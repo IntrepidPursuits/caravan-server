@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170607143332) do
+ActiveRecord::Schema.define(version: 20170607152420) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,8 +38,9 @@ ActiveRecord::Schema.define(version: 20170607143332) do
     t.boolean "driver?"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["car_id"], name: "index_seats_on_car_id", unique: true
-    t.index ["user_id"], name: "index_seats_on_user_id", unique: true
+    t.index ["car_id", "user_id"], name: "index_seats_on_car_id_and_user_id", unique: true
+    t.index ["car_id"], name: "index_seats_on_car_id"
+    t.index ["user_id"], name: "index_seats_on_user_id"
   end
 
   create_table "trips", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -52,7 +53,7 @@ ActiveRecord::Schema.define(version: 20170607143332) do
     t.decimal "destination_longitude", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["creator_id"], name: "index_trips_on_creator_id", unique: true
+    t.index ["creator_id"], name: "index_trips_on_creator_id"
     t.index ["name"], name: "index_trips_on_name", unique: true
   end
 
