@@ -1,0 +1,2 @@
+class UserTrip < ApplicationRecord
+end
