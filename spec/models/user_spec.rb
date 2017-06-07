@@ -8,8 +8,4 @@ RSpec.describe User, type: :model do
     it { should have_many(:trips).through(:user_trips) }
     it { should have_many(:user_trips) }
   end
-
-  describe "validations" do
-    
-  end
 end
