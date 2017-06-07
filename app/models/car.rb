@@ -1,14 +1,15 @@
 class Car < ApplicationRecord
   belongs_to :trip
+  has_many :locations
   has_many :seats
   has_many :users, through: :seats
 
   enum status: {
-    "Not started": 0,
-    "In transit": 1,
-    "Arrived": 2
+    not_started: 0,
+    in_transit: 1,
+    arrived: 2
   }
 
-  validates :status, inclusion: { in: statuses.keys }
-  validates :num_seats, range: [1..25]
+  validates :status, presence: true
+  validates :num_seats, presence: true, inclusion: { in: 1..25 }
 end

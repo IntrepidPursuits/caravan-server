@@ -1,5 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe Car, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe "associations" do
+    it { should belong_to(:trip) }
+    it { should have_many(:locations) }
+    it { should have_many(:seats) }
+    it { should have_many(:users).through(:seats) }
+  end
+
+  describe "validations" do
+    it { should validate_inclusion_of(:num_seats).in_range(1..25) }
+    it { should validate_presence_of(:status) }
+    it { should validate_presence_of(:num_seats) }
+  end
+
+  describe "set enum" do
+    it { should define_enum_for(:status) }
+  end
 end
