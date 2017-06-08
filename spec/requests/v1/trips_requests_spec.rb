@@ -11,13 +11,19 @@ describe "Trip Request", type: :request do
         )
 
         expect(response).to have_http_status :created
-        expect(response).to have_json_path("trip")
+        expect(body).to have_json_path("creator_id")
+        expect(body).to have_json_path("departure_date")
+        expect(body).to have_json_path("destination_address")
+        expect(body).to have_json_path("destination_latitude")
+        expect(body).to have_json_path("destination_longitude")
+        expect(body).to have_json_path("invite_code")
       end
     end
   end
 
   def valid_trip_info
-    trip = build(:trip)
+    creator = create(:user)
+    trip = build(:trip, creator: creator)
     { trip: trip }
   end
 end

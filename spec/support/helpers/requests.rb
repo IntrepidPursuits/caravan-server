@@ -1,5 +1,9 @@
 module Helpers
   module Requests
+    def body
+      response.body
+    end
+
     def api_version
       1
     end
