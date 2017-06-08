@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe UserTrip, type: :model do
   describe "associations" do
@@ -7,6 +7,9 @@ RSpec.describe UserTrip, type: :model do
   end
 
   describe "validations" do
-    it { should validate_uniqueness_of(:user_id).scoped_to(:trip_id) }
+    it do
+      create(:user_trip)
+      should validate_uniqueness_of(:user).scoped_to(:trip_id)
+    end
   end
 end

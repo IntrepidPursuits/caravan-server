@@ -10,7 +10,7 @@ class CreateTrips < ActiveRecord::Migration[5.1]
       t.decimal :destination_longitude, null: false
       t.timestamps
     end
-    add_index :trips, :creator_id, unique: true
+    add_index :trips, :creator_id
     add_index :trips, :name, unique: true
   end
 end

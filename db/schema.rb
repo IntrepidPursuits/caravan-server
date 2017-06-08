@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170607152420) do
+ActiveRecord::Schema.define(version: 20170607142500) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 20170607152420) do
   create_table "seats", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "user_id", null: false
     t.uuid "car_id", null: false
-    t.boolean "driver?"
+    t.boolean "driver?", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["car_id", "user_id"], name: "index_seats_on_car_id_and_user_id", unique: true
@@ -58,11 +58,12 @@ ActiveRecord::Schema.define(version: 20170607152420) do
   end
 
   create_table "user_trips", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "trip_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "user_id"
-    t.uuid "trip_id"
     t.index ["trip_id"], name: "index_user_trips_on_trip_id"
+    t.index ["user_id", "trip_id"], name: "index_user_trips_on_user_id_and_trip_id", unique: true
     t.index ["user_id"], name: "index_user_trips_on_user_id"
   end
 
@@ -72,6 +73,4 @@ ActiveRecord::Schema.define(version: 20170607152420) do
     t.datetime "updated_at", null: false
   end
 
-  add_foreign_key "user_trips", "trips"
-  add_foreign_key "user_trips", "users"
 end
