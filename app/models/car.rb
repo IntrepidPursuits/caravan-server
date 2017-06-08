@@ -10,8 +10,11 @@ class Car < ApplicationRecord
     arrived: 2
   }
 
-  validates :status, presence: true
   validates :num_seats, presence: true, inclusion: { in: 1..25 }
+  validates :status, presence: true
+  validates :trip, presence: true
 
-  
+  def seats_filled
+    self.seats.count
+  end
 end

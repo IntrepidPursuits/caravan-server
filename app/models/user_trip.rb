@@ -2,5 +2,6 @@ class UserTrip < ApplicationRecord
   belongs_to :trip
   belongs_to :user
 
-  validates :user, uniqueness: { scope: :trip_id }
+  validates :trip, presence: true
+  validates :user, presence: true, uniqueness: { scope: :trip_id }
 end

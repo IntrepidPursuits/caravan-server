@@ -7,6 +7,8 @@ RSpec.describe UserTrip, type: :model do
   end
 
   describe "validations" do
+    it { should validate_presence_of(:trip) }
+    it { should validate_presence_of(:user) }
     it do
       create(:user_trip)
       should validate_uniqueness_of(:user).scoped_to(:trip_id)

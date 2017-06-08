@@ -6,6 +6,7 @@ RSpec.describe Location, type: :model do
   end
 
   describe "validations" do
+    it { should validate_presence_of(:car) }
     it { should validate_presence_of(:latitude) }
     it { should validate_presence_of(:longitude) }
   end
