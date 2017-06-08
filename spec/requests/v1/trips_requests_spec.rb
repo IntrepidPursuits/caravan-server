@@ -17,6 +17,7 @@ describe "Trip Request", type: :request do
         expect(body).to have_json_path("destination_latitude")
         expect(body).to have_json_path("destination_longitude")
         expect(body).to have_json_path("invite_code")
+        expect(body).to have_json_path("name")
       end
     end
   end
