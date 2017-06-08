@@ -15,9 +15,6 @@ RSpec.describe Trip, type: :model do
     it { should validate_presence_of(:destination_longitude) }
     it { should validate_presence_of(:invite_code) }
     it { should validate_presence_of(:name) }
-    it do
-      create(:trip)
-      should validate_uniqueness_of(:name)
-    end
+    it { should validate_uniqueness_of(:name) }
   end
 end

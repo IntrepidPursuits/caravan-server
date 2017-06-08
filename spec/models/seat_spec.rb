@@ -8,6 +8,9 @@ RSpec.describe Seat, type: :model do
 
   describe "validations" do
     it { should validate_presence_of(:driver?) }
-    it { should validate_inclusion_of(:driver?).in_array([:true, :false]) }
+    it do
+      create(:seat)
+      should validate_uniqueness_of(:user).scoped_to(:car_id)
+    end
   end
 end
