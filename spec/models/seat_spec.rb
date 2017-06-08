@@ -7,8 +7,8 @@ RSpec.describe Seat, type: :model do
   end
 
   describe "validations" do
-    it { should validate_presence_of(:car_id) }
-    it { should validate_presence_of(:user_id) }
+    it { should validate_presence_of(:car) }
+    it { should validate_presence_of(:user) }
     it do
       create(:seat)
       should validate_uniqueness_of(:user).scoped_to(:car_id)

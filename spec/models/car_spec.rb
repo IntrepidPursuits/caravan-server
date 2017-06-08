@@ -10,9 +10,9 @@ RSpec.describe Car, type: :model do
 
   describe "validations" do
     it { should validate_inclusion_of(:num_seats).in_range(1..25) }
-    it { should validate_presence_of(:trip_id) }
-    it { should validate_presence_of(:status) }
     it { should validate_presence_of(:num_seats) }
+    it { should validate_presence_of(:status) }
+    it { should validate_presence_of(:trip) }
   end
 
   describe "set enum" do

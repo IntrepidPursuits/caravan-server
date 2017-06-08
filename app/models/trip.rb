@@ -4,6 +4,7 @@ class Trip < ApplicationRecord
   has_many :user_trips
   has_many :users, through: :user_trips
 
+  validates :creator, presence: true
   validates :departure_date, presence: true
   validates :destination_address, presence: true
   validates :destination_latitude, presence: true
