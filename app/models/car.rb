@@ -12,6 +12,4 @@ class Car < ApplicationRecord
 
   validates :status, presence: true
   validates :num_seats, presence: true, inclusion: { in: 1..25 }
-
-  
 end
