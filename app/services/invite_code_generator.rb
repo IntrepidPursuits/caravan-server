@@ -10,10 +10,11 @@ class InviteCodeGenerator
   private
 
   def generate_code
-    code = SecureRandom.hex(10)
-    if !Trip.where(invite_code: code).empty?
-      code = generate_code
+    code = InviteCode.new(code: SecureRandom.hex(10))
+    if code.save
+      return code
+    else
+      generate_code
     end
-    code
   end
 end

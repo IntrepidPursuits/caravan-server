@@ -8,8 +8,8 @@ describe InviteCodeGenerator do
 
       expect(response).to be_a InviteCodeGenerator
       expect(response.invite_code).to_not be nil
-      expect(response.invite_code).to be_a String
-      expect(response.invite_code.length).to equal 20
+      expect(response.invite_code.code).to be_a String
+      expect(response.invite_code.code.length).to equal 20
     end
   end
 end
