@@ -1,6 +1,4 @@
 class InviteCodeGenerator
-  attr_reader :invite_code
-
   def self.perform
     new.perform
   end
