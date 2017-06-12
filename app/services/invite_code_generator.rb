@@ -1,20 +1,18 @@
+require "securerandom"
+
 class InviteCodeGenerator
   attr_reader :invite_code
 
-  def initialize(length = 10)
-    @invite_code = generate_code(length)
+  def initialize
+    @invite_code = generate_code
   end
 
   private
 
-  def generate_code(length)
-    chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ0123456789"
-    code = ""
-    length.times do
-      code += chars[rand(chars.size)]
-    end
+  def generate_code
+    code = SecureRandom.hex(10)
     if !Trip.where(invite_code: code).empty?
-      code = generate_code(length)
+      code = generate_code
     end
     code
   end
