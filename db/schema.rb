@@ -40,9 +40,9 @@ ActiveRecord::Schema.define(version: 20170609201727) do
     t.uuid "car_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["car_id", "user_id"], name: "index_signups_on_car_id_and_user_id", unique: true
     t.index ["car_id"], name: "index_signups_on_car_id"
-    t.index ["trip_id", "user_id"], name: "index_signups_on_trip_id_and_user_id", unique: true
+    t.index ["trip_id"], name: "index_signups_on_trip_id", unique: true
+    t.index ["user_id"], name: "index_signups_on_user_id", unique: true
   end
 
   create_table "trips", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -56,8 +56,8 @@ ActiveRecord::Schema.define(version: 20170609201727) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_trips_on_creator_id"
-    t.index ["invite_code"], name: "index_trips_on_invite_code"
-    t.index ["name"], name: "index_trips_on_name"
+    t.index ["invite_code"], name: "index_trips_on_invite_code", unique: true
+    t.index ["name"], name: "index_trips_on_name", unique: true
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
