@@ -25,7 +25,7 @@ describe "Trip Request", type: :request do
 
   def valid_trip_info
     creator = create(:user)
-    trip = build(:trip, creator: creator)
+    trip = build(:trip, creator: creator, invite_code: nil)
     { trip: trip }
   end
 end
