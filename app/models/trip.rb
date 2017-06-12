@@ -1,5 +1,5 @@
 class Trip < ApplicationRecord
-  belongs_to :creator, class_name: :User, polymorphic: true
+  belongs_to :creator, class_name: :User
   has_many :cars
   has_many :signups
   has_many :users, through: :signups
