@@ -10,8 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
 ActiveRecord::Schema.define(version: 20170616140329) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "pgcrypto"
@@ -40,6 +40,11 @@ ActiveRecord::Schema.define(version: 20170616140329) do
     t.index ["user_id"], name: "index_google_identities_on_user_id", unique: true
   end
 
+  create_table "invite_codes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "code", null: false
+    t.index ["code"], name: "index_invite_codes_on_code", unique: true
+  end
+
   create_table "locations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "car_id", null: false
     t.decimal "latitude", null: false
@@ -64,14 +69,13 @@ ActiveRecord::Schema.define(version: 20170616140329) do
     t.uuid "creator_id", null: false
     t.string "name", null: false
     t.datetime "departing_on", null: false
-    t.string "invite_code", null: false
     t.string "destination_address", null: false
     t.decimal "destination_latitude", null: false
     t.decimal "destination_longitude", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "invite_code_id", null: false
     t.index ["creator_id"], name: "index_trips_on_creator_id"
-    t.index ["invite_code"], name: "index_trips_on_invite_code", unique: true
     t.index ["name"], name: "index_trips_on_name", unique: true
   end
 
