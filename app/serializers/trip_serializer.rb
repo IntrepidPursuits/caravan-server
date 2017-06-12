@@ -10,5 +10,5 @@ class TripSerializer < ActiveModel::Serializer
     :updated_at,
     :creator,
     :cars,
-    :signups
+    :users
 end
