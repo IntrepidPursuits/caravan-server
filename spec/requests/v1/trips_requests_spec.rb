@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "Trip Request", type: :request do
+describe "Trip Request" do
   describe "POST /trips" do
     context "with valid creator, name, departure date, and destination" do
       it "returns valid JSON for the new trip" do
