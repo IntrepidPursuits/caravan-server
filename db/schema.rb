@@ -56,8 +56,8 @@ ActiveRecord::Schema.define(version: 20170609201727) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_trips_on_creator_id"
-    t.index ["invite_code"], name: "index_trips_on_invite_code", unique: true
-    t.index ["name"], name: "index_trips_on_name", unique: true
+    t.index ["invite_code"], name: "index_trips_on_invite_code"
+    t.index ["name"], name: "index_trips_on_name"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

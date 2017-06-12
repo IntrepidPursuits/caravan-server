@@ -12,7 +12,7 @@ RSpec.describe Car, type: :model do
     it { should validate_numericality_of(:max_seats).is_equal_to(1) }
     it { should validate_presence_of(:max_seats) }
     it { should validate_presence_of(:status) }
-    it { should validate_presence_of(:trip_id) }
+    it { should validate_presence_of(:trip) }
   end
 
   describe "set enum" do

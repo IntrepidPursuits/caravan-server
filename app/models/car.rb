@@ -1,6 +1,6 @@
 class Car < ApplicationRecord
   belongs_to :trip
-  
+
   has_many :locations
   has_many :signups
   has_many :users, through: :signups
@@ -13,5 +13,5 @@ class Car < ApplicationRecord
 
   validates :max_seats, presence: true, numericality: { equal_to: 1 }
   validates :status, presence: true
-  validates :trip_id, presence: true
+  validates :trip, presence: true
 end
