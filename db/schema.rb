@@ -10,9 +10,60 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 20170609201727) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "pgcrypto"
+
+  create_table "cars", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "trip_id", null: false
+    t.integer "max_seats", default: 1, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["trip_id"], name: "index_cars_on_trip_id"
+  end
+
+  create_table "locations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "car_id", null: false
+    t.decimal "latitude", null: false
+    t.decimal "longitude", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["car_id"], name: "index_locations_on_car_id"
+  end
+
+  create_table "signups", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "trip_id", null: false
+    t.uuid "user_id", null: false
+    t.uuid "car_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["car_id", "trip_id"], name: "index_signups_on_car_id_and_trip_id", unique: true
+    t.index ["car_id"], name: "index_signups_on_car_id"
+    t.index ["trip_id", "user_id"], name: "index_signups_on_trip_id_and_user_id", unique: true
+  end
+
+  create_table "trips", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "creator_id", null: false
+    t.string "name", null: false
+    t.datetime "departing_on", null: false
+    t.string "invite_code", null: false
+    t.string "destination_address", null: false
+    t.decimal "destination_latitude", null: false
+    t.decimal "destination_longitude", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_trips_on_creator_id"
+    t.index ["invite_code"], name: "index_trips_on_invite_code", unique: true
+    t.index ["name"], name: "index_trips_on_name", unique: true
+  end
+
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
 end
