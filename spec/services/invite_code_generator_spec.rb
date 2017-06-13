@@ -4,11 +4,11 @@ require "rails_helper"
 describe InviteCodeGenerator do
   describe ".perform" do
     it "returns an InviteCode with a random invite code" do
-      response = InviteCodeGenerator.perform
+      invite_code = InviteCodeGenerator.perform
 
-      expect(response).to be_a InviteCode
-      expect(response.code).to_not be nil
-      expect(response.code).to be_a String
+      expect(invite_code).to be_a InviteCode
+      expect(invite_code.code).to_not be nil
+      expect(invite_code.code).to be_a String
     end
   end
 end

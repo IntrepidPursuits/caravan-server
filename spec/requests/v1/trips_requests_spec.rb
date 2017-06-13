@@ -5,7 +5,7 @@ describe "Trip Request" do
     context "with valid creator, name, departure date, and destination" do
       it "returns valid JSON for the new trip" do
         post(
-          api_v1_trips_url,
+          trips_url,
           params: valid_trip_info.to_json,
           headers: accept_headers
         )

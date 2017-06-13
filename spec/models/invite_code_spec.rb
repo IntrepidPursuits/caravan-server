@@ -9,7 +9,7 @@ RSpec.describe InviteCode, type: :model do
     it { should validate_presence_of(:code) }
     it do
       create(:invite_code)
-      should validate_uniqueness_of(:code)
+      should validate_uniqueness_of(:code).case_insensitive
     end
   end
 end

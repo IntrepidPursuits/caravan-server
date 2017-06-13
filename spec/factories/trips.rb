@@ -6,6 +6,6 @@ FactoryGirl.define do
     destination_latitude 1.000000
     destination_longitude 1.000000
     destination_address "1 Sesame St"
-    invite_code 
+    invite_code
   end
 end
