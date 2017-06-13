@@ -4,6 +4,9 @@ describe "Trip Request" do
   describe "POST /trips" do
     context "with valid creator, name, departure date, and destination" do
       it "returns valid JSON for the new trip" do
+        unsaved_trip = build(:trip, invite_code: nil)
+        valid_trip_info = { trip: unsaved_trip }
+
         post(
           trips_url,
           params: valid_trip_info.to_json,
@@ -21,11 +24,29 @@ describe "Trip Request" do
         expect(body).to have_json_path("trip/name")
       end
     end
-  end
+    
+    context "with invalid data" do
+      it "throws an error" do
+        invalid_trip_info = {
+          trip: {
+            creator: nil,
+            invite_code: nil,
+            destination_address: nil,
+            destination_latitude: nil,
+            destination_longitude: nil,
+            name: nil
+          }
+        }
 
-  def valid_trip_info
-    creator = create(:user)
-    trip = build(:trip, creator: creator, invite_code: nil)
-    { trip: trip }
+        post(
+          trips_url,
+          params: invalid_trip_info.to_json,
+          headers: accept_headers
+        )
+
+        expect(response).to have_http_status :bad_request
+        expect(body).to have_json_path("error")
+      end
+    end
   end
 end
