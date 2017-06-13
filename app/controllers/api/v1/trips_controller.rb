@@ -1,10 +1,12 @@
 class Api::V1::TripsController < ApplicationController
   def create
-    invite_code = InviteCodeGenerator.new.invite_code
+    invite_code = InviteCodeGenerator.perform
     trip_params_with_code = trip_params.merge(invite_code: invite_code)
     trip = Trip.create!(trip_params_with_code)
     render json: trip, status: :created
   end
+
+  private
 
   def trip_params
     params.require(:trip).permit(

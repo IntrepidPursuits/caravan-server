@@ -3,18 +3,16 @@ require "securerandom"
 class InviteCodeGenerator
   attr_reader :invite_code
 
-  def initialize
-    @invite_code = generate_code
+  def self.perform
+    new.perform
   end
 
-  private
-
-  def generate_code
+  def perform
     code = InviteCode.new(code: SecureRandom.hex(10))
     if code.save
       return code
     else
-      generate_code
+      perform
     end
   end
 end
