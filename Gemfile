@@ -6,6 +6,7 @@ git_source(:github) do |repo_name|
 end
 
 gem "active_model_serializers", "0.8.3"
+gem "httparty"
 gem "omniauth-google-oauth2"
 gem "pg", "~> 0.18"
 gem "puma", "~> 3.7"
@@ -18,6 +19,8 @@ group :development, :test do
   gem "factory_girl_rails"
   gem "pry-rails"
   gem "rspec-rails", "~> 3.5"
+  gem "warden"
+  gem "webmock"
 end
 
 group :development do

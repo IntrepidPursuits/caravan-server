@@ -1,0 +1,18 @@
+{
+ "azp": "407408718192.apps.googleusercontent.com",
+ "aud": "407408718192.apps.googleusercontent.com",
+ "sub": "106177189018693159056",
+ "email": "riki.konikoff@gmail.com",
+ "email_verified": "true",
+ "at_hash": "annashP0evBDalqouZFhJQ",
+ "iss": "https://accounts.google.com",
+ "iat": "1497558957",
+ "exp": "1497562557",
+ "name": "Riki Konikoff",
+ "picture": "https://lh4.googleusercontent.com/-qQ7shdzexGw/AAAAAAAAAAI/AAAAAAAAAUI/7SN14nqVhAU/s96-c/photo.jpg",
+ "given_name": "Riki",
+ "family_name": "Konikoff",
+ "locale": "en",
+ "alg": "RS256",
+ "kid": "774fb12ac2d04a9927f9a1120cf087ce64232724"
+}
