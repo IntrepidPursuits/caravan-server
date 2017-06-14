@@ -1,5 +1,3 @@
-require "securerandom"
-
 class InviteCodeGenerator
   attr_reader :invite_code
 
@@ -8,7 +6,7 @@ class InviteCodeGenerator
   end
 
   def perform
-    code = InviteCode.new(code: SecureRandom.hex(10))
+    code = InviteCode.new(code: SecureRandom.hex(3))
     if code.save
       return code
     else
