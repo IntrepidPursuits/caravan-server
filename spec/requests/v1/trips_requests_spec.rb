@@ -44,7 +44,7 @@ describe "Trip Request" do
           headers: accept_headers
         )
 
-        expect(response).to have_http_status :bad_request
+        expect(response).to have_http_status :unprocessable_entity
         expect(body).to have_json_path("errors")
         expect(parsed_body["errors"]).to include ("Invalid trip data.")
         expect(parsed_body["errors"]).to include ("Creator must exist")
