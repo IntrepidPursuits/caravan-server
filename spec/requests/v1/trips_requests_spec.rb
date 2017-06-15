@@ -24,7 +24,7 @@ describe "Trip Request" do
         expect(body).to have_json_path("trip/name")
       end
     end
-    
+
     context "with invalid data" do
       it "throws an error" do
         invalid_trip_info = {
@@ -45,7 +45,15 @@ describe "Trip Request" do
         )
 
         expect(response).to have_http_status :bad_request
-        expect(body).to have_json_path("error")
+        expect(body).to have_json_path("errors")
+        expect(parsed_body["errors"]).to include ("Invalid trip data.")
+        expect(parsed_body["errors"]).to include ("Creator must exist")
+        expect(parsed_body["errors"]).to include ("Creator can't be blank")
+        expect(parsed_body["errors"]).to include ("Departing on can't be blank")
+        expect(parsed_body["errors"]).to include ("Destination address can't be blank")
+        expect(parsed_body["errors"]).to include ("Destination longitude can't be blank")
+        expect(parsed_body["errors"]).to include ("Destination latitude can't be blank")
+        expect(parsed_body["errors"]).to include ("Name can't be blank")
       end
     end
   end

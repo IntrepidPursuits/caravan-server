@@ -6,7 +6,7 @@ class Api::V1::TripsController < Api::V1::ApiController
     if trip.save
       render json: trip, status: :created
     else
-      render json: { error: "Invalid request" }, status: :bad_request
+      raise InvalidTripError.new(trip)
     end
   end
 

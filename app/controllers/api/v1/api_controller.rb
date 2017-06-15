@@ -12,4 +12,10 @@ class Api::V1::ApiController < ApplicationController
   def warden
     @warden ||= request.env["warden"]
   end
+
+  [InvalidTripError].each do |error|
+     rescue_from error do |exception|
+       render json: { errors: exception.message }, status: :bad_request
+    end
+  end
 end
