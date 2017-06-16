@@ -12,6 +12,7 @@ class Car < ApplicationRecord
   }
 
   validates :max_seats, presence: true, numericality: { equal_to: 1 }
+  validates :name, presence: true, uniqueness: { scope: :trip_id }
   validates :status, presence: true
   validates :trip, presence: true
 end
