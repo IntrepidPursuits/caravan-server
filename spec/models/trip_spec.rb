@@ -5,6 +5,7 @@ RSpec.describe Trip, type: :model do
     it { should belong_to(:creator) }
     it { should belong_to(:invite_code) }
     it { should have_many(:cars) }
+    it { should have_many(:locations).through(:cars) }
     it { should have_many(:signups) }
     it { should have_many(:users).through(:signups) }
   end
