@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Auth requests" do
-  describe "POST /auth" do
+  describe "POST /auths" do
     context "with valid google token for a new user" do
       before :each do
         stub_google_token_request

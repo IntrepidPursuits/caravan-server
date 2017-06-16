@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(version: 20170616140329) do
     t.string "email", null: false
     t.text "image"
     t.string "provider", default: "google", null: false
-    t.string "token"
+    t.string "token", null: false
     t.datetime "token_expires_at"
     t.string "uid", null: false
     t.uuid "user_id", null: false
