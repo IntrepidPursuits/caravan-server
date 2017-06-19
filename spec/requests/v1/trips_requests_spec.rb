@@ -95,6 +95,7 @@ describe "Trip Request" do
       expect(body).to have_json_path("trip/name")
       expect(body).to have_json_path("trip/cars")
       expect(body).to have_json_path("trip/cars/0/max_seats")
+      expect(body).to have_json_path("trip/cars/0/name")
       expect(body).to have_json_path("trip/cars/0/status")
       expect(body).to have_json_path("trip/signed_up_users")
       expect(body).to have_json_path("trip/signed_up_users/0/name")
