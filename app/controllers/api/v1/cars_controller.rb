@@ -10,6 +10,9 @@ class Api::V1::CarsController < Api::V1::ApiController
   end
 
   def update
+    car = Car.find(params[:id])
+    car.update_attributes(status: params[:status])
+    render json: car, status: :ok, serializer: CarSerializer, except: [:cars, :signups, :users]
   end
 
   private

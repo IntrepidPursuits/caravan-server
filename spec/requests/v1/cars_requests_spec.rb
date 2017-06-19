@@ -122,13 +122,7 @@ RSpec.describe "Car Requests", type: :request do
         expect(response).to have_http_status :ok
         expect(body).to have_json_path("car")
         expect(body).to have_json_path("car/status")
-        expect(parsed_body["car"]["status"]).to be "in_transit"
-      end
-
-      def updated_car
-        car = Car.last
-        car.status = 1
-        { car: car }
+        expect(parsed_body["car"]["status"]).to eq("in_transit")
       end
     end
   end
