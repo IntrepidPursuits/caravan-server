@@ -14,7 +14,7 @@ module ExternalRequests
     { content_type: "application/json" }
   end
 
-  def stub_google_info_request
+  def stub_google_profile_request
     stub_request(:get, /.*googleapis.com\/plus\/v1\/people\/.*/)
       .to_return(status: :ok, body: google_user_info, headers: json_content)
   end

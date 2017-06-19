@@ -4,8 +4,9 @@ RSpec.describe "Auth requests" do
   describe "POST /auths" do
     context "with valid google token for a new user" do
       before :each do
-        stub_google_token_request
-        stub_google_info_request
+        token_validator = double("token_validator")
+        allow(token_validator).to receive(:perform).and_return(true)
+        stub_google_profile_request
       end
 
       it "returns a valid JSON user data" do

@@ -11,9 +11,8 @@ class GoogleAuthenticator
 
   def perform
     raise Api::V1::ApiController::UnauthorizedAccess if !token_valid?
-    google_identity = GoogleIdentity.find_or_create_by(attrs)
+    google_identity = GoogleIdentity.find_by(uid: google_uid) || GoogleIdentity.create(attrs)
     user = google_identity.user
-    # reset the token?
     [user, google_identity]
   end
 
@@ -53,6 +52,6 @@ class GoogleAuthenticator
   end
 
   def user
-    user = User.find_or_create_by(name: google_profile["name"])
+    user = User.create(name: google_profile["name"])
   end
 end

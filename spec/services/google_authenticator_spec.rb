@@ -2,10 +2,21 @@ require "rails_helper"
 
 RSpec.describe "GoogleAuthenticator" do
   describe ".perform" do
+    context "with invalid credentials" do
+      it "should raise an error" do
+        token_validator = double("token_validator")
+        allow(token_validator).to receive(:perform).and_return(false)
+        expect { GoogleAuthenticator.perform("a") }.to raise_error(Api::V1::ApiController::UnauthorizedAccess)
+      end
+    end
+
     context "with valid credentials" do
       before(:each) do
-        stub_google_token_request
-        stub_google_info_request
+        token_validator = double("token_validator")
+        allow(token_validator).to receive(:perform).and_return(true)
+
+        google_profile = double("google_profile")
+        allow(google_profile).to receive(:perform).and_return(google_info_response)
       end
 
       context "for an existing user and google_identity" do

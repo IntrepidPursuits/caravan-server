@@ -10,7 +10,7 @@ class GoogleProfileRequest
   end
 
   def perform
-    raise InvalidGoogleUser if !user_response.present?
+    raise InvalidGoogleUser if user_response.body.nil?
     user_response
   end
 
