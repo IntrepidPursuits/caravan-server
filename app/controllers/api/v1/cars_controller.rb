@@ -9,6 +9,9 @@ class Api::V1::CarsController < Api::V1::ApiController
     render json: car, status: :ok, serializer: CarSerializer, except: [:cars, :signups, :users]
   end
 
+  def update
+  end
+
   private
 
   def car_params

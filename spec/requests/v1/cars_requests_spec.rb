@@ -107,4 +107,29 @@ RSpec.describe "Car Requests", type: :request do
       end
     end
   end
+
+  describe "PATCH /cars/:id", type: :request do
+    context "user can update their car's status to reflect starting the trip" do
+      it "returns updated JSON for the car" do
+        car = create(:car)
+
+        patch(
+          api_v1_car_url(car),
+          params: { status: 1 }.to_json,
+          headers: accept_headers
+        )
+
+        expect(response).to have_http_status :ok
+        expect(body).to have_json_path("car")
+        expect(body).to have_json_path("car/status")
+        expect(body["car"]["status"]).to be "in_transit"
+      end
+
+      def updated_car
+        car = Car.last
+        car.status = 1
+        { car: car }
+      end
+    end
+  end
 end
