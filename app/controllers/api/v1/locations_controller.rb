@@ -1,8 +1,7 @@
 class Api::V1::LocationsController < Api::V1::ApiController
   def create
     location = Location.create!(location_params)
-    trip = location.car.trip
-    render json: trip,
+    render json: location.trip,
            except: [:cars, :locations, :signups, :users],
            serializer: TripLocationsSerializer,
            status: :created
