@@ -88,12 +88,10 @@ RSpec.describe "Car Requests", type: :request do
       it "returns valid JSON for the car and its passengers" do
         car = create(:car)
         passenger = create(:user)
+        identity = create(:google_identity, user: passenger)
         signup = create(:signup, car: car, user: passenger)
 
-        get(
-          api_v1_car_url(car),
-          headers: accept_headers
-        )
+        get(api_v1_car_url(car))
 
         expect(response).to have_http_status :ok
         expect(body).to have_json_path("car")
