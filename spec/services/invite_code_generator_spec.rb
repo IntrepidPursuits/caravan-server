@@ -9,7 +9,7 @@ describe InviteCodeGenerator do
       expect(invite_code.code).to_not be nil
       expect(invite_code.code).to be_a String
       expect(invite_code.code.length).to be 6
-      expect(invite_code.code).to_not match(/\W/)
+      expect(invite_code.code).to_not match(/\D/)
     end
   end
 end

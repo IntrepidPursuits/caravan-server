@@ -4,7 +4,7 @@ class InviteCodeGenerator
   end
 
   def perform
-    code = InviteCode.new(code: SecureRandom.hex(3))
+    code = InviteCode.new(code: '%06d' % SecureRandom.random_number(999999))
     if code.save
       return code
     else
