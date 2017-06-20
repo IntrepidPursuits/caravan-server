@@ -22,11 +22,21 @@ describe "Trip Request" do
         expect(body).to have_json_path("trip/destination_longitude")
         expect(body).to have_json_path("trip/invite_code")
         expect(body).to have_json_path("trip/name")
+
+        expect(parsed_body["trip"]["creator"]["name"])
+          .to eq attributes_for(:user)[:name]
+        expect(parsed_body["trip"]["destination_address"])
+          .to eq attributes_for(:trip)[:destination_address].to_s
+        expect(parsed_body["trip"]["destination_latitude"])
+          .to eq attributes_for(:trip)[:destination_latitude].to_s
+        expect(parsed_body["trip"]["destination_longitude"])
+          .to eq attributes_for(:trip)[:destination_longitude].to_s
+        expect(parsed_body["trip"]["cars"].empty?).to be true
       end
     end
 
     context "with invalid data" do
-      it "throws an error" do
+      it "returns JSON with validation errors" do
         invalid_trip_info = {
           trip: {
             creator: nil,
