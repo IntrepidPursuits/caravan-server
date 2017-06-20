@@ -31,14 +31,11 @@ ActiveRecord::Schema.define(version: 20170616140329) do
     t.string "email", null: false
     t.text "image"
     t.string "provider", default: "google", null: false
-    t.string "token", null: false
-    t.datetime "token_expires_at"
     t.string "uid", null: false
     t.uuid "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_google_identities_on_email", unique: true
-    t.index ["token"], name: "index_google_identities_on_token", unique: true
     t.index ["uid"], name: "index_google_identities_on_uid", unique: true
     t.index ["user_id"], name: "index_google_identities_on_user_id", unique: true
   end

@@ -11,7 +11,13 @@ class GoogleAuthenticator
 
   def perform
     raise Api::V1::ApiController::UnauthorizedAccess if !token_valid?
-    google_identity = GoogleIdentity.find_by(uid: google_uid) || GoogleIdentity.create(attrs)
+    google_identity = GoogleIdentity.find_by(uid: google_uid)
+    if google_identity
+      google_identity.update_attributes(attrs_to_update)
+      google_identity.user.update_attributes(name: token_hash[:name])
+    else
+      google_identity = GoogleIdentity.create(attrs_to_create)
+    end
     user = google_identity.user
     [user, google_identity]
   end
@@ -28,14 +34,19 @@ class GoogleAuthenticator
     parsed_token = JSON.parse(token)["token"]
   end
 
-  def attrs
-    @attrs ||= {
-      email: google_profile["email"],
-      image: google_profile["picture"],
-      token: token,
-      token_expires_at: Date.today + 5,
+  def attrs_to_update
+    {
+      email: token_hash[:email],
+      image: token_hash[:image]
+    }
+  end
+
+  def attrs_to_create
+    {
+      email: token_hash[:email],
+      image: token_hash[:image],
       uid: google_uid,
-      user: user
+      user: new_user
     }
   end
 
@@ -43,15 +54,11 @@ class GoogleAuthenticator
     @token_hash = token_validator.token_hash
   end
 
-  def google_profile
-    @google_profile ||= GoogleProfileRequest.perform(google_uid)
-  end
-
   def google_uid
     @google_uid ||= token_hash[:google_uid]
   end
 
-  def user
-    user = User.create(name: google_profile["name"])
+  def new_user
+    new_user = User.create(name: token_hash[:name])
   end
 end

@@ -6,7 +6,7 @@ RSpec.describe "Auth requests" do
       before :each do
         token_validator = double("token_validator")
         allow(token_validator).to receive(:perform).and_return(true)
-        stub_google_profile_request
+        stub_google_token_request
       end
 
       it "returns a valid JSON user data" do
@@ -47,6 +47,10 @@ RSpec.describe "Auth requests" do
         expect(google_identity).to be
         expect(GoogleIdentity.count).to be(g_ids_count + 1)
         expect(User.count).to be(users_count + 1)
+      end
+
+      it "returns valid auth token and expiration date" do
+
       end
     end
   end

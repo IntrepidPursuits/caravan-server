@@ -10,9 +10,13 @@ class GoogleTokenValidator
   end
 
   def perform
-    return false if !client_id_valid?
+    return false if token_invalid? || !client_id_valid?
     token_hash
     true
+  end
+
+  def token_invalid?
+    response["error_description"] == "Invalid Value"
   end
 
   def client_id_valid?
@@ -24,7 +28,7 @@ class GoogleTokenValidator
   end
 
   def token_hash
-    @token_hash ||= { google_uid: response["sub"], email: response["email"] }
+    @token_hash ||= { google_uid: response["sub"], email: response["email"], name: response["name"], image: response["picture"] }
   end
 
   def response

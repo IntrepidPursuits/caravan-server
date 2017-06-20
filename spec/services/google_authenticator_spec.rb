@@ -4,50 +4,65 @@ RSpec.describe "GoogleAuthenticator" do
   describe ".perform" do
     context "with invalid credentials" do
       it "should raise an error" do
-        token_validator = double("token_validator")
-        allow(token_validator).to receive(:perform).and_return(false)
-        expect { GoogleAuthenticator.perform("a") }.to raise_error(Api::V1::ApiController::UnauthorizedAccess)
+        GoogleAuthenticator.any_instance.stub(:token_valid?).and_return(false)
+
+        expect { GoogleAuthenticator.perform("bah") }.to raise_error(Api::V1::ApiController::UnauthorizedAccess)
       end
     end
 
     context "with valid credentials" do
       before(:each) do
-        token_validator = double("token_validator")
-        allow(token_validator).to receive(:perform).and_return(true)
-
-        google_profile = double("google_profile")
-        allow(google_profile).to receive(:perform).and_return(google_profile_info)
+        GoogleAuthenticator.any_instance.stub(:token_valid?).and_return(true)
+        GoogleAuthenticator.any_instance.stub(:token_hash).and_return(user_info)
       end
 
       context "for an existing user and google_identity" do
-        it "logs in the user" do
+        it "updates the existing user and GoogleIdentity" do
+          create(:google_identity, uid: "118041628242866040308")
+          starting_user_count = User.count
+          starting_google_id_count = GoogleIdentity.count
 
+          user, google_identity = GoogleAuthenticator.perform(SecureRandom.hex(20))
+
+          expect(user).to be
+          expect(google_identity).to be
+          expect(User.count).to eq(starting_user_count)
+          expect(GoogleIdentity.count).to eq(starting_google_id_count)
+          expect(user.name).to eq("Riki Konikoff")
+          expect(google_identity.uid).to eq("118041628242866040308")
+          expect(google_identity.email).to eq("rkonikoff@intrepid.io")
+          expect(google_identity.image).to eq("https://lh4.googleusercontent.com/-2KGQauB9ezg/AAAAAAAAAAI/AAAAAAAAAAs/92F79-o1zFA/s96-c/photo.jpg")
         end
       end
 
       context "for a new user" do
-        it "creates the new user" do
-          token = SecureRandom.hex(20)
-          starting_count = User.count
-          authenticated_object = GoogleAuthenticator.perform(token)
-          user = authenticated_object[0]
+        it "creates the new user and corresponding GoogleIdentity" do
+          starting_user_count = User.count
+          starting_google_id_count = GoogleIdentity.count
+
+          user, google_identity = GoogleAuthenticator.perform(SecureRandom.hex(20))
 
           expect(user).to be
-          expect(User.count).to be(starting_count + 1)
-          expect(user.name).to be
-        end
-
-        it "creates a new google_identity for the new user" do
-          token = SecureRandom.hex(20)
-          user, google_identity = GoogleAuthenticator.perform(token)
-
+          expect(google_identity).to be
+          expect(User.count).to be(starting_user_count + 1)
+          expect(GoogleIdentity.count).to be(starting_google_id_count + 1)
+          expect(user.name).to eq("Riki Konikoff")
           expect(google_identity.user_id).to eq(user.id)
-          expect(google_identity.token).to eq(token)
-          expect(google_identity.uid).to be
-          expect(google_identity.email).to be
+          expect(google_identity.uid).to eq("118041628242866040308")
+          expect(google_identity.email).to eq("rkonikoff@intrepid.io")
+          expect(google_identity.image).to eq("https://lh4.googleusercontent.com/-2KGQauB9ezg/AAAAAAAAAAI/AAAAAAAAAAs/92F79-o1zFA/s96-c/photo.jpg")
         end
       end
     end
+  end
+
+  def user_info
+    {
+      email: google_profile_info["email"],
+      name: google_profile_info["name"],
+      google_uid: google_profile_info["sub"],
+      image: google_profile_info["picture"]
+    }
   end
 
   def google_profile_info
