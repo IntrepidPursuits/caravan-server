@@ -1,6 +1,4 @@
 class Api::V1::ApiController < ApplicationController
-
-
   class UnauthorizedAccess < StandardError
     def message
       'Unauthorized Client ID'

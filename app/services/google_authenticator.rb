@@ -22,10 +22,10 @@ class GoogleAuthenticator
         google_identity.update_attributes(attrs_to_update)
         google_identity.user.update_attributes(name: token_hash[:name])
       end
+      google_identity
     else
-      google_identity = GoogleIdentity.create(attrs_to_create)
+      GoogleIdentity.create(attrs_to_create)
     end
-    google_identity
   end
 
   def token_valid?

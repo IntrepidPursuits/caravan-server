@@ -8,8 +8,8 @@ module Helpers
       JSON.parse body
     end
 
-    def accept_header
-      "application/vnd.caravan-server.com; version=1"
+    def accept_header(version = 1)
+      "application/vnd.caravan-server.com; version=#{version}"
     end
 
     def accept_headers
