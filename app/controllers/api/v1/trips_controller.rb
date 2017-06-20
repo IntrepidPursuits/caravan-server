@@ -8,7 +8,10 @@ class Api::V1::TripsController < Api::V1::ApiController
 
   def show
     trip = Trip.find(params[:id])
-    render json: trip, status: :ok, except: [:invite_code, :signups, :users]
+    render json: trip,
+           except: [:invite_code, :signups, :users],
+           serializer: TripSerializer,
+           status: :ok
   end
 
   private
