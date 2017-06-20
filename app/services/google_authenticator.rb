@@ -11,15 +11,21 @@ class GoogleAuthenticator
 
   def perform
     raise Api::V1::ApiController::UnauthorizedAccess if !token_valid?
+    google_identity = create_or_update_google_identity
+    [google_identity.user, google_identity]
+  end
+
+  def create_or_update_google_identity
     google_identity = GoogleIdentity.find_by(uid: google_uid)
     if google_identity
-      google_identity.update_attributes(attrs_to_update)
-      google_identity.user.update_attributes(name: token_hash[:name])
+      ActiveRecord::Base.transaction do
+        google_identity.update_attributes(attrs_to_update)
+        google_identity.user.update_attributes(name: token_hash[:name])
+      end
     else
       google_identity = GoogleIdentity.create(attrs_to_create)
     end
-    user = google_identity.user
-    [user, google_identity]
+    google_identity
   end
 
   def token_valid?

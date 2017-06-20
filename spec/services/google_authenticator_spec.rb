@@ -18,7 +18,7 @@ RSpec.describe "GoogleAuthenticator" do
 
       context "for an existing user and google_identity" do
         it "updates the existing user and GoogleIdentity" do
-          create(:google_identity, uid: "118041628242866040308")
+          create(:google_identity, uid: "383579238759")
           starting_user_count = User.count
           starting_google_id_count = GoogleIdentity.count
 
@@ -29,9 +29,9 @@ RSpec.describe "GoogleAuthenticator" do
           expect(User.count).to eq(starting_user_count)
           expect(GoogleIdentity.count).to eq(starting_google_id_count)
           expect(user.name).to eq("Riki Konikoff")
-          expect(google_identity.uid).to eq("118041628242866040308")
+          expect(google_identity.uid).to eq("383579238759")
           expect(google_identity.email).to eq("rkonikoff@intrepid.io")
-          expect(google_identity.image).to eq("https://lh4.googleusercontent.com/-2KGQauB9ezg/AAAAAAAAAAI/AAAAAAAAAAs/92F79-o1zFA/s96-c/photo.jpg")
+          expect(google_identity.image).to eq("https://somepicture.jpg")
         end
       end
 
@@ -48,9 +48,9 @@ RSpec.describe "GoogleAuthenticator" do
           expect(GoogleIdentity.count).to be(starting_google_id_count + 1)
           expect(user.name).to eq("Riki Konikoff")
           expect(google_identity.user_id).to eq(user.id)
-          expect(google_identity.uid).to eq("118041628242866040308")
+          expect(google_identity.uid).to eq("383579238759")
           expect(google_identity.email).to eq("rkonikoff@intrepid.io")
-          expect(google_identity.image).to eq("https://lh4.googleusercontent.com/-2KGQauB9ezg/AAAAAAAAAAI/AAAAAAAAAAs/92F79-o1zFA/s96-c/photo.jpg")
+          expect(google_identity.image).to eq("https://somepicture.jpg")
         end
       end
     end

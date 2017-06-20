@@ -17,10 +17,10 @@ RSpec.describe "GoogleTokenValidator" do
       it "sets the token_hash" do
         token_validator = GoogleTokenValidator.new(google_token)
         expect(token_validator.token_hash).to be
-        expect(token_validator.token_hash[:google_uid]).to eq("118041628242866040308")
+        expect(token_validator.token_hash[:google_uid]).to eq("383579238759")
         expect(token_validator.token_hash[:email]).to eq("rkonikoff@intrepid.io")
         expect(token_validator.token_hash[:name]).to eq("Riki Konikoff")
-        expect(token_validator.token_hash[:image]).to eq("https://lh4.googleusercontent.com/-2KGQauB9ezg/AAAAAAAAAAI/AAAAAAAAAAs/92F79-o1zFA/s96-c/photo.jpg")
+        expect(token_validator.token_hash[:image]).to eq("https://somepicture.jpg")
       end
     end
   end
