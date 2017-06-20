@@ -9,10 +9,6 @@ class TripLocationsSerializer < ActiveModel::Serializer
   end
 
   def last_locations
-    last_locations = []
-    self.cars.each do |car|
-      last_locations << car.locations.order("updated_at").last
-    end
-    last_locations
+    LastLocations.perform(self.cars)
   end
 end
