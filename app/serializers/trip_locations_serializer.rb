@@ -7,8 +7,4 @@ class TripLocationsSerializer < ActiveModel::Serializer
   def trip_id
     self.object.id
   end
-
-  def last_locations
-    LastLocations.perform(self.cars)
-  end
 end

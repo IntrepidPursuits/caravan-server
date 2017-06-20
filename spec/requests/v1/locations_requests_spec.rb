@@ -24,9 +24,12 @@ describe "Location Request" do
         expect(body).to have_json_path("trip_locations/last_locations/0/longitude")
 
         expect(parsed_body["trip_locations"]["trip_id"]).to eq(car.trip.id)
-        expect(parsed_body["trip_locations"]["last_locations"][0]["car_id"]).to eq(car.id)
-        expect(parsed_body["trip_locations"]["last_locations"][0]["latitude"]).to eq("3.492")
-        expect(parsed_body["trip_locations"]["last_locations"][0]["longitude"]).to eq("4.103")
+        expect(parsed_body["trip_locations"]["last_locations"][0]["car_id"])
+          .to eq(car.id)
+        expect(parsed_body["trip_locations"]["last_locations"][0]["latitude"])
+          .to eq(attributes_for(:location)[:latitude].to_s)
+        expect(parsed_body["trip_locations"]["last_locations"][0]["longitude"])
+          .to eq(attributes_for(:location)[:longitude].to_s)
       end
     end
 

@@ -14,4 +14,8 @@ class Trip < ApplicationRecord
   validates :destination_longitude, presence: true
   validates :invite_code_id, presence: true, uniqueness: true
   validates :name, presence: true, uniqueness: true
+
+  def last_locations
+    LastLocations.perform(self.cars)
+  end
 end
