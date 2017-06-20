@@ -2,12 +2,8 @@ class Api::V1::TripsController < Api::V1::ApiController
   def create
     invite_code = InviteCodeGenerator.perform
     trip_params_with_code = trip_params.merge(invite_code: invite_code)
-    trip = Trip.new(trip_params_with_code)
-    if trip.save
-      render json: trip, status: :created
-    else
-      raise InvalidTripError.new(trip)
-    end
+    trip = Trip.create!(trip_params_with_code)
+    render json: trip, serializer: TripSerializer, status: :created
   end
 
   private

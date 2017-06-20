@@ -13,9 +13,7 @@ class Api::V1::ApiController < ApplicationController
     @warden ||= request.env["warden"]
   end
 
-  [InvalidTripError].each do |error|
-     rescue_from error do |exception|
-       render json: { errors: exception.message }, status: :unprocessable_entity
-    end
+  rescue_from ActiveRecord::RecordInvalid do |exception|
+    render json: { errors: exception.message }, status: :unprocessable_entity
   end
 end

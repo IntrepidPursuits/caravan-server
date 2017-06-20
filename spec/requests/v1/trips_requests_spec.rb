@@ -46,7 +46,7 @@ describe "Trip Request" do
 
         expect(response).to have_http_status :unprocessable_entity
         expect(body).to have_json_path("errors")
-        expect(parsed_body["errors"]).to include ("Invalid trip data.")
+        expect(parsed_body["errors"]).to include ("Validation failed")
         expect(parsed_body["errors"]).to include ("Creator must exist")
         expect(parsed_body["errors"]).to include ("Creator can't be blank")
         expect(parsed_body["errors"]).to include ("Departing on can't be blank")
