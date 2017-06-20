@@ -7,6 +7,7 @@ require "date"
 require "rspec/rails"
 require "spec_helper"
 require "support/factory_girl"
+require "warden"
 
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|

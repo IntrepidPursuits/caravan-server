@@ -4,6 +4,10 @@ module Helpers
       response.body
     end
 
+    def parsed_body
+      JSON.parse body
+    end
+
     def api_version
       1
     end

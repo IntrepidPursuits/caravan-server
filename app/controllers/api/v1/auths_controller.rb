@@ -1,11 +1,15 @@
 class Api::V1::AuthsController < Api::V1::ApiController
   def create
-    user, google_identity = GoogleAuthenticator.perform(params[:auth][:token])
-    give them a token that i create
+    user, google_identity = GoogleAuthenticator.perform(auth_params[:token])
 
-    render json: user, status: :created if user.valid? && google_identity.valid?
-    # render with my token i just gave them
-    # credential serializer
-    # token and exp. date
+    if user.valid? && google_identity.valid?
+      render json: user, status: :created, serializer: AuthSerializer
+    end
+  end
+
+  private
+
+  def auth_params
+    params.require(:auth).permit(:token)
   end
 end
