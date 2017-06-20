@@ -16,7 +16,7 @@ RSpec.describe "GoogleAuthenticator" do
         allow(token_validator).to receive(:perform).and_return(true)
 
         google_profile = double("google_profile")
-        allow(google_profile).to receive(:perform).and_return(google_info_response)
+        allow(google_profile).to receive(:perform).and_return(google_profile_info)
       end
 
       context "for an existing user and google_identity" do
@@ -48,6 +48,10 @@ RSpec.describe "GoogleAuthenticator" do
         end
       end
     end
+  end
+
+  def google_profile_info
+    JSON.parse load_fixture("google_info_response.json")
   end
 
   def google_uid
