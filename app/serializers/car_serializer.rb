@@ -2,11 +2,11 @@ class CarSerializer < ActiveModel::Serializer
   attributes :id,
     :max_seats,
     :name,
-    :passengers,
     :status,
+    :passengers,
     :trip
 
-  has_one :trip
+  has_one :trip, serializer: SimpleTripSerializer
 
   has_many :locations
   has_many :signups

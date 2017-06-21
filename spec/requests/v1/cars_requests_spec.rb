@@ -24,15 +24,16 @@ RSpec.describe "Car Requests", type: :request do
         expect(parsed_body["car"]["status"]).to eq("not_started")
 
         expect(body).to have_json_path("car/trip")
+        expect(body).to have_json_path("car/trip/code")
         expect(body).to have_json_path("car/trip/creator")
         expect(body).to have_json_path("car/trip/departing_on")
         expect(body).to have_json_path("car/trip/destination_address")
         expect(body).to have_json_path("car/trip/destination_latitude")
         expect(body).to have_json_path("car/trip/destination_longitude")
+        expect(body).to have_json_path("car/trip/id")
         expect(body).to have_json_path("car/trip/name")
-        expect(body).to have_json_path("car/trip/invite_code")
-        expect(body).to have_json_path("car/trip/signed_up_users")
 
+        expect(parsed_body["car"]["locations"]).to be_a(Array)
         expect(parsed_body["car"]["passengers"]).to be_a(Array)
       end
     end
@@ -96,11 +97,24 @@ RSpec.describe "Car Requests", type: :request do
         expect(response).to have_http_status :ok
         expect(body).to have_json_path("car")
         expect(body).to have_json_path("car/id")
-        expect(body).to have_json_path("car/locations")
-        expect(body).to have_json_path("car/max_seats")
-        expect(body).to have_json_path("car/status")
+
+        expect(parsed_body["car"]["max_seats"]).to eq(1)
+        expect(parsed_body["car"]["name"]).to include("Car ")
+        expect(parsed_body["car"]["status"]).to eq("not_started")
+
         expect(body).to have_json_path("car/trip")
-        expect(body).to have_json_path("car/passengers")
+        expect(body).to have_json_path("car/trip/code")
+        expect(body).to have_json_path("car/trip/creator")
+        expect(body).to have_json_path("car/trip/departing_on")
+        expect(body).to have_json_path("car/trip/destination_address")
+        expect(body).to have_json_path("car/trip/destination_latitude")
+        expect(body).to have_json_path("car/trip/destination_longitude")
+        expect(body).to have_json_path("car/trip/id")
+        expect(body).to have_json_path("car/trip/name")
+
+        expect(parsed_body["car"]["locations"]).to be_a(Array)
+        expect(parsed_body["car"]["passengers"]).to be_a(Array)
+
         expect(body).to have_json_path("car/passengers/0/id")
         expect(body).to have_json_path("car/passengers/0/name")
         expect(body).to have_json_path("car/passengers/0/email")
