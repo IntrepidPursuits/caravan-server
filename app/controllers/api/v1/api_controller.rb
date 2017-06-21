@@ -3,10 +3,8 @@ class Api::V1::ApiController < ApplicationController
     render json: { errors: exception.message }, status: :unprocessable_entity
   end
 
-  class UnauthorizedAccess < StandardError
-    def message
-      'Unauthorized Client ID'
-    end
+  rescue_from UnauthorizedAccess do |exception|
+    render json: { errors: exception.message }, status: :unprocessable_entity
   end
 
   def current_user

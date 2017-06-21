@@ -77,8 +77,35 @@ RSpec.describe "Car Requests", type: :request do
           )
 
           expect(response).to have_http_status 400
-          
+
         }.to raise_exception(ActionController::ParameterMissing, "param is missing or the value is empty: car")
+      end
+    end
+  end
+
+  describe "GET /cars/:id", type: :reqest do
+    context "with information on the passengers in the car" do
+      it "returns valid JSON for the car and its passengers" do
+        car = create(:car)
+        passenger = create(:user)
+        signup = create(:signup, car: car, user: passenger)
+
+        get(
+          api_v1_car_url(car),
+          headers: accept_headers
+        )
+
+        expect(response).to have_http_status :ok
+        expect(body).to have_json_path("car")
+        expect(body).to have_json_path("car/id")
+        expect(body).to have_json_path("car/locations")
+        expect(body).to have_json_path("car/max_seats")
+        expect(body).to have_json_path("car/status")
+        expect(body).to have_json_path("car/trip")
+        expect(body).to have_json_path("car/passengers")
+        expect(body).to have_json_path("car/passengers/0/id")
+        expect(body).to have_json_path("car/passengers/0/name")
+        expect(body).to have_json_path("car/passengers/0/email")
       end
     end
   end

@@ -8,6 +8,7 @@ class TripSerializer < ActiveModel::Serializer
              :destination_latitude,
              :destination_longitude,
              :id,
+             :invite_code,
              :name,
              :signed_up_users,
              :updated_at
