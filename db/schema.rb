@@ -10,8 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170616140329) do
 
+ActiveRecord::Schema.define(version: 20170616140329) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "pgcrypto"
@@ -25,6 +25,19 @@ ActiveRecord::Schema.define(version: 20170616140329) do
     t.string "name", null: false
     t.index ["name", "trip_id"], name: "index_cars_on_name_and_trip_id", unique: true
     t.index ["trip_id"], name: "index_cars_on_trip_id"
+  end
+
+  create_table "google_identities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "email", null: false
+    t.text "image"
+    t.string "provider", default: "google", null: false
+    t.string "uid", null: false
+    t.uuid "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_google_identities_on_email", unique: true
+    t.index ["uid"], name: "index_google_identities_on_uid", unique: true
+    t.index ["user_id"], name: "index_google_identities_on_user_id", unique: true
   end
 
   create_table "locations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
