@@ -10,6 +10,8 @@ Rails.application.routes.draw do
       resources :locations, only: [:create]
     end
     resources :signups, only: [:create]
-    resources :trips, only: [:create, :show]
+    resources :trips, only: [:create, :show] do
+      resources :locations, only: [:index]
+    end
   end
 end

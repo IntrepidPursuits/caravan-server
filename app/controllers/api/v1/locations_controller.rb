@@ -7,6 +7,13 @@ class Api::V1::LocationsController < Api::V1::ApiController
            status: :created
   end
 
+  def index
+    trip = Trip.find(params[:trip_id])
+    render json: trip,
+           except: [:cars, :locations],
+           serializer: TripLocationsSerializer
+  end
+
   private
 
   def location_params
