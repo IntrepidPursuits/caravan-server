@@ -1,8 +1,10 @@
 class Api::V1::ApiController < ApplicationController
-  class UnauthorizedAccess < StandardError
-    def message
-      'Unauthorized Client ID'
-    end
+  rescue_from ActiveRecord::RecordInvalid do |exception|
+    render json: { errors: exception.message }, status: :unprocessable_entity
+  end
+
+  rescue_from UnauthorizedAccess do |exception|
+    render json: { errors: exception.message }, status: :unprocessable_entity
   end
 
   def current_user
@@ -11,9 +13,5 @@ class Api::V1::ApiController < ApplicationController
 
   def warden
     @warden ||= request.env["warden"]
-  end
-
-  rescue_from ActiveRecord::RecordInvalid do |exception|
-    render json: { errors: exception.message }, status: :unprocessable_entity
   end
 end

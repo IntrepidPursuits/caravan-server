@@ -5,7 +5,7 @@ module Helpers
     end
 
     def parsed_body
-      JSON.parse body
+      JSON.parse(body)
     end
 
     def accept_header(version = 1)
