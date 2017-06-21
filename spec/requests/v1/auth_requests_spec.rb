@@ -43,5 +43,22 @@ RSpec.describe "Auth requests" do
         expect(decoded_token["sub"]).to eq(parsed_body["auth"]["user"]["id"])
       end
     end
+
+    context "with google token from an invalid client" do
+      it "raises an error" do
+        stub_invalid_client_id_request
+
+        params = { auth: { token: SecureRandom.hex(20) } }
+
+        post(
+          auths_url,
+          params: params.to_json,
+          headers: accept_headers
+        )
+
+        expect(response).to have_http_status 422
+        expect(parsed_body["errors"]).to eq("Unauthorized Client ID")
+      end
+    end
   end
 end

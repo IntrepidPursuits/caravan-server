@@ -6,7 +6,7 @@ RSpec.describe "GoogleAuthenticator" do
       it "should raise an error" do
         GoogleAuthenticator.any_instance.stub(:token_valid?).and_return(false)
 
-        expect { GoogleAuthenticator.perform("bah") }.to raise_error(Api::V1::ApiController::UnauthorizedAccess)
+        expect { GoogleAuthenticator.perform("bah") }.to raise_error(UnauthorizedAccess)
       end
     end
 

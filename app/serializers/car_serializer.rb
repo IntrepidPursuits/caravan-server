@@ -7,10 +7,11 @@ class CarSerializer < ActiveModel::Serializer
     :trip
 
   has_one :trip
-  
+
   has_many :locations
   has_many :signups
-  has_many :users, through: :signups, serializer: PassengerSerializer
+  has_many :users, through: :signups,
+    serializer: PassengerSerializer, key: :passengers
 
   def passengers
     self.users
