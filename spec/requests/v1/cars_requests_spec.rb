@@ -32,7 +32,7 @@ RSpec.describe "Car Requests", type: :request do
         expect(body).to have_json_path("car/trip/name")
         expect(body).to have_json_path("car/trip/invite_code")
         expect(body).to have_json_path("car/trip/signed_up_users")
-        
+
         expect(parsed_body["car"]["passengers"]).to be_a(Array)
       end
     end
@@ -75,7 +75,10 @@ RSpec.describe "Car Requests", type: :request do
             params: empty_car_info.to_json,
             headers: accept_headers
           )
-        }.to raise_error ActionController::ParameterMissing
+
+          expect(response).to have_http_status 400
+          
+        }.to raise_exception(ActionController::ParameterMissing, "param is missing or the value is empty: car")
       end
     end
   end
