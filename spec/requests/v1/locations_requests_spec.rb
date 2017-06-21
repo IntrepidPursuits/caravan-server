@@ -2,9 +2,9 @@ require "rails_helper"
 
 describe "Location Request" do
   describe "POST /cars/:car_id/locations" do
-    context "with valid latitude and longitude" do
+    context "with valid latitude, longitude, and car status" do
       it "returns valid JSON with list of locations of other cars in the trip" do
-        car = create(:car)
+        car = create(:car, status: 1)
         unsaved_location = build(:location, car: nil)
         valid_location_info = { location: unsaved_location }
 
@@ -35,7 +35,7 @@ describe "Location Request" do
 
     context "with invalid latitude and longitude" do
       it "returns JSON with validation errors" do
-        car = create(:car)
+        car = create(:car, status: 1)
         invalid_location_info = {
           location: {
             latitude: nil,
@@ -56,13 +56,36 @@ describe "Location Request" do
         expect(parsed_body["errors"]).to include ("Longitude can't be blank")
       end
     end
+    
+    context "with car that hasn't started trip yet" do
+      it "returns JSON with validation errors" do
+        car = create(:car)
+        invalid_car_status = {
+          location: {
+            latitude: 1.0,
+            longitude: 2.0
+          }
+        }
+
+        post(
+          car_locations_url(car),
+          params: invalid_car_status.to_json,
+          headers: accept_headers
+        )
+
+        expect(response).to have_http_status :unprocessable_entity
+        expect(body).to have_json_path("errors")
+        expect(parsed_body["errors"])
+          .to include ("Cannot update car's location if it has a status of 'Not Started'")
+      end
+    end
   end
 
   describe "GET /trips/:trip_id/locations" do
     it "returns most recent locations of each car in the trip" do
       trip = create(:trip)
-      car1 = create(:car, trip: trip)
-      car2 = create(:car, trip: trip)
+      car1 = create(:car, trip: trip, status: 1)
+      car2 = create(:car, trip: trip, status: 1)
       create_list(:location, 2, car: car1)
       create_list(:location, 2, car: car2)
       car1_last_location = create(:location, car: car1, latitude: 1.00, longitude: 2.00)
