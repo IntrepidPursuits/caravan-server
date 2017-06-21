@@ -139,5 +139,22 @@ RSpec.describe "Car Requests", type: :request do
         expect(parsed_body["car"]["status"]).to eq("in_transit")
       end
     end
+
+    context "user can update car's status to reflect arriving at the destination" do
+      it "returns updated JSON for the car" do
+        car = create(:car)
+
+        patch(
+          api_v1_car_url(car),
+          params: { status: 2 }.to_json,
+          headers: accept_headers
+        )
+
+        expect(response).to have_http_status :ok
+        expect(body).to have_json_path("car")
+        expect(body).to have_json_path("car/status")
+        expect(parsed_body["car"]["status"]).to eq("arrived")
+      end
+    end
   end
 end
