@@ -3,6 +3,7 @@ class Trip < ApplicationRecord
   belongs_to :invite_code
 
   has_many :cars
+  has_many :locations, through: :cars
   has_many :signups
   has_many :users, through: :signups
 
@@ -13,4 +14,8 @@ class Trip < ApplicationRecord
   validates :destination_longitude, presence: true
   validates :invite_code_id, presence: true, uniqueness: true
   validates :name, presence: true, uniqueness: true
+
+  def last_locations
+    self.cars.map { |car| car.locations.order("updated_at").last }
+  end
 end
