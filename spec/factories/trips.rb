@@ -6,6 +6,6 @@ FactoryGirl.define do
     destination_latitude 1.000000
     destination_longitude 1.000000
     destination_address "1 Sesame St"
-    sequence(:invite_code) { |n| "sdfsdfd #{n}" }
+    invite_code
   end
 end
