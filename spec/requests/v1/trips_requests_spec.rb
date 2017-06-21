@@ -81,7 +81,7 @@ describe "Trip Request" do
       create(:signup, trip: trip, user: user2)
       create(:signup, trip: trip, user: user3)
 
-      get(api_v1_trip_url(trip))
+      get(trip_url(trip))
 
       expect(response).to have_http_status :ok
       expect(body).to have_json_path("trip")

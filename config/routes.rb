@@ -7,6 +7,6 @@ Rails.application.routes.draw do
                    defaults: { format: :json }) do
     resources :auths, only: [:create]
     resources :cars, only: [:create]
-    resources :trips, only: [:create]
+    resources :trips, only: [:create, :show]
   end
 end
