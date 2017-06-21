@@ -15,7 +15,7 @@ class TripSerializer < ActiveModel::Serializer
   has_one :creator
   has_one :invite_code
 
-  has_many :cars
+  has_many :cars, serializer: SimpleCarSerializer
   has_many :signups
   has_many :users, through: :signups
 
