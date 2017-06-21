@@ -1,3 +1,3 @@
-class SignupSerializer < ActiveModel::Serializer
-  attributes :created_at, :id, :trip_id, :updated_at, :user_id
+class SignupSerializer < BaseSerializer
+  attributes :trip_id, :user_id
 end
