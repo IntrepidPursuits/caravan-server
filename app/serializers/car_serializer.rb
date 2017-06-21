@@ -2,15 +2,16 @@ class CarSerializer < ActiveModel::Serializer
   attributes :id,
     :max_seats,
     :name,
-    :passengers,
     :status,
+    :passengers,
     :trip
 
-  has_one :trip
+  has_one :trip, serializer: SimpleTripSerializer
 
   has_many :locations
   has_many :signups
-  has_many :users, through: :signups, serializer: PassengerSerializer, except: [:google_identity]
+  has_many :users, through: :signups,
+    serializer: PassengerSerializer, key: :passengers
 
   def passengers
     self.users

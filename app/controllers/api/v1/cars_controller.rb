@@ -1,13 +1,18 @@
 class Api::V1::CarsController < Api::V1::ApiController
   def create
     car = Car.create!(car_params)
-
-    render json: car, status: :created, serializer: CarSerializer, except: [:cars, :signups, :users]
+    render json: car,
+      status: :created,
+      serializer: CarSerializer,
+      except: [:car, :cars, :google_identity, :invite_code, :signups]
   end
 
   def show
     car = Car.find(params[:id])
-    render json: car, status: :ok, serializer: CarSerializer, except: [:cars, :signups, :users]
+    render json: car,
+      status: :ok,
+      serializer: CarSerializer,
+      except: [:car, :cars, :google_identity, :invite_code, :signups]
   end
 
   private
