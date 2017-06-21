@@ -16,6 +16,6 @@ class Trip < ApplicationRecord
   validates :name, presence: true, uniqueness: true
 
   def last_locations
-    LastLocations.perform(self.cars)
+    self.cars.map { |car| car.locations.order("updated_at").last }
   end
 end
