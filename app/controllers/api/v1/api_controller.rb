@@ -1,4 +1,8 @@
 class Api::V1::ApiController < ApplicationController
+  rescue_from ActiveRecord::RecordInvalid do |exception|
+    render json: { errors: exception.message }, status: :unprocessable_entity
+  end
+
   class UnauthorizedAccess < StandardError
     def message
       'Unauthorized Client ID'
