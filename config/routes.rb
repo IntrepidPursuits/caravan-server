@@ -7,19 +7,19 @@ Rails.application.routes.draw do
                    defaults: { format: :json }) do
     resources :auths, only: [:create]
 
-    resources :cars, only: [:create, :show] do
-      resources :locations, only: [:create]
-      resource :status, only: [:update], controller: :car_status
+    constraints AuthenticatedConstraint.new do
+      resources :cars, only: [:create, :show] do
+        resources :locations, only: [:create]
+        resource :status, only: [:update], controller: :car_status
+      end
+      resources :signups, only: [:create]
+      resources :trips, only: [:create, :show] do
+        resources :locations, only: [:index]
+      end
+      resources :users, only: [] do
+        resources :trips, only: [:index]
+      end
     end
 
-    resources :signups, only: [:create]
-
-    resources :trips, only: [:create, :show] do
-      resources :locations, only: [:index]
-    end
-    
-    resources :users, only: [] do
-      resources :trips, only: [:index]
-    end
   end
 end

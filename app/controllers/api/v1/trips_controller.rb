@@ -8,6 +8,7 @@ class Api::V1::TripsController < Api::V1::ApiController
 
   def index
     user = User.find(params[:user_id])
+    raise UserNotAuthorizedError if user.id != current_user.id
     trips = user.trips
     render json: trips,
       except: [:cars, :creator, :invite_code, :signups, :users],
@@ -27,12 +28,13 @@ class Api::V1::TripsController < Api::V1::ApiController
 
   def trip_params
     params.require(:trip).permit(
-      :creator_id,
       :departing_on,
       :destination_address,
       :destination_latitude,
       :destination_longitude,
       :name
+    ).merge(
+      creator: current_user
     )
   end
 end
