@@ -56,7 +56,7 @@ describe "Location Request" do
         expect(parsed_body["errors"]).to include ("Longitude can't be blank")
       end
     end
-    
+
     context "with car that hasn't started trip yet" do
       it "returns JSON with validation errors" do
         car = create(:car)
@@ -82,31 +82,58 @@ describe "Location Request" do
   end
 
   describe "GET /trips/:trip_id/locations" do
-    it "returns most recent locations of each car in the trip" do
-      trip = create(:trip)
-      car1 = create(:car, trip: trip, status: 1)
-      car2 = create(:car, trip: trip, status: 1)
-      create_list(:location, 2, car: car1)
-      create_list(:location, 2, car: car2)
-      car1_last_location = create(:location, car: car1, latitude: 1.00, longitude: 2.00)
-      car2_last_location = create(:location, car: car2, latitude: 3.00, longitude: 4.00)
+    xcontext "authenticated user" do
+      # valid trip tests will go in this block
+    end
 
-      get(api_v1_trip_locations_url(trip))
+    context "valid trip" do
+      it "returns most recent locations of each car in the trip" do
+        trip = create(:trip)
+        car1 = create(:car, trip: trip, status: 1)
+        car2 = create(:car, trip: trip, status: 1)
+        create_list(:location, 2, car: car1)
+        create_list(:location, 2, car: car2)
+        car1_last_location = create(:location, car: car1, latitude: 1.00, longitude: 2.00)
+        car2_last_location = create(:location, car: car2, latitude: 3.00, longitude: 4.00)
 
-      expect(response).to have_http_status :ok
-      expect(parsed_body["trip_locations"]["trip_id"]).to eq trip.id
-      expect(parsed_body["trip_locations"]["last_locations"][0]["car_id"])
-        .to eq car1.id
-      expect(parsed_body["trip_locations"]["last_locations"][0]["latitude"])
-        .to eq car1_last_location.latitude.to_s
-      expect(parsed_body["trip_locations"]["last_locations"][0]["longitude"])
-        .to eq car1_last_location.longitude.to_s
-      expect(parsed_body["trip_locations"]["last_locations"][1]["car_id"])
-        .to eq car2.id
-      expect(parsed_body["trip_locations"]["last_locations"][1]["latitude"])
-        .to eq car2_last_location.latitude.to_s
-      expect(parsed_body["trip_locations"]["last_locations"][1]["longitude"])
-        .to eq car2_last_location.longitude.to_s
+        get(api_v1_trip_locations_url(trip))
+
+        expect(response).to have_http_status :ok
+        expect(parsed_body["trip_locations"]["trip_id"]).to eq trip.id
+        expect(parsed_body["trip_locations"]["last_locations"][0]["car_id"])
+          .to eq car1.id
+        expect(parsed_body["trip_locations"]["last_locations"][0]["latitude"])
+          .to eq car1_last_location.latitude.to_s
+        expect(parsed_body["trip_locations"]["last_locations"][0]["longitude"])
+          .to eq car1_last_location.longitude.to_s
+        expect(parsed_body["trip_locations"]["last_locations"][1]["car_id"])
+          .to eq car2.id
+        expect(parsed_body["trip_locations"]["last_locations"][1]["latitude"])
+          .to eq car2_last_location.latitude.to_s
+        expect(parsed_body["trip_locations"]["last_locations"][1]["longitude"])
+          .to eq car2_last_location.longitude.to_s
+      end
+    end
+
+    context "not a real trip id" do
+      it "returns JSON with error" do
+        get(api_v1_trip_locations_url("fake_trip"))
+
+        expect(response).to have_http_status :not_found
+        expect(parsed_body["errors"]).to include "Couldn't find Trip with 'id'=fake_trip"
+      end
+    end
+
+    xcontext "current user is not signed up for trip" do
+      it "returns JSON with error telling user to sign up" do
+        expect(response).to have_http_status :forbidden
+      end
+    end
+
+    xcontext "unathenticated user" do
+      it "returns JSON with error" do
+        
+      end
     end
   end
 end
