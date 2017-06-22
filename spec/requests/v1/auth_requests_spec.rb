@@ -47,7 +47,6 @@ describe "Auth requests" do
     context "with google token from an invalid client" do
       it "raises an error" do
         stub_invalid_client_id_request
-
         params = { auth: { token: SecureRandom.hex(20) } }
 
         post(

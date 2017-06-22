@@ -1,12 +1,12 @@
 class DecodeJwt
   attr_reader :access_token
 
-  def self.perform(argument)
-    new(argument).perform
-  end
-
   def initialize(access_token)
     @access_token = access_token
+  end
+
+  def self.perform(access_token)
+    new(access_token).perform
   end
 
   def perform

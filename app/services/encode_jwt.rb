@@ -1,13 +1,13 @@
 class EncodeJwt
   attr_reader :expiration_datetime, :user
 
-  def self.perform(argument)
-    new(argument).perform
-  end
-
   def initialize(user:, expiration_datetime: default_token_expiration_datetime)
     @user = user
     @expiration_datetime = expiration_datetime
+  end
+
+  def self.perform(argument)
+    new(argument).perform
   end
 
   def perform
