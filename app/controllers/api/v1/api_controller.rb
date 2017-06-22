@@ -13,8 +13,10 @@ class Api::V1::ApiController < ApplicationController
     end
   end
 
-  rescue_from MissingInviteCodeError do |exception|
-    render json: { errors: exception.message }, status: :bad_request
+  [MissingInviteCodeError, ArgumentError].each do |error|
+    rescue_from error do |exception|
+      render json: { errors: exception.message }, status: :bad_request
+    end
   end
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
