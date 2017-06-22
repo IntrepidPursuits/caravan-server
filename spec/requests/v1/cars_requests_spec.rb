@@ -24,15 +24,16 @@ RSpec.describe "Car Requests", type: :request do
         expect(parsed_body["car"]["status"]).to eq("not_started")
 
         expect(body).to have_json_path("car/trip")
+        expect(body).to have_json_path("car/trip/code")
         expect(body).to have_json_path("car/trip/creator")
         expect(body).to have_json_path("car/trip/departing_on")
         expect(body).to have_json_path("car/trip/destination_address")
         expect(body).to have_json_path("car/trip/destination_latitude")
         expect(body).to have_json_path("car/trip/destination_longitude")
+        expect(body).to have_json_path("car/trip/id")
         expect(body).to have_json_path("car/trip/name")
-        expect(body).to have_json_path("car/trip/invite_code")
-        expect(body).to have_json_path("car/trip/signed_up_users")
 
+        expect(parsed_body["car"]["locations"]).to be_a(Array)
         expect(parsed_body["car"]["passengers"]).to be_a(Array)
       end
     end
@@ -75,10 +76,92 @@ RSpec.describe "Car Requests", type: :request do
             params: empty_car_info.to_json,
             headers: accept_headers
           )
-
           expect(response).to have_http_status 400
-          
+
         }.to raise_exception(ActionController::ParameterMissing, "param is missing or the value is empty: car")
+      end
+    end
+  end
+
+  describe "GET /cars/:id", type: :reqest do
+    context "for a valid car" do
+      xcontext "when user is signed in" do
+        it "returns valid JSON for the car and its passengers" do
+          current_user = create(:user) #there will be a helper method for this
+          # implement "it" block from line 123 here when authorization is in effect
+          # (change passenger to current_user)
+        end
+
+        context "the user isn't signed up for the car's associated trip " do
+          it "returns 403 Forbidden" do
+            current_user = create(:user) #there will be a helper method for this
+            car = create(:car)
+
+            expect {
+              get(api_v1_car_url(car))
+              expect(response).to have_http_status 403
+            }.to raise_exception(NotAuthorizedError)
+          end
+        end
+      end
+
+      xcontext "when no user is signed in" do
+        it "returns 403 Forbidden" do
+          current_user = nil
+          car = create(:car)
+          passenger = create(:user)
+          identity = create(:google_identity, user: passenger)
+          signup = Signup.find_or_create_by(trip: car.trip, car: car, user: passenger)
+
+          expect {
+            get(api_v1_car_url(car))
+            expect(response).to have_http_status 403
+          }.to raise_exception(NotAuthorizedError)
+        end
+      end
+
+      it "returns valid JSON for the car and its passengers" do
+        car = create(:car)
+        passenger = create(:user)
+        identity = create(:google_identity, user: passenger)
+        signup = Signup.find_or_create_by(trip: car.trip, car: car, user: passenger)
+
+        get(api_v1_car_url(car))
+
+        expect(response).to have_http_status :ok
+        expect(body).to have_json_path("car")
+        expect(body).to have_json_path("car/id")
+
+        expect(parsed_body["car"]["max_seats"]).to eq(1)
+        expect(parsed_body["car"]["name"]).to include("Car ")
+        expect(parsed_body["car"]["status"]).to eq("not_started")
+
+        expect(body).to have_json_path("car/trip")
+        expect(body).to have_json_path("car/trip/code")
+        expect(body).to have_json_path("car/trip/creator")
+        expect(body).to have_json_path("car/trip/departing_on")
+        expect(body).to have_json_path("car/trip/destination_address")
+        expect(body).to have_json_path("car/trip/destination_latitude")
+        expect(body).to have_json_path("car/trip/destination_longitude")
+        expect(body).to have_json_path("car/trip/id")
+        expect(body).to have_json_path("car/trip/name")
+
+        expect(parsed_body["car"]["locations"]).to be_a(Array)
+        expect(parsed_body["car"]["passengers"]).to be_a(Array)
+
+        expect(body).to have_json_path("car/passengers/0/id")
+        expect(body).to have_json_path("car/passengers/0/name")
+        expect(body).to have_json_path("car/passengers/0/email")
+      end
+    end
+
+    context "for a car that doesn't exist" do
+      it "should raise an error" do
+        expect {
+          get(api_v1_car_url(id: 1))
+
+          expect(response).to have_http_status 422
+        }.to raise_exception(ActiveRecord::RecordNotFound)
       end
     end
   end
