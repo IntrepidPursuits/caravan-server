@@ -24,7 +24,7 @@ describe "Signup Request" do
       end
     end
 
-    context "without a valid signup code" do
+    context "with an invalid signup code" do
       it "returns JSON with error" do
         unsaved_signup_invalid_code = build(:signup)
         signup_info_invalid_code = {
@@ -41,6 +41,25 @@ describe "Signup Request" do
         expect(response).to have_http_status :unprocessable_entity
         expect(body).to have_json_path("errors")
         expect(parsed_body["errors"]).to include ("Invalid invite code.")
+      end
+    end
+
+    context "without a signup code" do
+      it "returns JSON with error" do
+        unsaved_signup_missing_code = build(:signup)
+        signup_info_missing_code = {
+          signup: unsaved_signup_missing_code
+        }
+
+        post(
+          signups_url,
+          params: signup_info_missing_code.to_json,
+          headers: accept_headers
+        )
+
+        expect(response).to have_http_status :bad_request
+        expect(body).to have_json_path("errors")
+        expect(parsed_body["errors"]).to include ("Invite code is missing.")
       end
     end
 
