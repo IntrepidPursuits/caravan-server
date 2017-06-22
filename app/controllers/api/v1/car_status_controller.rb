@@ -1,4 +1,4 @@
-class Api::V1::StatusesController < Api::V1::ApiController
+class Api::V1::CarStatusController < Api::V1::ApiController
   def update
     car = Car.find(params[:car_id])
     car.update_attributes(status: params[:status])
