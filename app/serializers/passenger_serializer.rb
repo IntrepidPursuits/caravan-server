@@ -1,5 +1,5 @@
-class PassengerSerializer < ActiveModel::Serializer
-  attributes :id, :name, :email
+class PassengerSerializer < BaseSerializer
+  attributes :name, :email
 
   has_one :google_identity
 
