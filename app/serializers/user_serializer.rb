@@ -1,5 +1,5 @@
-class UserSerializer < ActiveModel::Serializer
-  attributes :id, :name
+class UserSerializer < BaseSerializer
+  attributes :name
 
   has_one :google_identity
 end

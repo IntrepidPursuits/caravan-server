@@ -1,5 +1,5 @@
 FactoryGirl.define do
   factory :invite_code do
-    sequence(:code) { |n| "sdfsdfd #{n}" } 
+    sequence(:code) { |n| "12345#{n}" } 
   end
 end

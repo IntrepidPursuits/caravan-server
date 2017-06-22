@@ -41,4 +41,24 @@ RSpec.describe Trip, type: :model do
       expect(trip.last_locations[1].longitude).to eq car2_last_location.longitude
     end
   end
+
+  describe "valid_code?" do
+    context "valid code" do
+      it "returns true" do
+        invite_code = create(:invite_code)
+        trip = create(:trip, invite_code: invite_code)
+
+        expect(trip.valid_code?(invite_code.code)).to be true
+      end
+    end
+    
+    context "invalid code" do
+      it "returns false" do
+        invite_code = create(:invite_code)
+        trip = create(:trip, invite_code: invite_code)
+
+        expect(trip.valid_code?("abcdef")).to be false
+      end
+    end
+  end
 end

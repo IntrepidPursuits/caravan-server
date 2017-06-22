@@ -1,6 +1,5 @@
-class SimpleCarSerializer < ActiveModel::Serializer
-  attributes :id,
-    :max_seats,
-    :name,
-    :status
+class SimpleCarSerializer < BaseSerializer
+  attributes :max_seats,
+             :name,
+             :status
 end

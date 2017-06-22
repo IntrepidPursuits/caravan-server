@@ -1,16 +1,13 @@
-class TripSerializer < ActiveModel::Serializer
+class TripSerializer < BaseSerializer
   attributes :cars,
              :code,
-             :created_at,
              :creator,
              :departing_on,
              :destination_address,
              :destination_latitude,
              :destination_longitude,
-             :id,
              :name,
-             :signed_up_users,
-             :updated_at
+             :signed_up_users
 
   has_one :creator
   has_one :invite_code
