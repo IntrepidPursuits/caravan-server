@@ -8,7 +8,7 @@ Rails.application.routes.draw do
     resources :auths, only: [:create]
     resources :cars, only: [:create, :show] do
       resources :locations, only: [:create]
-      resources :statuses, only: [:create]
+      resource :status, only: [:update]
     end
     resources :signups, only: [:create]
     resources :trips, only: [:create, :show] do

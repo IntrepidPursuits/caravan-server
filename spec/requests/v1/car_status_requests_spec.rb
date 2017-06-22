@@ -1,13 +1,13 @@
 require "rails_helper"
 
-RSpec.describe "POST /cars/:id/statuses", type: :request do
+RSpec.describe "PATCH /cars/:id/status", type: :request do
   context "user can update their car's status to reflect starting the trip" do
     context "when status is specified as a number" do
       it "returns updated JSON for the car" do
         car = create(:car)
 
-        post(
-        api_v1_car_statuses_url(car),
+        patch(
+        api_v1_car_status_url(car),
         params: { status: 1 }.to_json,
         headers: accept_headers
         )
@@ -23,8 +23,8 @@ RSpec.describe "POST /cars/:id/statuses", type: :request do
       it "returns updated JSON for the car" do
         car = create(:car)
 
-        post(
-        api_v1_car_statuses_url(car),
+        patch(
+        api_v1_car_status_url(car),
         params: { status: "in_transit" }.to_json,
         headers: accept_headers
         )
@@ -42,8 +42,8 @@ RSpec.describe "POST /cars/:id/statuses", type: :request do
       it "returns updated JSON for the car" do
         car = create(:car)
 
-        post(
-        api_v1_car_statuses_url(car),
+        patch(
+        api_v1_car_status_url(car),
         params: { status: 2 }.to_json,
         headers: accept_headers
         )
@@ -59,8 +59,8 @@ RSpec.describe "POST /cars/:id/statuses", type: :request do
       it "returns updated JSON for the car" do
         car = create(:car)
 
-        post(
-          api_v1_car_statuses_url(car),
+        patch(
+          api_v1_car_status_url(car),
           params: { status: "arrived" }.to_json,
           headers: accept_headers
         )

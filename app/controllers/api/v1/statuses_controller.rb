@@ -1,5 +1,5 @@
 class Api::V1::StatusesController < Api::V1::ApiController
-  def create
+  def update
     car = Car.find(params[:car_id])
     car.update_attributes(status: params[:status])
     render json: car,
