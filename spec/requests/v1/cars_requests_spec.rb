@@ -70,15 +70,13 @@ RSpec.describe "Car Requests", type: :request do
       it "raises an error" do
         empty_car_info = { car: {} }
 
-        expect {
-          post(
-            api_v1_cars_url,
-            params: empty_car_info.to_json,
-            headers: accept_headers
-          )
-          expect(response).to have_http_status 400
-
-        }.to raise_exception(ActionController::ParameterMissing, "param is missing or the value is empty: car")
+        post(
+          api_v1_cars_url,
+          params: empty_car_info.to_json,
+          headers: accept_headers
+        )
+        expect(response).to have_http_status :bad_request
+        expect(parsed_body["errors"]).to eq "param is missing or the value is empty: car"
       end
     end
   end
@@ -88,35 +86,31 @@ RSpec.describe "Car Requests", type: :request do
       xcontext "when user is signed in" do
         it "returns valid JSON for the car and its passengers" do
           current_user = create(:user) #there will be a helper method for this
-          # implement "it" block from line 123 here when authorization is in effect
+          # implement "it" block from line 117 here when authorization is in effect
           # (change passenger to current_user)
         end
 
-        context "the user isn't signed up for the car's associated trip " do
+        xcontext "the user isn't signed up for the car's associated trip " do
           it "returns 403 Forbidden" do
             current_user = create(:user) #there will be a helper method for this
             car = create(:car)
 
-            expect {
-              get(api_v1_car_url(car))
-              expect(response).to have_http_status 403
-            }.to raise_exception(NotAuthorizedError)
+            get(api_v1_car_url(car))
+            expect(response).to have_http_status :forbidden
           end
         end
       end
 
       xcontext "when no user is signed in" do
-        it "returns 403 Forbidden" do
+        it "returns 401 Unauthorized" do
           current_user = nil
           car = create(:car)
           passenger = create(:user)
           identity = create(:google_identity, user: passenger)
           signup = Signup.find_or_create_by(trip: car.trip, car: car, user: passenger)
 
-          expect {
-            get(api_v1_car_url(car))
-            expect(response).to have_http_status 403
-          }.to raise_exception(NotAuthorizedError)
+          get(api_v1_car_url(car))
+          expect(response).to have_http_status :unauthorized
         end
       end
 
@@ -157,11 +151,10 @@ RSpec.describe "Car Requests", type: :request do
 
     context "for a car that doesn't exist" do
       it "should raise an error" do
-        expect {
-          get(api_v1_car_url(id: 1))
+        get(api_v1_car_url(id: 1))
 
-          expect(response).to have_http_status 422
-        }.to raise_exception(ActiveRecord::RecordNotFound)
+        expect(response).to have_http_status :not_found
+        expect(parsed_body["errors"]).to eq "Couldn't find Car with 'id'=1"
       end
     end
   end
