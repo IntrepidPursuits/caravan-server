@@ -138,7 +138,7 @@ describe "Trip Request" do
 
 
     xcontext "when trying to view a different user's trips" do
-      it "raises an error" do
+      it "returns 403 Forbidden" do
         new_user = create(:user)
 
         get(api_v1_user_trips_url(user_id: new_user.id))
@@ -147,7 +147,7 @@ describe "Trip Request" do
     end
 
     xcontext "when trying to view trips for a user that doesn't exist" do
-      it "raises an error" do
+      it "raises 404 Not Found" do
         get(api_v1_user_trips_url(user_id: "not a real user id"))
 
         expect(response).to have_http_status :not_found
@@ -156,7 +156,7 @@ describe "Trip Request" do
     end
 
     xcontext "when no user is signed in" do
-      it "raises an error" do
+      it "returns 401 Unauthorized" do
         user = current_user
         warden.logout
         get(api_v1_user_trips_url(user_id: user.id))
