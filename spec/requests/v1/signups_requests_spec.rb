@@ -187,6 +187,27 @@ describe "Signup Request" do
         end
       end
 
+      context "with invalid signup_id" do
+        it "returns 400 Bad Request" do
+          current_user = create(:user)
+          car = create(:car)
+
+          signup_params = { signup: {
+            user_id: current_user.id,
+            trip_id: car.trip_id,
+            car_id: car.id
+          } }
+
+          patch(
+            api_v1_signup_url("not an id"),
+            params: signup_params.to_json,
+            headers: accept_headers
+          )
+
+          expect(response).to have_http_status :bad_request
+        end
+      end
+
       xcontext "when no user is signed in" do
         it "returns 401 Unauthorized" do
           car = create(:car)
