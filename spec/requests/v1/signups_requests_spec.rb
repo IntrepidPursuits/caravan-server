@@ -131,13 +131,13 @@ describe "Signup Request" do
   end
 
   describe "PATCH /signups/:id" do
-    context "when a user signs up for a car" do
-      context "for an existing trip, user, and car" do
-        it "returns valid JSON for the updated car and passengers" do
-          trip = create(:trip)
+    context "user joins a car in a trip" do
+      context "users is logged in" do
+        it "returns valid JSON for the updated car and passengers (including the current user)" do
           google_identity = create(:google_identity)
           current_user = create(:user, google_identity: google_identity)
-          car = create(:car, trip: trip)
+          car = create(:car)
+          trip = car.trip
           signup = create(:signup, user: current_user, trip: trip)
 
           signup_params = { signup: {
@@ -157,12 +157,54 @@ describe "Signup Request" do
           expect(parsed_body["car"]["locations"]).to eq []
           expect(parsed_body["car"]["max_seats"]).to eq car.max_seats
           expect(parsed_body["car"]["name"]).to eq car.name
-          expect(parsed_body["car"]["status"]).to eq trip.status
+          expect(parsed_body["car"]["status"]).to eq car.status
           expect(parsed_body["car"]["trip"]["id"]).to eq trip.id
           expect(parsed_body["car"]["trip"]["name"]).to eq trip.name
           expect(parsed_body["car"]["passengers"][0]["id"]).to eq current_user.id
           expect(parsed_body["car"]["passengers"][0]["name"]).to eq current_user.name
           expect(parsed_body["car"]["passengers"][0]["email"]).to eq google_identity.email
+        end
+      end
+
+      context "with an invalid car_id" do
+        it "returns 404 Not Found" do
+          current_user = create(:user)
+          signup = create(:signup)
+
+          signup_params = { signup: {
+            user_id: current_user.id,
+            trip_id: signup.trip_id,
+            car_id: "invaild id"
+          } }
+
+          patch(
+            api_v1_signup_url(signup),
+            params: signup_params.to_json,
+            headers: accept_headers
+          )
+
+          expect(response).to have_http_status :not_found
+        end
+      end
+
+      xcontext "when no user is signed in" do
+        it "returns 401 Unauthorized" do
+          car = create(:car)
+          signup = create(:signup)
+
+          signup_params = { signup: {
+            user_id: "none",
+            trip_id: car.trip_id,
+            car_id: car.id
+          } }
+
+          patch(
+            api_v1_signup_url(signup),
+            params: signup_params.to_json,
+            headers: accept_headers
+          )
+
+          expect(response).to have_http_status :unauthorized
         end
       end
     end
