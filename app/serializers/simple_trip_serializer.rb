@@ -6,7 +6,6 @@ class SimpleTripSerializer < BaseSerializer
              :destination_address,
              :destination_latitude,
              :destination_longitude,
-             :id,
              :name
 
   has_one :creator, class_name: :user
