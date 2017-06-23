@@ -2,7 +2,39 @@ require "rails_helper"
 
 RSpec.describe "Car Requests", type: :request do
   describe "POST /cars" do
-    context "with valid trip, max_seats, name, status, and associated signup(s)" do
+    context "for a new car on an existing trip" do
+      it "automatically adds the current user to the car" do
+        unsaved_car = build(:car)
+        valid_car_info = {
+          car: unsaved_car
+        }
+
+        post(
+          api_v1_cars_url,
+          params: valid_car_info.to_json,
+          headers: accept_headers
+        )
+
+
+        expect(response).to have_http_status :created
+        expect(body).to have_json_path("car")
+        expect(body).to have_json_path("car/id")
+
+        expect(parsed_body["car"]["max_seats"]).to eq(1)
+        expect(parsed_body["car"]["name"]).to include("Car ")
+        expect(parsed_body["car"]["status"]).to eq("not_started")
+
+        expect(parsed_body["car"]["locations"]).to eq []
+        expect(parsed_body["car"]["passengers"][0]["id"]).to eq current_user.id
+        expect(parsed_body["car"]["passengers"][0]["name"]).to eq current_user.name
+        expect(parsed_body["car"]["passengers"][0]["email"]).to eq current_user.google_identity.email
+
+        expect(parsed_body["car"]["trip"]["id"]).to eq unsaved_car.trip.id
+        expect(parsed_body["car"]["trip"]["name"]).to eq unsaved_car.trip.name
+      end
+    end
+
+    xcontext "with valid trip, max_seats, name, status, and associated signup(s)" do
       it "returns valid JSON for the new car" do
         unsaved_car = build(:car)
         valid_car_info = {
