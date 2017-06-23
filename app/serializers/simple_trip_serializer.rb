@@ -1,4 +1,6 @@
 class SimpleTripSerializer < BaseSerializer
+  embed :ids
+
   attributes :cars,
              :code,
              :creator,
@@ -6,7 +8,6 @@ class SimpleTripSerializer < BaseSerializer
              :destination_address,
              :destination_latitude,
              :destination_longitude,
-             :id,
              :name
 
   has_one :creator, class_name: :user

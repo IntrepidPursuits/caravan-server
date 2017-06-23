@@ -101,4 +101,68 @@ describe "Trip Request" do
       expect(body).to have_json_path("trip/signed_up_users/0/name")
     end
   end
+
+  describe "GET /users/:user_id/trips" do
+    let!(:current_user) { create(:user) }
+
+    context "when user is signed in" do
+      context "when the user is not yet signed up for any trips" do
+        it "shows and empty array" do
+          get(api_v1_user_trips_url(user_id: current_user.id))
+
+          expect(response).to have_http_status :ok
+          expect(parsed_body["trips"]).to be_a(Array)
+          expect(parsed_body["trips"]).to eq []
+        end
+      end
+    end
+
+      context "when the user is signed up for at least one trip" do
+        let!(:trip) { create(:trip) }
+        let!(:signups) { create(:signup, user: current_user, trip: trip) }
+
+        it "shows JSON for all the current user's trips" do
+          get(api_v1_user_trips_url(user_id: current_user.id))
+
+          expect(response).to have_http_status :ok
+          expect(parsed_body["trips"]).to be_a(Array)
+          expect(parsed_body["trips"][0]["code"]).to eq(trip.invite_code.code)
+          expect(parsed_body["trips"][0]["departing_on"]).to match(trip.departing_on)
+          expect(parsed_body["trips"][0]["destination_address"]).to eq("1 Sesame St")
+          expect(parsed_body["trips"][0]["destination_latitude"]).to eq("1.0")
+          expect(parsed_body["trips"][0]["destination_longitude"]).to eq("1.0")
+          expect(parsed_body["trips"][0]["id"]).to eq(trip.id)
+          expect(parsed_body["trips"][0]["name"]).to eq(trip.name)
+        end
+      end
+
+
+    xcontext "when trying to view a different user's trips" do
+      it "raises an error" do
+        new_user = create(:user)
+
+        get(api_v1_user_trips_url(user_id: new_user.id))
+        expect(response).to have_http_status :forbidden
+      end
+    end
+
+    xcontext "when trying to view trips for a user that doesn't exist" do
+      it "raises an error" do
+        get(api_v1_user_trips_url(user_id: "not a real user id"))
+
+        expect(response).to have_http_status :not_found
+        expect(parsed_body["errors"]).to eq "Couldn't find User with 'id'=not a real user id"
+      end
+    end
+
+    xcontext "when no user is signed in" do
+      it "raises an error" do
+        user = current_user
+        warden.logout
+        get(api_v1_user_trips_url(user_id: user.id))
+
+        expect(response).to have_http_status :unauthorized
+      end
+    end
+  end
 end
