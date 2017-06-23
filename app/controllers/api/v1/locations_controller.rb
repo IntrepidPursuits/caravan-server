@@ -1,10 +1,19 @@
 class Api::V1::LocationsController < Api::V1::ApiController
   def create
+    car = Car.find(location_params["car_id"])
+    raise CarNotStartedError.new if car.status == "not_started"
     location = Location.create!(location_params)
     render json: location.trip,
            except: [:cars, :locations, :signups, :users],
            serializer: TripLocationsSerializer,
            status: :created
+  end
+
+  def index
+    trip = Trip.find(params[:trip_id])
+    render json: trip,
+           except: [:cars, :locations],
+           serializer: TripLocationsSerializer
   end
 
   private

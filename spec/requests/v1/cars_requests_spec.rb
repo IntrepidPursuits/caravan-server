@@ -157,11 +157,10 @@ RSpec.describe "Car Requests", type: :request do
 
     context "for a car that doesn't exist" do
       it "should raise an error" do
-        expect {
-          get(api_v1_car_url(id: 1))
+        get(api_v1_car_url(id: 1))
 
-          expect(response).to have_http_status 422
-        }.to raise_exception(ActiveRecord::RecordNotFound)
+        expect(response).to have_http_status :not_found
+        expect(parsed_body["errors"]).to include "Couldn't find Car with 'id'=1"
       end
     end
   end
