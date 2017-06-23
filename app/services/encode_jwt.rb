@@ -1,9 +1,9 @@
 class EncodeJwt
-  attr_reader :expiration_datetime, :user
+  attr_reader :expires_at, :user
 
-  def initialize(user:, expiration_datetime: default_token_expiration_datetime)
+  def initialize(user:, expires_at: 30.days.from_now)
     @user = user
-    @expiration_datetime = expiration_datetime
+    @expires_at = expires_at
   end
 
   def self.perform(argument)
@@ -11,7 +11,7 @@ class EncodeJwt
   end
 
   def perform
-    JWT.encode payload, token_secret, "HS256"
+    JWT.encode payload, secret, "HS256"
   end
 
   private
@@ -19,15 +19,11 @@ class EncodeJwt
   def payload
     {
       "sub": user.id,
-      "exp": expiration_datetime.to_i
+      "exp": expires_at.to_i
     }
   end
 
-  def default_token_expiration_datetime
-    30.day.from_now
-  end
-
-  def token_secret
+  def secret
     Rails.application.secrets.secret_key_base
   end
 end

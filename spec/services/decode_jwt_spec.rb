@@ -30,9 +30,9 @@ RSpec.describe DecodeJwt do
 
     context "with an expiration datetime specified" do
       let!(:access_token) do
-        EncodeJwt.perform(user: user, expiration_datetime: expiration_datetime)
+        EncodeJwt.perform(user: user, expires_at: expires_at)
       end
-      let(:expiration_datetime) { 1.hour.from_now }
+      let(:expires_at) { 1.hour.from_now }
       context "with a valid access token" do
         it "returns the decoded payload" do
           Timecop.freeze
@@ -47,7 +47,7 @@ RSpec.describe DecodeJwt do
 
       context "with an expired access token" do
         it "raises an error" do
-          Timecop.travel(expiration_datetime)
+          Timecop.travel(expires_at)
           expect do
             DecodeJwt.perform(access_token)
           end.to raise_error JWT::ExpiredSignature
