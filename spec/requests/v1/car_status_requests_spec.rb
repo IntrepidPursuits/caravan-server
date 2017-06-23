@@ -46,9 +46,9 @@ RSpec.describe "PATCH /cars/:id/status", type: :request do
         expect(parsed_body["car"]["status"]).to eq("in_transit")
 
         patch(
-        api_v1_car_status_url(car),
-        params: { status: "arrived" }.to_json,
-        headers: accept_headers
+          api_v1_car_status_url(car),
+          params: { status: "arrived" }.to_json,
+          headers: accept_headers
         )
 
         expect(response).to have_http_status :ok
@@ -70,7 +70,7 @@ RSpec.describe "PATCH /cars/:id/status", type: :request do
       )
 
       expect(response).to have_http_status :bad_request
-      expect(parsed_body).to include("errors"=>"'boogityboogityboo' is not a valid status")
+      expect(parsed_body["errors"]).to eq "'boogityboogityboo' is not a valid status"
 
       patch(
         api_v1_car_status_url(car),
@@ -79,7 +79,7 @@ RSpec.describe "PATCH /cars/:id/status", type: :request do
       )
 
       expect(response).to have_http_status :bad_request
-      expect(parsed_body).to include("errors"=>"'42' is not a valid status")
+      expect(parsed_body["errors"]).to eq "'42' is not a valid status"
     end
   end
 
@@ -101,11 +101,11 @@ RSpec.describe "PATCH /cars/:id/status", type: :request do
 
         expect {
           patch(
-          api_v1_car_status_url(car),
-          params: { status: "in_transit" }.to_json,
-          headers: accept_headers
+            api_v1_car_status_url(car),
+            params: { status: "in_transit" }.to_json,
+            headers: accept_headers
           )
-          expect(response).to have_http_status 403
+          expect(response).to have_http_status :unauthorized
         }.to raise_exception(NotAuthorizedError)
       end
     end
@@ -117,9 +117,9 @@ RSpec.describe "PATCH /cars/:id/status", type: :request do
 
       expect {
         patch(
-        api_v1_car_status_url(car),
-        params: { status: "in_transit" }.to_json,
-        headers: accept_headers
+          api_v1_car_status_url(car),
+          params: { status: "in_transit" }.to_json,
+          headers: accept_headers
         )
         expect(response).to have_http_status 403
       }.to raise_exception(NotAuthorizedError)

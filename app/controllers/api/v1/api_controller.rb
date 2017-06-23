@@ -13,7 +13,7 @@ class Api::V1::ApiController < ApplicationController
     end
   end
 
-  [MissingInviteCodeError, ArgumentError].each do |error|
+  [MissingInviteCodeError, ArgumentError, ActionController::ParameterMissing].each do |error|
     rescue_from error do |exception|
       render json: { errors: exception.message }, status: :bad_request
     end
