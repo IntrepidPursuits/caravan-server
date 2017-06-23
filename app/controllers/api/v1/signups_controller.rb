@@ -10,11 +10,10 @@ class Api::V1::SignupsController < Api::V1::ApiController
   end
 
   def update
-    current_user = User.find(signup_params["user_id"])
     trip = Trip.find(signup_params["trip_id"])
-    signup = Signup.find_by(trip: trip, user: current_user)
-
+    raise UserNotAuthorizedError unless signup = Signup.find_by(trip: trip, user: current_user)
     if car = Car.find(signup_params["car_id"])
+      raise ActiveRecord::RecordInvalid if car.trip != trip
       signup.update_attributes(car_id: car.id)
     end
 
@@ -25,6 +24,6 @@ class Api::V1::SignupsController < Api::V1::ApiController
   private
 
   def signup_params
-    params.require(:signup).permit(:trip_id).merge(user: current_user)
+    params.require(:signup).permit(:trip_id, :car_id).merge(user: current_user)
   end
 end
