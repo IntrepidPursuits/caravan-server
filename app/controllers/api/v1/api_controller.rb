@@ -22,4 +22,8 @@ class Api::V1::ApiController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound do |exception|
     render json: { errors: exception.message }, status: :not_found
   end
+
+  rescue_from UserNotAuthorizedError do |exception|
+    render json: { errors: exception.message }, status: :forbidden
+  end
 end

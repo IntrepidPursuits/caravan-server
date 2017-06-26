@@ -18,5 +18,17 @@ module Helpers
         "Content-Type": "application/json"
       }
     end
+
+    def authorization_headers(user = nil)
+      accept_headers.merge("Authorization": "Bearer #{authorization_header(user)}")
+    end
+
+    def authorization_header(user = nil)
+      EncodeJwt.perform(user: user)
+    end
+
+    def invalid_authorization_headers
+      accept_headers.merge("Authorization": "Bearer #{SecureRandom.hex(20)}")
+    end
   end
 end
