@@ -104,7 +104,7 @@ describe "Location Request" do
         end
       end
 
-      context "user is sign up for trip but not in the car" do
+      context "user is signed up for trip but not in the car" do
         it "returns 403 Forbidden" do
           car = create(:car, status: 1)
           signup = create(:signup, trip: car.trip, user: current_user)

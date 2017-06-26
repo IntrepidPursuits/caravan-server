@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Car Requests" do
+describe "Car Requests" do
   describe "POST /cars" do
     context "authenticated user" do
       let!(:current_user) { create(:user) }
@@ -175,23 +175,6 @@ RSpec.describe "Car Requests" do
             api_v1_car_url(car),
             params: {},
             headers: authorization_headers(current_user)
-          )
-
-          expect(response).to have_http_status :forbidden
-          expect(parsed_body["errors"])
-            .to include "User is not authorized to perform this action"
-        end
-      end
-
-      context "the user is signed up for the trip but not the car" do
-        it "returns 403 Forbidden" do
-          car = create(:car)
-          signup = create(:signup, trip: car.trip, user: current_user)
-
-          get(
-          api_v1_car_url(car),
-          params: {},
-          headers: authorization_headers(current_user)
           )
 
           expect(response).to have_http_status :forbidden

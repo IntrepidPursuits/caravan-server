@@ -9,7 +9,7 @@ class Api::V1::CarsController < Api::V1::ApiController
 
   def show
     car = Car.find(params[:id])
-    if Signup.where(car: car, trip: car.trip, user: current_user).empty?
+    if Signup.where(trip: car.trip, user: current_user).empty?
       raise UserNotAuthorizedError
     end
     render json: car,
