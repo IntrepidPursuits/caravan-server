@@ -8,20 +8,22 @@ Rails.application.routes.draw do
     resources :auths, only: [:create]
 
     constraints AuthenticatedConstraint.new do
-      resources :cars, only: [:create, :show] do
-        resources :locations, only: [:create]
-        resource :status, only: [:update], controller: :car_status
-      end
+      resources :cars, only: [:create]
+    end
+    
+    resources :cars, only: [:show] do
+      resources :locations, only: [:create]
+      resource :status, only: [:update], controller: :car_status
+    end
 
-      resources :signups, only: [:create]
+    resources :signups, only: [:create]
 
-      resources :trips, only: [:create, :show] do
-        resources :locations, only: [:index]
-      end
+    resources :trips, only: [:create, :show] do
+      resources :locations, only: [:index]
+    end
 
-      resources :users, only: [] do
-        resources :trips, only: [:index]
-      end
+    resources :users, only: [] do
+      resources :trips, only: [:index]
     end
   end
 end
