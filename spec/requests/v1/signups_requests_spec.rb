@@ -207,6 +207,26 @@ describe "Signup Request" do
             expect(response).to have_http_status :unprocessable_entity
           end
         end
+
+        context "car does not exist" do
+          it "returns 404 Not Found" do
+            trip = create(:trip)
+            signup = create(:signup, trip: trip, user: current_user)
+
+            signup_params = { signup: {
+              trip_id: trip.id,
+              car_id: "something invalid here"
+            } }
+
+            patch(
+              api_v1_signup_url(signup),
+              params: signup_params.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :not_found
+          end
+        end
       end
 
       context "unauthorized user" do
