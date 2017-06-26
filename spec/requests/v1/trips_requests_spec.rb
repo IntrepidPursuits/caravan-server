@@ -101,4 +101,87 @@ describe "Trip Request" do
       expect(body).to have_json_path("trip/signed_up_users/0/name")
     end
   end
+
+  describe "GET /users/:user_id/trips" do
+    let!(:current_user) { create(:user) }
+
+    context "when user is signed in" do
+      context "when the user is not yet signed up for any trips" do
+        it "shows and empty array" do
+          get(api_v1_user_trips_url(user_id: current_user.id))
+
+          expect(response).to have_http_status :ok
+          expect(parsed_body["trips"]).to be_a(Array)
+          expect(parsed_body["trips"]).to eq []
+        end
+      end
+    end
+
+      context "when the user is signed up for at least one trip" do
+        let!(:trip_1) { create(:trip) }
+        let!(:signups) { create(:signup, user: current_user, trip: trip_1) }
+
+        it "shows JSON for all the current user's trips" do
+          get(api_v1_user_trips_url(user_id: current_user.id))
+
+          expect(response).to have_http_status :ok
+          expect(parsed_body["trips"]).to be_a(Array)
+
+          trips = parsed_body["trips"]
+
+          expect(trips[0]["code"]).to eq(trip_1.invite_code.code)
+          expect(trips[0]["departing_on"]).to match(trip_1.departing_on)
+          expect(trips[0]["destination_address"]).to eq("1 Sesame St")
+          expect(trips[0]["destination_latitude"]).to eq("1.0")
+          expect(trips[0]["destination_longitude"]).to eq("1.0")
+          expect(trips[0]["id"]).to eq(trip_1.id)
+          expect(trips[0]["name"]).to eq(trip_1.name)
+        end
+
+        it "does not show trips that the user has not signed up for" do
+          trip_2 = create(:trip, destination_address: "8 Harry Potter Rd")
+
+          get(api_v1_user_trips_url(user_id: current_user.id))
+
+          expect(response).to have_http_status :ok
+
+          trips = parsed_body["trips"]
+          trips.each_with_index do |trip, index|
+            expect(trips[index]["id"]).to_not eq trip_2.id
+            expect(trips[index]["name"]).to_not eq trip_2.name
+            expect(trips[index]["code"]).to_not eq trip_2.invite_code.code
+            expect(trips[index]["departing_on"]).to_not eq trip_2.departing_on
+            expect(trips[index]["destination_address"]).to_not eq "8 Harry Potter Rd"
+          end
+        end
+      end
+
+    xcontext "when trying to view a different user's trips" do
+      it "returns 403 Forbidden" do
+        new_user = create(:user)
+
+        get(api_v1_user_trips_url(user_id: new_user.id))
+        expect(response).to have_http_status :forbidden
+      end
+    end
+
+    xcontext "when trying to view trips for a user that doesn't exist" do
+      it "raises 404 Not Found" do
+        get(api_v1_user_trips_url(user_id: "not a real user id"))
+
+        expect(response).to have_http_status :not_found
+        expect(parsed_body["errors"]).to eq "Couldn't find User with 'id'=not a real user id"
+      end
+    end
+
+    xcontext "when no user is signed in" do
+      it "returns 401 Unauthorized" do
+        user = current_user
+        warden.logout
+        get(api_v1_user_trips_url(user_id: user.id))
+
+        expect(response).to have_http_status :unauthorized
+      end
+    end
+  end
 end

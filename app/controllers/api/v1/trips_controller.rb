@@ -6,6 +6,15 @@ class Api::V1::TripsController < Api::V1::ApiController
     render json: trip, serializer: TripSerializer, status: :created
   end
 
+  def index
+    user = User.find(params[:user_id])
+    trips = user.trips
+    render json: trips,
+      except: [:cars, :creator, :invite_code, :signups, :users],
+      each_serializer: SimpleTripSerializer,
+      status: :ok
+  end
+
   def show
     trip = Trip.find(params[:id])
     render json: trip,
