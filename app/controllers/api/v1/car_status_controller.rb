@@ -1,7 +1,7 @@
 class Api::V1::CarStatusController < Api::V1::ApiController
   def update
     car = Car.find(params[:car_id])
-    if Signup.where(car: car, trip: car.trip, user: current_user).empty?
+    if !current_user.cars.include?(car)
       raise UserNotAuthorizedError
     end
     car.update_attributes(status: params[:status])

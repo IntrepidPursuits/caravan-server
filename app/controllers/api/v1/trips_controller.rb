@@ -7,8 +7,8 @@ class Api::V1::TripsController < Api::V1::ApiController
   end
 
   def index
-    user = User.find(params[:user_id])
-    raise UserNotAuthorizedError if user.id != current_user.id
+    user = User.includes(:trips).find(params[:user_id])
+    raise UserNotAuthorizedError if user != current_user
     trips = user.trips
     render json: trips,
       except: [:cars, :creator, :invite_code, :signups, :users],
