@@ -1,11 +1,11 @@
 class Api::V1::CarsController < Api::V1::ApiController
   def create
     ActiveRecord::Base.transaction do
-      car = Car.create(car_params)
-      user = current_user
-      Signup.create!(car_id: car.id, trip_id: car.trip_id, user_id: user.id)
+      @car = Car.create!(car_params)
+      raise UserNotAuthorizedError unless signup = Signup.find_by(trip: @car.trip, user: current_user)
+      signup.update_attributes(car: @car)
     end
-    render json: car, status: :created, serializer: CarSerializer, except: exclusions
+    render json: @car, status: :created, serializer: CarSerializer, except: exclusions
   end
 
   def show

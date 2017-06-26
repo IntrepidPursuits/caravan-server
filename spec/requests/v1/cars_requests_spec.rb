@@ -2,113 +2,154 @@ require "rails_helper"
 
 RSpec.describe "Car Requests", type: :request do
   describe "POST /cars" do
-    xcontext "for a new car on an existing trip" do
-      it "automatically adds the current user to the car" do
-        unsaved_car = build(:car)
-        valid_car_info = {
-          car: unsaved_car
-        }
+    context "authenticated user" do
+      let!(:current_user) { create(:user) }
+      let!(:google_identity) { create(:google_identity, user: current_user) }
 
-        post(
-          api_v1_cars_url,
-          params: valid_car_info.to_json,
-          headers: accept_headers
-        )
-
-
-        expect(response).to have_http_status :created
-        expect(body).to have_json_path("car")
-        expect(body).to have_json_path("car/id")
-
-        expect(parsed_body["car"]["max_seats"]).to eq(1)
-        expect(parsed_body["car"]["name"]).to include("Car ")
-        expect(parsed_body["car"]["status"]).to eq("not_started")
-
-        expect(parsed_body["car"]["locations"]).to eq []
-        expect(parsed_body["car"]["passengers"][0]["id"]).to eq current_user.id
-        expect(parsed_body["car"]["passengers"][0]["name"]).to eq current_user.name
-        expect(parsed_body["car"]["passengers"][0]["email"]).to eq current_user.google_identity.email
-
-        expect(parsed_body["car"]["trip"]["id"]).to eq unsaved_car.trip.id
-        expect(parsed_body["car"]["trip"]["name"]).to eq unsaved_car.trip.name
-      end
-    end
-
-    xcontext "with valid trip, max_seats, name, status, and associated signup(s)" do
-      it "returns valid JSON for the new car" do
-        unsaved_car = build(:car)
-        valid_car_info = {
-          car: unsaved_car
-        }
-
-        post(
-          api_v1_cars_url,
-          params: valid_car_info.to_json,
-          headers: accept_headers
-        )
-
-        expect(response).to have_http_status :created
-        expect(body).to have_json_path("car")
-        expect(body).to have_json_path("car/id")
-
-        expect(parsed_body["car"]["max_seats"]).to eq(1)
-        expect(parsed_body["car"]["name"]).to include("Car ")
-        expect(parsed_body["car"]["status"]).to eq("not_started")
-
-        expect(body).to have_json_path("car/trip")
-        expect(body).to have_json_path("car/trip/code")
-        expect(body).to have_json_path("car/trip/creator")
-        expect(body).to have_json_path("car/trip/departing_on")
-        expect(body).to have_json_path("car/trip/destination_address")
-        expect(body).to have_json_path("car/trip/destination_latitude")
-        expect(body).to have_json_path("car/trip/destination_longitude")
-        expect(body).to have_json_path("car/trip/id")
-        expect(body).to have_json_path("car/trip/name")
-
-        expect(parsed_body["car"]["locations"]).to be_a(Array)
-        expect(parsed_body["car"]["passengers"]).to be_a(Array)
-      end
-    end
-
-    xcontext "with invalid info" do
-      it "raises an error" do
-        invalid_car_info = {
-          car: {
-            trip: nil,
-            max_seats: nil,
-            name: nil,
-            status: nil
+      context "for a new car on a trip that the user is signed up for" do
+        it "returns valid JSON for the new car" do
+          signup = create(:signup, user: current_user)
+          unsaved_car = build(:car, trip: signup.trip)
+          valid_car_info = {
+            car: unsaved_car
           }
-        }
 
-        post(
-          api_v1_cars_url,
-          params: invalid_car_info.to_json,
-          headers: accept_headers
-        )
+          post(
+            api_v1_cars_url,
+            params: valid_car_info.to_json,
+            headers: authorization_headers(current_user)
+          )
 
-        expect(response).to have_http_status :unprocessable_entity
-        expect(body).to have_json_path("errors")
-        expect(parsed_body["errors"]).to include "Trip must exist"
-        expect(parsed_body["errors"]).to include "Trip can't be blank"
-        expect(parsed_body["errors"]).to include "Max seats can't be blank"
-        expect(parsed_body["errors"]).to include "Max seats is not a number"
-        expect(parsed_body["errors"]).to include "Name can't be blank"
-        expect(parsed_body["errors"]).to include "Status can't be blank"
+          expect(response).to have_http_status :created
+          expect(body).to have_json_path("car")
+          expect(body).to have_json_path("car/id")
+
+          expect(parsed_body["car"]["max_seats"]).to eq(1)
+          expect(parsed_body["car"]["name"]).to include("Car ")
+          expect(parsed_body["car"]["status"]).to eq("not_started")
+
+          expect(body).to have_json_path("car/trip")
+          expect(body).to have_json_path("car/trip/code")
+          expect(body).to have_json_path("car/trip/creator")
+          expect(body).to have_json_path("car/trip/departing_on")
+          expect(body).to have_json_path("car/trip/destination_address")
+          expect(body).to have_json_path("car/trip/destination_latitude")
+          expect(body).to have_json_path("car/trip/destination_longitude")
+          expect(body).to have_json_path("car/trip/id")
+          expect(body).to have_json_path("car/trip/name")
+
+          expect(parsed_body["car"]["locations"]).to be_a(Array)
+          expect(parsed_body["car"]["passengers"]).to be_a(Array)
+        end
+
+        it "automatically adds the current user to the car" do
+          signup = create(:signup, user: current_user)
+          unsaved_car = build(:car, trip: signup.trip)
+          valid_car_info = {
+            car: unsaved_car
+          }
+
+          post(
+            api_v1_cars_url,
+            params: valid_car_info.to_json,
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status :created
+          expect(body).to have_json_path("car")
+          expect(body).to have_json_path("car/id")
+
+          expect(parsed_body["car"]["max_seats"]).to eq(1)
+          expect(parsed_body["car"]["name"]).to include("Car ")
+          expect(parsed_body["car"]["status"]).to eq("not_started")
+
+          expect(parsed_body["car"]["locations"]).to eq []
+          expect(parsed_body["car"]["passengers"][0]["id"]).to eq current_user.id
+          expect(parsed_body["car"]["passengers"][0]["name"]).to eq current_user.name
+          expect(parsed_body["car"]["passengers"][0]["email"]).to eq current_user.google_identity.email
+
+          expect(parsed_body["car"]["trip"]["id"]).to eq unsaved_car.trip.id
+          expect(parsed_body["car"]["trip"]["name"]).to eq unsaved_car.trip.name
+        end
+      end
+
+      context "with invalid info" do
+        it "returns 422 Unprocessable Entity" do
+          invalid_car_info = {
+            car: {
+              trip: nil,
+              max_seats: nil,
+              name: nil,
+              status: nil
+            }
+          }
+
+          post(
+            api_v1_cars_url,
+            params: invalid_car_info.to_json,
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status :unprocessable_entity
+          expect(body).to have_json_path("errors")
+          expect(parsed_body["errors"]).to include "Trip must exist"
+          expect(parsed_body["errors"]).to include "Trip can't be blank"
+          expect(parsed_body["errors"]).to include "Max seats can't be blank"
+          expect(parsed_body["errors"]).to include "Max seats is not a number"
+          expect(parsed_body["errors"]).to include "Name can't be blank"
+          expect(parsed_body["errors"]).to include "Status can't be blank"
+        end
+      end
+
+      context "with no information" do
+        it "returns 400 Bad Request" do
+          empty_car_info = { car: {} }
+
+          post(
+            api_v1_cars_url,
+            params: empty_car_info.to_json,
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status :bad_request
+          expect(parsed_body["errors"]).to eq "param is missing or the value is empty: car"
+        end
       end
     end
 
-    context "with no information" do
-      it "raises an error" do
-        empty_car_info = { car: {} }
+    context "unauthorized user" do
+      context "no authorization header" do
+        it "returns 401 Unauthorized" do
+          unsaved_car = build(:car)
+          valid_car_info = {
+            car: unsaved_car
+          }
 
-        post(
-          api_v1_cars_url,
-          params: empty_car_info.to_json,
-          headers: accept_headers
-        )
-        expect(response).to have_http_status :bad_request
-        expect(parsed_body["errors"]).to eq "param is missing or the value is empty: car"
+          post(
+            api_v1_cars_url,
+            params: valid_car_info.to_json,
+            headers: accept_headers
+          )
+
+          expect(response).to have_http_status :unauthorized
+        end
+      end
+
+      context "invalid access token" do
+        it "returns 401 Unauthorized" do
+          unsaved_car = build(:car)
+          valid_car_info = {
+            car: unsaved_car
+          }
+
+          post(
+            api_v1_cars_url,
+            params: valid_car_info.to_json,
+            headers: accept_headers
+          )
+
+          expect(response).to have_http_status :unauthorized
+        end
       end
     end
   end
