@@ -3,7 +3,7 @@ require "rails_helper"
 describe "Car Requests" do
   describe "POST /cars" do
     context "authenticated user" do
-      let!(:current_user) { create(:user) }
+      let(:current_user) { create(:user) }
 
       context "with valid trip, max_seats, name, status, and associated signup(s)" do
         it "returns valid JSON for the new car" do
@@ -125,7 +125,7 @@ describe "Car Requests" do
 
   describe "GET /cars/:id" do
     context "authenticated user" do
-      let!(:current_user) { create(:user) }
+      let(:current_user) { create(:user) }
 
       context "for a valid car" do
         it "returns valid JSON for the car and its passengers" do

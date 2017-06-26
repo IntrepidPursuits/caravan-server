@@ -3,7 +3,7 @@ require "rails_helper"
 describe "Signup Request" do
   describe "POST /signups" do
     context "authenticated user" do
-      let!(:current_user) { create(:user) }
+      let(:current_user) { create(:user) }
 
       context "with valid trip and signup code" do
         it "returns valid JSON for a new signup" do

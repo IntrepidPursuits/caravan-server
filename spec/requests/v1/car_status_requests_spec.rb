@@ -3,7 +3,7 @@ require "rails_helper"
 describe "Car Status Requests" do
   describe "PATCH /cars/:id/status" do
     context "authenticated user" do
-      let!(:current_user) { create(:user) }
+      let(:current_user) { create(:user) }
       let!(:current_user_identity) { create(:google_identity, user: current_user) }
 
       context "user can update their car's status to reflect starting/ending the trip" do

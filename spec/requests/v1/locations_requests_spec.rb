@@ -3,7 +3,7 @@ require "rails_helper"
 describe "Location Request" do
   describe "POST /cars/:car_id/locations" do
     context "authenticated user" do
-      let!(:current_user) { create(:user) }
+      let(:current_user) { create(:user) }
 
       context "with valid latitude and longitude" do
         it "returns valid JSON with list of locations of other cars in the trip" do
@@ -161,7 +161,7 @@ describe "Location Request" do
 
   describe "GET /trips/:trip_id/locations" do
     context "authenticated user" do
-      let!(:current_user) { create(:user) }
+      let(:current_user) { create(:user) }
 
       context "valid trip" do
         it "returns most recent locations of each car in the trip" do

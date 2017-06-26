@@ -2,9 +2,7 @@ class Api::V1::LocationsController < Api::V1::ApiController
   def create
     car = Car.find(location_params["car_id"])
     raise CarNotStartedError.new if car.status == "not_started"
-    if !current_user.cars.include?(car)
-      raise UserNotAuthorizedError
-    end
+    authorize car, :create_location?
     location = Location.create!(location_params)
     render json: location.trip,
            except: [:cars, :locations, :signups, :users],

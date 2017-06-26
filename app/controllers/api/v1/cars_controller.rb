@@ -9,9 +9,7 @@ class Api::V1::CarsController < Api::V1::ApiController
 
   def show
     car = Car.find(params[:id])
-    if !current_user.trips.include?(car.trip)
-      raise UserNotAuthorizedError
-    end
+    authorize car
     render json: car,
       status: :ok,
       serializer: CarSerializer,

@@ -3,7 +3,7 @@ require "rails_helper"
 describe "Trip Request" do
   describe "POST /trips" do
     context "authenticated user" do
-      let!(:current_user) { create(:user) }
+      let(:current_user) { create(:user) }
 
       context "with valid creator, name, departure date, and destination" do
         it "returns valid JSON for the new trip" do
@@ -103,7 +103,7 @@ describe "Trip Request" do
 
   describe "GET /trips/:id" do
     context "authenticated user" do
-      let!(:current_user) { create(:user) }
+      let(:current_user) { create(:user) }
 
       context "valid trip" do
         it "returns valid JSON for an individual trip" do
@@ -158,7 +158,7 @@ describe "Trip Request" do
     end
 
     context "unauthenticated user" do
-      let!(:trip) { create(:trip) }
+      let(:trip) { create(:trip) }
 
       context "no authorization header" do
         it "returns 401 Unauthorized" do
@@ -188,7 +188,7 @@ describe "Trip Request" do
 
   describe "GET /users/:user_id/trips" do
     context "authenticated user" do
-      let!(:current_user) { create(:user) }
+      let(:current_user) { create(:user) }
 
       context "when the user is not yet signed up for any trips" do
         it "shows and empty array" do
@@ -205,7 +205,7 @@ describe "Trip Request" do
       end
 
       context "when the user is signed up for at least one trip" do
-        let!(:trip_1) { create(:trip) }
+        let(:trip_1) { create(:trip) }
         let!(:signups) { create(:signup, user: current_user, trip: trip_1) }
 
         it "shows JSON for all the current user's trips" do
@@ -280,7 +280,7 @@ describe "Trip Request" do
     end
 
     context "unauthenticated user" do
-      let!(:user) { create(:user) }
+      let(:user) { create(:user) }
 
       context "no authorization header" do
         it "returns 401 Unauthorized" do

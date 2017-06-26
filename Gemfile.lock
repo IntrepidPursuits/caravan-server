@@ -120,6 +120,8 @@ GEM
       pry (>= 0.10.4)
     public_suffix (2.0.5)
     puma (3.9.1)
+    pundit (1.1.0)
+      activesupport (>= 3.0.0)
     rack (2.0.3)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -222,6 +224,7 @@ DEPENDENCIES
   pg (~> 0.18)
   pry-rails
   puma (~> 3.7)
+  pundit
   rails (~> 5.1.1)
   rspec-rails (~> 3.5)
   shoulda-matchers
@@ -231,6 +234,9 @@ DEPENDENCIES
   versionist
   warden
   webmock
+
+RUBY VERSION
+   ruby 2.4.1p111
 
 BUNDLED WITH
    1.15.1
