@@ -1,6 +1,4 @@
 class SimpleTripSerializer < BaseSerializer
-  embed :ids
-
   attributes :cars,
              :code,
              :creator,
