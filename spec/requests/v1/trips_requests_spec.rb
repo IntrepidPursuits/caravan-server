@@ -18,13 +18,14 @@ describe "Trip Request" do
 
           expect(response).to have_http_status :created
           expect(body).to have_json_path("trip")
+          expect(body).to have_json_path("trip/code")
           expect(body).to have_json_path("trip/creator")
           expect(body).to have_json_path("trip/departing_on")
           expect(body).to have_json_path("trip/destination_address")
           expect(body).to have_json_path("trip/destination_latitude")
           expect(body).to have_json_path("trip/destination_longitude")
-          expect(body).to have_json_path("trip/invite_code")
           expect(body).to have_json_path("trip/name")
+          expect(body).to have_json_path("trip/signed_up_users")
 
           expect(parsed_body["trip"]["creator"]["name"])
             .to eq current_user.name
@@ -35,6 +36,8 @@ describe "Trip Request" do
           expect(parsed_body["trip"]["destination_longitude"])
             .to eq attributes_for(:trip)[:destination_longitude].to_s
           expect(parsed_body["trip"]["cars"].empty?).to be true
+          expect(parsed_body["trip"]["signed_up_users"].length).to eq 1
+          expect(parsed_body["trip"]["signed_up_users"][0]["name"]).to eq current_user.name
         end
       end
 
