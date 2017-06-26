@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Car Requests", type: :request do
   describe "POST /cars" do
-    context "for a new car on an existing trip" do
+    xcontext "for a new car on an existing trip" do
       it "automatically adds the current user to the car" do
         unsaved_car = build(:car)
         valid_car_info = {
@@ -70,7 +70,7 @@ RSpec.describe "Car Requests", type: :request do
       end
     end
 
-    context "with invalid info" do
+    xcontext "with invalid info" do
       it "raises an error" do
         invalid_car_info = {
           car: {
