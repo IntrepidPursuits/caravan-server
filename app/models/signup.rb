@@ -3,6 +3,7 @@ class Signup < ApplicationRecord
   belongs_to :trip
   belongs_to :user
 
-  validates :trip, uniqueness: { scope: :user_id }, presence: true
-  validates :user, uniqueness: { scope: :car_id }, presence: true
+  validates_presence_of :trip, :user
+  validates_uniqueness_of :trip, scope: :user_id
+  validates_uniqueness_of :car, scope: :user_id, allow_nil: true
 end
