@@ -26,8 +26,5 @@ class Api::V1::ApiController < ApplicationController
   rescue_from Pundit::NotAuthorizedError do |exception|
     render json: { errors: "User is not authorized to perform this action" },
            status: :forbidden
-
-  rescue_from UserNotAuthorizedError do |exception|
-    render json: { errors: exception.message }, status: :forbidden
   end
 end
