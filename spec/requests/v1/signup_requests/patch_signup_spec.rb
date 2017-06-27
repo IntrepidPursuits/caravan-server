@@ -46,6 +46,7 @@ describe "Signup Request" do
             )
 
             expect(response).to have_http_status :not_found
+            expect(parsed_body["errors"]).to eq "Couldn't find Signup with 'id'=invalid signup"
           end
         end
 
@@ -65,9 +66,10 @@ describe "Signup Request" do
               headers: authorization_headers(current_user)
             )
 
-              expect(response).to have_http_status :not_found
-            end
+            expect(response).to have_http_status :not_found
+            expect(parsed_body["errors"]).to eq "Couldn't find Car with 'id'=something invalid here"
           end
+        end
 
         context "car belongs to a different trip" do
           it "returns 422 Unprocessable Entity" do
@@ -87,6 +89,7 @@ describe "Signup Request" do
             )
 
             expect(response).to have_http_status :unprocessable_entity
+            expect(parsed_body["errors"]).to eq "Record invalid"
           end
         end
 
@@ -103,6 +106,7 @@ describe "Signup Request" do
             )
 
             expect(response).to have_http_status :forbidden
+            expect(parsed_body["errors"]).to eq "User is not authorized to perform this action"
           end
         end
       end
