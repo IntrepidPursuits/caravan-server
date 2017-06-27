@@ -100,9 +100,9 @@ describe "Signup Request" do
           }
 
           post(
-            signups_url,
-            params: valid_signup_info.to_json,
-            headers: accept_headers
+          signups_url,
+          params: valid_signup_info.to_json,
+          headers: accept_headers
           )
 
           expect(response).to have_http_status :unauthorized
@@ -119,12 +119,155 @@ describe "Signup Request" do
           }
 
           post(
-            signups_url,
-            params: valid_signup_info.to_json,
-            headers: invalid_authorization_headers
+          signups_url,
+          params: valid_signup_info.to_json,
+          headers: invalid_authorization_headers
           )
 
           expect(response).to have_http_status :unauthorized
+        end
+      end
+    end
+  end
+
+  describe "PATCH /signups/:id" do
+    context "authenticated user" do
+      let!(:current_user) { create(:user) }
+
+      context "user joins a car in a trip they are signed up for" do
+        context "with valid trip_id and car_id" do
+          it "returns valid JSON for the updated car and passengers" do
+            google_identity = create(:google_identity, user: current_user)
+            car = create(:car)
+            trip = car.trip
+            signup = create(:signup, user: current_user, trip: trip)
+
+            signup_params = { signup: {
+              trip_id: signup.trip_id,
+              car_id: car.id
+            } }
+
+            patch(
+              api_v1_signup_url(signup),
+              params: signup_params.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :ok
+            expect(parsed_body["car"]["id"]).to eq car.id
+            expect(parsed_body["car"]["locations"]).to eq []
+            expect(parsed_body["car"]["max_seats"]).to eq car.max_seats
+            expect(parsed_body["car"]["name"]).to eq car.name
+            expect(parsed_body["car"]["status"]).to eq car.status
+            expect(parsed_body["car"]["trip"]["id"]).to eq trip.id
+            expect(parsed_body["car"]["trip"]["name"]).to eq trip.name
+            expect(parsed_body["car"]["passengers"][0]["id"]).to eq current_user.id
+            expect(parsed_body["car"]["passengers"][0]["name"]).to eq current_user.name
+            expect(parsed_body["car"]["passengers"][0]["email"]).to eq google_identity.email
+          end
+        end
+
+        context "user is not signed up for the trip" do
+          it "returns 403 Forbidden" do
+            car = create(:car)
+            trip = car.trip
+
+            signup_params = { signup: {
+              trip_id: trip.id,
+              car_id: car.id
+            } }
+
+            patch(
+              api_v1_signup_url("invalid signup"),
+              params: signup_params.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :forbidden
+          end
+        end
+
+        context "with a car that belongs to a different trip" do
+          it "returns 422 Unprocessable Entity" do
+            car = create(:car)
+            trip = create(:trip)
+            signup = create(:signup, trip: trip, user: current_user)
+
+            signup_params = { signup: {
+              trip_id: trip.id,
+              car_id: car.id
+            } }
+
+            patch(
+              api_v1_signup_url(signup),
+              params: signup_params.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :unprocessable_entity
+          end
+        end
+
+        context "car does not exist" do
+          it "returns 404 Not Found" do
+            trip = create(:trip)
+            signup = create(:signup, trip: trip, user: current_user)
+
+            signup_params = { signup: {
+              trip_id: trip.id,
+              car_id: "something invalid here"
+            } }
+
+            patch(
+              api_v1_signup_url(signup),
+              params: signup_params.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :not_found
+          end
+        end
+      end
+
+      context "unauthorized user" do
+        context "no authorization header" do
+          it "returns 401 Unauthorized" do
+            car = create(:car)
+            signup = create(:signup, trip: car.trip, car: car)
+
+            signup_params = { signup: {
+              trip_id: car.trip_id,
+              car_id: car.id
+            } }
+
+            patch(
+              api_v1_signup_url(signup),
+              params: signup_params.to_json,
+              headers: accept_headers
+            )
+
+            expect(response).to have_http_status :unauthorized
+          end
+        end
+
+        context "invalid access token" do
+          it "returns 401 Unauthorized" do
+            car = create(:car)
+            signup = create(:signup, trip: car.trip, car: car)
+
+            signup_params = { signup: {
+              trip_id: car.trip_id,
+              car_id: car.id
+            } }
+
+            patch(
+              api_v1_signup_url(signup),
+              params: signup_params.to_json,
+              headers: invalid_authorization_headers
+            )
+
+            expect(response).to have_http_status :unauthorized
+          end
         end
       end
     end
