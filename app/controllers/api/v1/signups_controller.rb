@@ -10,12 +10,9 @@ class Api::V1::SignupsController < Api::V1::ApiController
   end
 
   def update
-    trip = Trip.find(signup_params["trip_id"])
-    signup = FindASignup.perform(trip, current_user)
-    if car = Car.find(signup_params["car_id"])
-      raise ActiveRecord::RecordInvalid if car.trip != trip
-      signup.update_attributes(car_id: car.id)
-    end
+    car_id = signup_params["car_id"]
+    trip_id = signup_params["trip_id"]
+    car = JoinACar.perform(car_id, trip_id, current_user)
 
     render json: car, status: :ok, serializer: CarSerializer,
       except: [:car, :cars, :google_identity, :signups]
