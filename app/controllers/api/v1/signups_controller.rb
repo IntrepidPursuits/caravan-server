@@ -9,6 +9,9 @@ class Api::V1::SignupsController < Api::V1::ApiController
     render json: signup, serializer: SignupSerializer, status: :created
   end
 
+  def update
+  end
+
   private
 
   def signup_params
