@@ -6,15 +6,15 @@ class CarPolicy < ApplicationPolicy
     @car = car
   end
 
+  def create_location?
+    user.cars.include?(car)
+  end
+
   def show?
     user.trips.include?(car.trip)
   end
 
   def update?
-    user.cars.include?(car)
-  end
-
-  def create_location?
     user.cars.include?(car)
   end
 end
