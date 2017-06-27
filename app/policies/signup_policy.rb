@@ -8,6 +8,5 @@ class SignupPolicy < ApplicationPolicy
 
   def update?
     signup.user == user
-    user.trips.include?(signup.trip)
   end
 end

@@ -134,8 +134,8 @@ describe "Signup Request" do
     context "authenticated user" do
       let!(:current_user) { create(:user) }
 
-      context "user joins a car in a trip they are signed up for" do
-        context "with valid trip_id and car_id" do
+      context "user joins a car" do
+        context "with valid car_id and a trip the user is signed up for" do
           it "returns valid JSON for the updated car and passengers" do
             google_identity = create(:google_identity, user: current_user)
             car = create(:car)
@@ -159,7 +159,7 @@ describe "Signup Request" do
         end
 
         context "user is not signed up for the trip" do
-          it "returns 403 Forbidden" do
+          it "returns 404 Not Found" do
             car = create(:car)
             trip = car.trip
 
@@ -174,18 +174,18 @@ describe "Signup Request" do
               headers: authorization_headers(current_user)
             )
 
-            expect(response).to have_http_status :forbidden
+            expect(response).to have_http_status :not_found
           end
         end
 
         context "with a car that belongs to a different trip" do
           it "returns 422 Unprocessable Entity" do
             car = create(:car)
-            trip = create(:trip)
-            signup = create(:signup, trip: trip, user: current_user)
+            create(:google_identity, user: current_user)
+            signup = create(:signup, user: current_user)
 
             signup_params = { signup: {
-              trip_id: trip.id,
+              trip_id: signup.trip_id,
               car_id: car.id
             } }
 
@@ -194,8 +194,24 @@ describe "Signup Request" do
               params: signup_params.to_json,
               headers: authorization_headers(current_user)
             )
-
+            
             expect(response).to have_http_status :unprocessable_entity
+          end
+        end
+
+        context "someone else's signup" do
+          it "raises 403 Forbidden" do
+            signup = create(:signup)
+            unsaved_signup = build(:signup, user: current_user)
+            signup_params = { signup: unsaved_signup }
+
+            patch(
+            api_v1_signup_url(signup),
+            params: signup_params.to_json,
+            headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :forbidden
           end
         end
 

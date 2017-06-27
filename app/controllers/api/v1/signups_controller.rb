@@ -10,11 +10,20 @@ class Api::V1::SignupsController < Api::V1::ApiController
   end
 
   def update
+    signup = Signup.find(params["id"])
+    authorize signup
+    if car = Car.find(signup_params["car_id"])
+      raise ActiveRecord::RecordInvalid unless car.trip == signup.trip
+      signup.update_attributes(car_id: car.id)
+    end
+
+    render json: car, status: :ok, serializer: CarSerializer,
+      except: [:car, :cars, :google_identity, :signups]
   end
 
   private
 
   def signup_params
-    params.require(:signup).permit(:trip_id).merge(user: current_user)
+    params.require(:signup).permit(:car_id, :trip_id).merge(user: current_user)
   end
 end
