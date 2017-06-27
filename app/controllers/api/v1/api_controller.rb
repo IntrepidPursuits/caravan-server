@@ -19,10 +19,8 @@ class Api::V1::ApiController < ApplicationController
     end
   end
 
-  [ActiveRecord::RecordNotFound].each do |error|
-    rescue_from error do |exception|
-      render json: { errors: exception.message }, status: :not_found
-    end
+  rescue_from ActiveRecord::RecordNotFound do |exception|
+    render json: { errors: exception.message }, status: :not_found
   end
 
   rescue_from Pundit::NotAuthorizedError do |exception|
