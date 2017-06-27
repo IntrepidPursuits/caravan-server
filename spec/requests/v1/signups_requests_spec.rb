@@ -135,7 +135,7 @@ describe "Signup Request" do
       let!(:current_user) { create(:user) }
 
       context "user joins a car" do
-        context "with valid car_id and a trip the user is signed up for" do
+        context "with valid car_id and trip_id (for a trip the user is signed up for)" do
           it "returns valid JSON for the updated car and passengers" do
             google_identity = create(:google_identity, user: current_user)
             car = create(:car)
@@ -194,7 +194,7 @@ describe "Signup Request" do
               params: signup_params.to_json,
               headers: authorization_headers(current_user)
             )
-            
+
             expect(response).to have_http_status :unprocessable_entity
           end
         end
@@ -206,9 +206,9 @@ describe "Signup Request" do
             signup_params = { signup: unsaved_signup }
 
             patch(
-            api_v1_signup_url(signup),
-            params: signup_params.to_json,
-            headers: authorization_headers(current_user)
+              api_v1_signup_url(signup),
+              params: signup_params.to_json,
+              headers: authorization_headers(current_user)
             )
 
             expect(response).to have_http_status :forbidden
