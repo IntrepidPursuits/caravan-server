@@ -11,7 +11,7 @@ class Api::V1::SignupsController < Api::V1::ApiController
 
   def update
     trip = Trip.find(signup_params["trip_id"])
-    raise UserNotAuthorizedError unless signup = Signup.find_by(trip: trip, user: current_user)
+    signup = FindASignup.perform(trip, current_user)
     if car = Car.find(signup_params["car_id"])
       raise ActiveRecord::RecordInvalid if car.trip != trip
       signup.update_attributes(car_id: car.id)
