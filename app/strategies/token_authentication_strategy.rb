@@ -14,10 +14,12 @@ class TokenAuthenticationStrategy < ::Warden::Strategies::Base
     fail!(I18n.t("warden.token_expired"))
   rescue ActiveRecord::RecordNotFound
     fail!(I18n.t("warden.user_not_found"))
+  rescue JWT::DecodeError
+    fail!("Invalid token")
   end
 
   def user
-    User.active.find(user_id)
+    User.find(user_id)
   end
 
   def user_id
@@ -25,7 +27,7 @@ class TokenAuthenticationStrategy < ::Warden::Strategies::Base
   end
 
   def token_payload
-    DecodeJwt.perform(access_token: access_token)
+    DecodeJwt.perform(access_token)
   end
 
   def access_token

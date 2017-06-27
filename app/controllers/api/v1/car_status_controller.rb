@@ -1,6 +1,7 @@
 class Api::V1::CarStatusController < Api::V1::ApiController
   def update
     car = Car.find(params[:car_id])
+    authorize car
     car.update_attributes(status: params[:status])
     render json: car,
       status: :ok,
