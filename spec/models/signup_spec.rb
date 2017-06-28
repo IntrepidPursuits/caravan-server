@@ -17,10 +17,10 @@ RSpec.describe Signup, type: :model do
       should validate_uniqueness_of(:trip).scoped_to(:user_id)
     end
     it do
-      user = create(:user)
       car = create(:car)
+      user = create(:user)
       create(:signup, user: user, car: car)
-      should validate_uniqueness_of(:user).scoped_to(:car_id)
+      should validate_uniqueness_of(:car).scoped_to(:user_id).allow_nil
     end
   end
 end
