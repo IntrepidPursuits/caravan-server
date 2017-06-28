@@ -20,7 +20,7 @@ describe "JoinACar" do
         signup = create(:signup, user: current_user)
         expect do
           JoinACar.perform("not a car", signup, current_user)
-        end.to raise_error ActiveRecord::RecordInvalid
+        end.to raise_error InvalidCarJoin
       end
     end
 
@@ -29,7 +29,7 @@ describe "JoinACar" do
         signup = create(:signup, user: current_user)
         expect do
           JoinACar.perform(car, signup, current_user)
-        end.to raise_error ActiveRecord::RecordInvalid
+        end.to raise_error InvalidCarJoin
       end
     end
   end

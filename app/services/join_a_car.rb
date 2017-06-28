@@ -10,7 +10,8 @@ class JoinACar < Api::V1::ApiController
   end
 
   def perform
-    raise ActiveRecord::RecordInvalid unless @car.is_a?(Car) && @car.trip == @signup.trip
+    return @car if @car == @signup.car
+    raise InvalidCarJoin unless @car.is_a?(Car) && @car.trip == @signup.trip
     @signup.update_attributes(car: @car)
     @car
   end
