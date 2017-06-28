@@ -7,7 +7,7 @@ describe "Car Requests" do
       let!(:google_identity) { create(:google_identity, user: current_user) }
 
       context "for a new car on a trip that the user is signed up for" do
-        context "with valid trip, max_seats, name, status, and associated signup(s)" do
+        context "with valid trip, max_seats, name, and status" do
           before(:each) do
             @signup = create(:signup, user: current_user)
             unsaved_car = build(:car, trip: @signup.trip)
@@ -25,21 +25,21 @@ describe "Car Requests" do
 
           it "returns valid JSON for the new car" do
             expect(response).to have_http_status :created
-            expect_body_to_include_car_attributes_at_path
+            expect_body_to_include_car_attributes_at_path("car")
 
-            expect(parsed_body["car"]["locations"]).to be_a(Array)
-            expect(parsed_body["car"]["locations"]).to eq []
-            expect(parsed_body["car"]["max_seats"]).to eq(1)
-            expect(parsed_body["car"]["name"]).to include("Car ")
-            expect(parsed_body["car"]["passengers"]).to be_a(Array)
-            expect(parsed_body["car"]["status"]).to eq("not_started")
+            car = parsed_body["car"]
+            expect(car["locations"]).to eq []
+            expect(car["max_seats"]).to eq(1)
+            expect(car["name"]).to include("Car ")
+            expect(car["status"]).to eq("not_started")
 
             trip = @signup.trip
-            expect(parsed_body["car"]["trip"]["id"]).to eq trip.id
-            expect(parsed_body["car"]["trip"]["name"]).to eq trip.name
+            expect(car["trip"]["id"]).to eq trip.id
+            expect(car["trip"]["name"]).to eq trip.name
           end
 
           it "automatically adds the current user to the car" do
+            expect(parsed_body["car"]["passengers"].length).to eq 1
             expect_body_to_include_passenger_attributes
           end
         end
@@ -64,11 +64,12 @@ describe "Car Requests" do
           )
 
           expect(response).to have_http_status :unprocessable_entity
+          errors = ["Max seats can't be blank", "Max seats is not a number",
+            "Name can't be blank", "Status can't be blank"]
 
-          expect(parsed_body["errors"]).to include "Max seats can't be blank"
-          expect(parsed_body["errors"]).to include "Max seats is not a number"
-          expect(parsed_body["errors"]).to include "Name can't be blank"
-          expect(parsed_body["errors"]).to include "Status can't be blank"
+          errors.each do |error|
+            expect(parsed_body["errors"]).to include error
+          end
         end
       end
 
@@ -130,8 +131,8 @@ describe "Car Requests" do
             )
 
             expect(response).to have_http_status :not_found
-            expect(body).to have_json_path("errors")
-            expect(parsed_body["errors"]).to include "Couldn't find Trip with 'id'=not a trip"
+            expect(parsed_body["errors"])
+              .to include "Couldn't find Trip with 'id'=not a trip"
           end
         end
       end
