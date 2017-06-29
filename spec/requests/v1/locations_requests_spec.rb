@@ -173,7 +173,6 @@ describe "Location Request" do
 
           get(
             api_v1_trip_locations_url(trip),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
@@ -194,7 +193,6 @@ describe "Location Request" do
 
           get(
             api_v1_trip_locations_url(trip),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
@@ -208,7 +206,6 @@ describe "Location Request" do
         it "returns JSON with error" do
           get(
             api_v1_trip_locations_url("fake_trip"),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
@@ -225,7 +222,6 @@ describe "Location Request" do
 
           get(
             api_v1_trip_locations_url(trip),
-            params: {},
             headers: accept_headers
           )
 
@@ -239,7 +235,6 @@ describe "Location Request" do
 
           get(
             api_v1_trip_locations_url(trip),
-            params: {},
             headers: invalid_authorization_headers
           )
 

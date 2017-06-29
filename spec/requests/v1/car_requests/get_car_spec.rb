@@ -14,7 +14,6 @@ describe "Car Requests" do
 
           get(
             api_v1_car_url(car),
-            params: {},
             headers: authorization_headers(passenger)
           )
 
@@ -51,7 +50,6 @@ describe "Car Requests" do
 
           get(
             api_v1_car_url(car),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
@@ -65,7 +63,6 @@ describe "Car Requests" do
         it "should raise an error" do
           get(
             api_v1_car_url(id: 1),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
@@ -82,7 +79,6 @@ describe "Car Requests" do
 
           get(
             api_v1_car_url(car),
-            params: {},
             headers: accept_headers
           )
 
@@ -96,7 +92,6 @@ describe "Car Requests" do
 
           get(
             api_v1_car_url(car),
-            params: {},
             headers: invalid_authorization_headers
           )
 
