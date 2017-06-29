@@ -13,6 +13,21 @@ module Helpers
       expect(parsed_body["car"]["passengers"][0]["email"]).to eq user.google_identity.email
     end
 
+    def expect_body_to_include_car_attributes_without_user(car, trip, user)
+      expect(parsed_body["car"]["id"]).to eq car.id
+      expect(parsed_body["car"]["locations"]).to eq []
+      expect(parsed_body["car"]["max_seats"]).to eq car.max_seats
+      expect(parsed_body["car"]["name"]).to eq car.name
+      expect(parsed_body["car"]["status"]).to eq car.status
+      expect(parsed_body["car"]["trip"]["id"]).to eq trip.id
+      expect(parsed_body["car"]["trip"]["name"]).to eq trip.name
+      car.users.each_with_index do |passenger, i|
+        expect(parsed_body["car"]["passengers"][i]["id"]).to_not eq user.id
+        expect(parsed_body["car"]["passengers"][i]["name"]).to_not eq user.name
+        expect(parsed_body["car"]["passengers"][i]["email"]).to_not eq user.google_identity.email
+      end
+    end
+
     def expect_body_to_include_trip_locations_attributes_at_path(path)
       expect(body).to have_json_path("#{path}")
       expect(body).to have_json_path("#{path}/trip_id")
