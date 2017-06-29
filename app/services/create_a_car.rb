@@ -1,4 +1,4 @@
-class CreateACar < Api::V1::ApiController
+class CreateACar
   def initialize(params, user)
     @params = params
     @user = user
