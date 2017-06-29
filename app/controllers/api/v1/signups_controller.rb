@@ -9,6 +9,14 @@ class Api::V1::SignupsController < Api::V1::ApiController
     render json: signup, serializer: SignupSerializer, status: :created
   end
 
+  def destroy
+    signup = Signup.find(params[:id])
+    authorize signup
+    signup.destroy!
+    
+    head :no_content
+  end
+
   def update
     signup = Signup.find(params["id"])
     authorize signup

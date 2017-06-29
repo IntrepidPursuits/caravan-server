@@ -9,4 +9,8 @@ class SignupPolicy < ApplicationPolicy
   def update?
     signup.user == user
   end
+
+  def destroy?
+    signup.user == user
+  end
 end
