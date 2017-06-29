@@ -24,7 +24,7 @@ module Helpers
     end
 
     def authorization_header(user = nil)
-      HandleJwt.encode(user: user)
+      HandleJwt.encode(user)
     end
 
     def invalid_authorization_headers

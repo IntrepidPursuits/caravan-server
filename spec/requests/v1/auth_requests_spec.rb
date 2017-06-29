@@ -39,7 +39,7 @@ describe "Auth requests" do
         )
 
         encoded_token = parsed_body["auth"]["access_token"]
-        decoded_token = HandleJwt.decode(access_token: encoded_token)
+        decoded_token = HandleJwt.decode(encoded_token)
         expect(decoded_token["sub"]).to eq(parsed_body["auth"]["user"]["id"])
       end
     end
