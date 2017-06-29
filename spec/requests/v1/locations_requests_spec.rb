@@ -19,13 +19,8 @@ describe "Location Request" do
           )
 
           expect(response).to have_http_status :created
-          expect(body).to have_json_path("trip_locations")
-          expect(body).to have_json_path("trip_locations/trip_id")
-          expect(body).to have_json_path("trip_locations/last_locations")
-          expect(body).to have_json_path("trip_locations/last_locations/0/id")
-          expect(body).to have_json_path("trip_locations/last_locations/0/car_id")
-          expect(body).to have_json_path("trip_locations/last_locations/0/latitude")
-          expect(body).to have_json_path("trip_locations/last_locations/0/longitude")
+          expect_body_to_include_trip_locations_attributes_at_path("trip_locations")
+          expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/0")
 
           expect(parsed_body["trip_locations"]["trip_id"]).to eq(car.trip.id)
           expect(parsed_body["trip_locations"]["last_locations"][0]["car_id"])
@@ -164,8 +159,9 @@ describe "Location Request" do
       let(:current_user) { create(:user) }
 
       context "valid trip" do
+        let(:trip) { create(:trip) }
+
         it "returns most recent locations of each car in the trip" do
-          trip = create(:trip)
           car1 = create(:car, trip: trip, status: 1)
           car2 = create(:car, trip: trip, status: 1)
           create_list(:location, 2, car: car1)
@@ -180,19 +176,29 @@ describe "Location Request" do
           )
 
           expect(response).to have_http_status :ok
+          expect_body_to_include_trip_locations_attributes_at_path("trip_locations")
+          expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/0")
+          expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/1")
+
           expect(parsed_body["trip_locations"]["trip_id"]).to eq trip.id
-          expect(parsed_body["trip_locations"]["last_locations"][0]["car_id"])
-            .to eq car1.id
-          expect(parsed_body["trip_locations"]["last_locations"][0]["latitude"])
-            .to eq car1_last_location.latitude.to_s
-          expect(parsed_body["trip_locations"]["last_locations"][0]["longitude"])
-            .to eq car1_last_location.longitude.to_s
-          expect(parsed_body["trip_locations"]["last_locations"][1]["car_id"])
-            .to eq car2.id
-          expect(parsed_body["trip_locations"]["last_locations"][1]["latitude"])
-            .to eq car2_last_location.latitude.to_s
-          expect(parsed_body["trip_locations"]["last_locations"][1]["longitude"])
-            .to eq car2_last_location.longitude.to_s
+          expect_body_to_include_locations_content(car1, car1_last_location, 0)
+          expect_body_to_include_locations_content(car2, car2_last_location, 1)
+        end
+
+        it "does not return nil for cars that don't have any locations" do
+          car1 = create(:car, trip: trip, status: 1)
+          car2 = create(:car, trip: trip, status: 1)
+          location = create(:location, car: car1)
+
+          get(
+            api_v1_trip_locations_url(trip),
+            params: {},
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status :ok
+          expect_body_to_include_locations_content(car1, location, 0)
+          expect(parsed_body["trip_locations"]["last_locations"].length).to eq 1
         end
       end
 
