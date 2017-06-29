@@ -15,8 +15,8 @@ class Api::V1::TripsController < Api::V1::ApiController
     authorize user, :current_user?
     trips = user.trips
     render json: trips,
+      each_serializer: UserTripSerializer,
       except: [:cars, :creator, :invite_code, :signups, :users],
-      each_serializer: SimpleTripSerializer,
       status: :ok
   end
 

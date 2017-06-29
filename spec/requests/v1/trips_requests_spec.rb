@@ -185,7 +185,7 @@ describe "Trip Request" do
 
       context "when the user is signed up for at least one trip" do
         let(:trip_1) { create(:trip) }
-        let!(:signups) { create(:signup, user: current_user, trip: trip_1) }
+        let!(:signup) { create(:signup, user: current_user, trip: trip_1) }
 
         it "shows JSON for all the current user's trips" do
           get(
@@ -206,6 +206,7 @@ describe "Trip Request" do
           expect(trips[0]["destination_longitude"]).to eq(trip_1.destination_longitude.to_s)
           expect(trips[0]["id"]).to eq(trip_1.id)
           expect(trips[0]["name"]).to eq(trip_1.name)
+          expect(trips[0]["signup_id"]).to eq(signup.id)
         end
 
         it "does not show trips that the user has not signed up for" do

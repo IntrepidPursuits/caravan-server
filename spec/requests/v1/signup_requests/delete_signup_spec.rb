@@ -33,6 +33,18 @@ describe "Signup Request" do
             .to include "User is not authorized to perform this action"
         end
       end
+
+      context "not a real signup id" do
+        it "returns JSON with error" do
+          delete(
+            signup_url("fake_id"),
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status :not_found
+          expect(parsed_body["errors"]).to include "Couldn't find Signup with 'id'=fake_id"
+        end
+      end
     end
 
     context "unauthenticated user" do
