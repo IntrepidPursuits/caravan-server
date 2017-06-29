@@ -9,4 +9,8 @@ class TripPolicy < ApplicationPolicy
   def create_car?
     trip.users.include?(user)
   end
+
+  def update_leave_car?
+    trip.users.include?(user)
+  end
 end

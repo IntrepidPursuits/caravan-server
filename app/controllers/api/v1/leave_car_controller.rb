@@ -1,7 +1,7 @@
 class Api::V1::LeaveCarController < Api::V1::ApiController
   def update
-    authorize signup
-    car = signup.car
+    raise ActionController::ParameterMissing unless car = signup.car
+    authorize car, :leave_car?
     signup.update_attributes!(car: nil)
     render json: car, status: :ok, serializer: CarSerializer, except: exclusions
   end

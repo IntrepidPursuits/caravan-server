@@ -17,4 +17,8 @@ class CarPolicy < ApplicationPolicy
   def update?
     user.cars.include?(car)
   end
+
+  def leave_car?
+    car.users.include?(user)
+  end
 end
