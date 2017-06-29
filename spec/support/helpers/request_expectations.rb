@@ -33,6 +33,7 @@ module Helpers
         .to eq location.latitude.to_s
       expect(parsed_body["trip_locations"]["last_locations"][index]["longitude"])
         .to eq location.longitude.to_s
+    end
 
     def expect_body_to_include_car_attributes_at_path(path)
       expect(body).to have_json_path(path)

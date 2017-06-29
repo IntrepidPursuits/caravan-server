@@ -89,6 +89,7 @@ describe "Car Requests" do
           )
 
           expect(response).to have_http_status :unprocessable_entity
+          expect(parsed_body["errors"]).to eq "You must provide a valid trip_id in order to create a car"
         end
       end
 

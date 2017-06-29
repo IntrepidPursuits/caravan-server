@@ -42,9 +42,9 @@ describe "CreateACar" do
         name: "My Car",
         trip_id: trip.id
       }
-      expect do
-        CreateACar.perform(car_params, current_user)
-      end.to raise_error ActiveRecord::RecordNotFound
+
+      expect { CreateACar.perform(car_params, current_user) }.to raise_error(MissingSignup,
+        "You must be signed up for a trip in order to create a car in that trip")
     end
   end
 
@@ -57,9 +57,8 @@ describe "CreateACar" do
         name: "My Car",
         trip_id: trip.id
       }
-      expect do
-        CreateACar.perform(car_params, nil)
-      end.to raise_error ActiveRecord::RecordNotFound
+      expect { CreateACar.perform(car_params, nil) }.to raise_error(MissingSignup,
+        "You must be signed up for a trip in order to create a car in that trip")
     end
   end
 end

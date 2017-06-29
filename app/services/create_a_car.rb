@@ -11,7 +11,7 @@ class CreateACar < Api::V1::ApiController
 
   def perform
     car = Car.create!(@params)
-    signup = Signup.find_by!(trip: @trip, user: @user)
+    raise MissingSignup unless signup = Signup.find_by(trip: @trip, user: @user)
     signup.update_attributes(car: car)
     car
   end
