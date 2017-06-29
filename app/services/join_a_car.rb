@@ -1,4 +1,4 @@
-class JoinACar < Api::V1::ApiController
+class JoinACar
   def initialize(car, signup, user)
     @car = car
     @signup = signup
