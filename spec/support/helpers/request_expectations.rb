@@ -12,5 +12,27 @@ module Helpers
       expect(parsed_body["car"]["passengers"][0]["name"]).to eq user.name
       expect(parsed_body["car"]["passengers"][0]["email"]).to eq user.google_identity.email
     end
+
+    def expect_body_to_include_trip_locations_attributes_at_path(path)
+      expect(body).to have_json_path("#{path}")
+      expect(body).to have_json_path("#{path}/trip_id")
+      expect(body).to have_json_path("#{path}/last_locations")
+    end
+
+    def expect_body_to_include_locations_attributes_at_path(path)
+      expect(body).to have_json_path("#{path}/id")
+      expect(body).to have_json_path("#{path}/car_id")
+      expect(body).to have_json_path("#{path}/latitude")
+      expect(body).to have_json_path("#{path}/longitude")
+    end
+
+    def expect_body_to_include_locations_content(car, location, index)
+      expect(parsed_body["trip_locations"]["last_locations"][index]["car_id"])
+        .to eq car.id
+      expect(parsed_body["trip_locations"]["last_locations"][index]["latitude"])
+        .to eq location.latitude.to_s
+      expect(parsed_body["trip_locations"]["last_locations"][index]["longitude"])
+        .to eq location.longitude.to_s
+    end
   end
 end
