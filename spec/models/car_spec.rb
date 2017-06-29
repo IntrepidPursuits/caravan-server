@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.describe Car, type: :model do
   describe "associations" do
+    it { should belong_to(:owner) }
     it { should belong_to(:trip) }
     it { should have_many(:locations) }
     it { should have_many(:signups) }
@@ -12,6 +13,7 @@ RSpec.describe Car, type: :model do
     it { should validate_numericality_of(:max_seats).is_equal_to(1) }
     it { should validate_presence_of(:max_seats) }
     it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:owner) }
     it { should validate_presence_of(:status) }
     it { should validate_presence_of(:trip) }
     it do

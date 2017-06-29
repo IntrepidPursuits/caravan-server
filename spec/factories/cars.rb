@@ -1,6 +1,7 @@
 FactoryGirl.define do
-  factory :car do
-    sequence(:name) { |n| "Car #{n}" } 
+  factory :car, aliases: [:owned_cars] do
+    association :owner, factory: :user
+    sequence(:name) { |n| "Car #{n}" }
     trip
   end
 end

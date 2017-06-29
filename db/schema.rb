@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20170705153335) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name", null: false
+    t.uuid "owner_id", null: false
     t.index ["name", "trip_id"], name: "index_cars_on_name_and_trip_id", unique: true
     t.index ["trip_id"], name: "index_cars_on_trip_id"
   end
