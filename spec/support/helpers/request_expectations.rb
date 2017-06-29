@@ -12,5 +12,53 @@ module Helpers
       expect(parsed_body["car"]["passengers"][0]["name"]).to eq user.name
       expect(parsed_body["car"]["passengers"][0]["email"]).to eq user.google_identity.email
     end
+
+    def expect_body_to_include_trip_locations_attributes_at_path(path)
+      expect(body).to have_json_path("#{path}")
+      expect(body).to have_json_path("#{path}/trip_id")
+      expect(body).to have_json_path("#{path}/last_locations")
+    end
+
+    def expect_body_to_include_locations_attributes_at_path(path)
+      expect(body).to have_json_path("#{path}/id")
+      expect(body).to have_json_path("#{path}/car_id")
+      expect(body).to have_json_path("#{path}/latitude")
+      expect(body).to have_json_path("#{path}/longitude")
+    end
+
+    def expect_body_to_include_locations_content(car, location, index)
+      expect(parsed_body["trip_locations"]["last_locations"][index]["car_id"])
+        .to eq car.id
+      expect(parsed_body["trip_locations"]["last_locations"][index]["latitude"])
+        .to eq location.latitude.to_s
+      expect(parsed_body["trip_locations"]["last_locations"][index]["longitude"])
+        .to eq location.longitude.to_s
+
+    def expect_body_to_include_car_attributes_at_path
+      expect(body).to have_json_path("car")
+      expect(body).to have_json_path("car/id")
+      expect(body).to have_json_path("car/locations")
+      expect(body).to have_json_path("car/max_seats")
+      expect(body).to have_json_path("car/name")
+      expect(body).to have_json_path("car/passengers")
+      expect(body).to have_json_path("car/status")
+      expect(body).to have_json_path("car/trip")
+      expect(body).to have_json_path("car/trip/code")
+      expect(body).to have_json_path("car/trip/creator")
+      expect(body).to have_json_path("car/trip/departing_on")
+      expect(body).to have_json_path("car/trip/destination_address")
+      expect(body).to have_json_path("car/trip/destination_latitude")
+      expect(body).to have_json_path("car/trip/destination_longitude")
+      expect(body).to have_json_path("car/trip/id")
+      expect(body).to have_json_path("car/trip/name")
+    end
+
+    def expect_body_to_include_passenger_attributes
+      parsed_body["car"]["passengers"].first do |passenger|
+        expect(passenger["id"]).to eq current_user.id
+        expect(passenger["name"]).to eq current_user.name
+        expect(passenger["email"]).to eq google_identity.email
+      end
+    end
   end
 end
