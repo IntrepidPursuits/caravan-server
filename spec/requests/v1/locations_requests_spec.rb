@@ -21,6 +21,7 @@ describe "Location Request" do
           expect(response).to have_http_status :created
           expect_body_to_include_trip_locations_attributes_at_path("trip_locations")
           expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/0")
+          expect(Location.find(parsed_body["trip_locations"]["last_locations"][0]["id"])).to be
 
           expect(json_value_at_path("trip_locations/trip_id")).to eq(car.trip.id)
           expect(json_value_at_path("trip_locations/last_locations/0/car_id"))

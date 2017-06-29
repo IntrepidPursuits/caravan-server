@@ -28,6 +28,7 @@ describe "Car Requests" do
             expect_body_to_include_car_attributes_at_path("car")
 
             car = parsed_body["car"]
+            expect(Car.find(car["id"])).to be
             expect(car["locations"]).to eq []
             expect(car["max_seats"]).to eq(1)
             expect(car["name"]).to include("Car ")
@@ -89,7 +90,8 @@ describe "Car Requests" do
           )
 
           expect(response).to have_http_status :unprocessable_entity
-          expect(parsed_body["errors"]).to eq "You must provide a valid trip_id in order to create a car"
+          expect(parsed_body["errors"])
+            .to eq "You must provide a valid trip_id in order to create a car"
         end
       end
 

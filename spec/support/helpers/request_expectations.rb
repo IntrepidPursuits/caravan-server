@@ -105,5 +105,13 @@ module Helpers
         expect(passenger["email"]).to eq google_identity.email
       end
     end
+
+    def expect_body_to_include_signup_attributes_and_content(user, trip)
+      expect(body).to have_json_path("signup")
+      expect(body).to have_json_path("signup/user_id")
+      expect(body).to have_json_path("signup/trip_id")
+      expect(parsed_body["signup"]["user_id"]).to eq user.id
+      expect(parsed_body["signup"]["trip_id"]).to eq trip.id
+    end
   end
 end
