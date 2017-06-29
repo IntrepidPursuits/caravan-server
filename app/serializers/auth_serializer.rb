@@ -8,7 +8,7 @@ class AuthSerializer < ActiveModel::Serializer
   end
 
   def access_token
-    EncodeJwt.perform(user: user)
+    HandleJwt.encode(user: user)
   end
 
   def root
