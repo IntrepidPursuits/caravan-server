@@ -25,6 +25,8 @@ describe "Location Request" do
           expect(parsed_body["trip_locations"]["trip_id"]).to eq(car.trip.id)
           expect(parsed_body["trip_locations"]["last_locations"][0]["car_id"])
             .to eq(car.id)
+          expect(parsed_body["trip_locations"]["last_locations"][0]["car_name"])
+            .to eq(car.name)
           expect(parsed_body["trip_locations"]["last_locations"][0]["latitude"])
             .to eq(attributes_for(:location)[:latitude].to_s)
           expect(parsed_body["trip_locations"]["last_locations"][0]["longitude"])

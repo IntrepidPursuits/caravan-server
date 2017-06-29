@@ -22,6 +22,7 @@ module Helpers
     def expect_body_to_include_locations_attributes_at_path(path)
       expect(body).to have_json_path("#{path}/id")
       expect(body).to have_json_path("#{path}/car_id")
+      expect(body).to have_json_path("#{path}/car_name")
       expect(body).to have_json_path("#{path}/latitude")
       expect(body).to have_json_path("#{path}/longitude")
     end
@@ -29,6 +30,8 @@ module Helpers
     def expect_body_to_include_locations_content(car, location, index)
       expect(parsed_body["trip_locations"]["last_locations"][index]["car_id"])
         .to eq car.id
+      expect(parsed_body["trip_locations"]["last_locations"][index]["car_name"])
+        .to eq car.name
       expect(parsed_body["trip_locations"]["last_locations"][index]["latitude"])
         .to eq location.latitude.to_s
       expect(parsed_body["trip_locations"]["last_locations"][index]["longitude"])
