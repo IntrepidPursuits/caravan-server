@@ -8,7 +8,7 @@ describe "CreateACar" do
     context "with valid car info" do
       it "returns a car object with user signed up" do
         signup = create(:signup, trip: trip, user: current_user)
-        Signup.stub(:find_by).and_return(signup)
+        expect(Signup).to receive(:find_by).and_return(signup)
         car_params = {
           name: "My Car",
           trip_id: trip.id
@@ -24,7 +24,6 @@ describe "CreateACar" do
     context "with invalid car info" do
       it "raises RecordInvalid" do
         signup = create(:signup, trip: trip, user: current_user)
-        Signup.stub(:find_by).and_return(signup)
         expect do
           CreateACar.perform({ name: nil }, current_user)
         end.to raise_error ActiveRecord::RecordInvalid
@@ -37,7 +36,7 @@ describe "CreateACar" do
     let!(:current_user) { create(:user) }
 
     it "raises RecordInvalid" do
-      Signup.stub(:find_by).and_return(nil)
+      expect(Signup).to receive(:find_by).and_return(nil)
       car_params = {
         name: "My Car",
         trip_id: trip.id
@@ -52,7 +51,7 @@ describe "CreateACar" do
     let!(:trip) { create(:trip) }
 
     it "raises RecordInvalid" do
-      Signup.stub(:find_by).and_return(nil)
+      expect(Signup).to receive(:find_by).and_return(nil)
       car_params = {
         name: "My Car",
         trip_id: trip.id

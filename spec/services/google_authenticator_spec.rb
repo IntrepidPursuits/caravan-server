@@ -4,7 +4,7 @@ RSpec.describe "GoogleAuthenticator" do
   describe ".perform" do
     context "with invalid credentials" do
       it "should raise an error" do
-        GoogleAuthenticator.any_instance.stub(:token_valid?).and_return(false)
+        expect_any_instance_of(GoogleAuthenticator).to receive(:token_valid?).and_return(false)
 
         expect { GoogleAuthenticator.perform("bah") }.to raise_error(UnauthorizedAccess)
       end
@@ -12,8 +12,8 @@ RSpec.describe "GoogleAuthenticator" do
 
     context "with valid credentials" do
       before(:each) do
-        GoogleAuthenticator.any_instance.stub(:token_valid?).and_return(true)
-        GoogleAuthenticator.any_instance.stub(:token_hash).and_return(user_info)
+        allow_any_instance_of(GoogleAuthenticator).to receive(:token_valid?).and_return(true)
+        allow_any_instance_of(GoogleAuthenticator).to receive(:token_hash).and_return(user_info)
       end
 
       context "for an existing user and google_identity" do
