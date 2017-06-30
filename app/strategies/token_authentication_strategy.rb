@@ -27,7 +27,7 @@ class TokenAuthenticationStrategy < ::Warden::Strategies::Base
   end
 
   def token_payload
-    DecodeJwt.perform(access_token)
+    HandleJwt.decode(access_token)
   end
 
   def access_token

@@ -23,6 +23,7 @@ group :development, :test do
   gem "factory_girl_rails"
   gem "pry-rails"
   gem "rspec-rails", "~> 3.5"
+  gem "timecop"
   gem "webmock"
 end
 
