@@ -16,25 +16,13 @@ describe "Trip Request" do
             headers: authorization_headers(current_user)
           )
 
+          new_trip_id = parsed_body["trip"]["id"]
+          
           expect(response).to have_http_status :created
-          expect(body).to have_json_path("trip")
-          expect(body).to have_json_path("trip/creator")
-          expect(body).to have_json_path("trip/departing_on")
-          expect(body).to have_json_path("trip/destination_address")
-          expect(body).to have_json_path("trip/destination_latitude")
-          expect(body).to have_json_path("trip/destination_longitude")
-          expect(body).to have_json_path("trip/invite_code")
-          expect(body).to have_json_path("trip/name")
-
-          expect(parsed_body["trip"]["creator"]["name"])
-            .to eq current_user.name
-          expect(parsed_body["trip"]["destination_address"])
-            .to eq attributes_for(:trip)[:destination_address].to_s
-          expect(parsed_body["trip"]["destination_latitude"])
-            .to eq attributes_for(:trip)[:destination_latitude].to_s
-          expect(parsed_body["trip"]["destination_longitude"])
-            .to eq attributes_for(:trip)[:destination_longitude].to_s
-          expect(parsed_body["trip"]["cars"].empty?).to be true
+          expect_response_to_include_basic_trip_attributes_at_path("trip")
+          expect_reponse_to_include_correct_trip_factory_content(current_user)
+          expect(Trip.find(new_trip_id)).to be
+          expect(Signup.find_by(user: current_user, trip_id: new_trip_id)).to be
         end
       end
 
@@ -125,21 +113,12 @@ describe "Trip Request" do
           )
 
           expect(response).to have_http_status :ok
-          expect(body).to have_json_path("trip")
-          expect(body).to have_json_path("trip/creator")
-          expect(body).to have_json_path("trip/creator/name")
-          expect(body).to have_json_path("trip/departing_on")
-          expect(body).to have_json_path("trip/destination_address")
-          expect(body).to have_json_path("trip/destination_latitude")
-          expect(body).to have_json_path("trip/destination_longitude")
-          expect(body).to have_json_path("trip/code")
-          expect(body).to have_json_path("trip/name")
-          expect(body).to have_json_path("trip/cars")
-          expect(body).to have_json_path("trip/cars/0/max_seats")
-          expect(body).to have_json_path("trip/cars/0/name")
-          expect(body).to have_json_path("trip/cars/0/status")
-          expect(body).to have_json_path("trip/signed_up_users")
-          expect(body).to have_json_path("trip/signed_up_users/0/name")
+          expect_response_to_include_basic_trip_attributes_at_path("trip")
+          expect_reponse_to_include_correct_trip_factory_content(current_user)
+          expect_response_to_include_trip_with_cars_attributes_at_path(
+            "trip/cars", trip.cars.length)
+          expect_response_to_include_trip_with_signups_attributes_at_path(
+            "trip/signed_up_users", trip.users.length)
         end
       end
 
@@ -222,9 +201,9 @@ describe "Trip Request" do
 
           expect(trips[0]["code"]).to eq(trip_1.invite_code.code)
           expect(trips[0]["departing_on"]).to match(trip_1.departing_on)
-          expect(trips[0]["destination_address"]).to eq("1 Sesame St")
-          expect(trips[0]["destination_latitude"]).to eq("1.0")
-          expect(trips[0]["destination_longitude"]).to eq("1.0")
+          expect(trips[0]["destination_address"]).to eq(trip_1.destination_address)
+          expect(trips[0]["destination_latitude"]).to eq(trip_1.destination_latitude.to_s)
+          expect(trips[0]["destination_longitude"]).to eq(trip_1.destination_longitude.to_s)
           expect(trips[0]["id"]).to eq(trip_1.id)
           expect(trips[0]["name"]).to eq(trip_1.name)
         end

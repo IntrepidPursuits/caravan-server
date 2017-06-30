@@ -33,6 +33,47 @@ module Helpers
         .to eq location.latitude.to_s
       expect(parsed_body["trip_locations"]["last_locations"][index]["longitude"])
         .to eq location.longitude.to_s
+      end
+
+    def expect_response_to_include_basic_trip_attributes_at_path(path)
+      expect(body).to have_json_path("#{path}")
+      expect(body).to have_json_path("#{path}/cars")
+      expect(body).to have_json_path("#{path}/code")
+      expect(body).to have_json_path("#{path}/creator")
+      expect(body).to have_json_path("#{path}/creator/name")
+      expect(body).to have_json_path("#{path}/departing_on")
+      expect(body).to have_json_path("#{path}/destination_address")
+      expect(body).to have_json_path("#{path}/destination_latitude")
+      expect(body).to have_json_path("#{path}/destination_longitude")
+      expect(body).to have_json_path("#{path}/name")
+      expect(body).to have_json_path("#{path}/signed_up_users")
+      expect(body).to have_json_path("#{path}/signed_up_users/0/name")
+    end
+
+    def expect_response_to_include_trip_with_cars_attributes_at_path(path, num_cars)
+      num_cars.times do |i|
+        expect(body).to have_json_path("#{path}/#{i}/max_seats")
+        expect(body).to have_json_path("#{path}/#{i}/name")
+        expect(body).to have_json_path("#{path}/#{i}/status")
+      end
+    end
+
+    def expect_response_to_include_trip_with_signups_attributes_at_path(path, num_users)
+      num_users.times do |i|
+        expect(body).to have_json_path("#{path}/#{i}/name")
+      end
+    end
+
+    def expect_reponse_to_include_correct_trip_factory_content(creator)
+      expect(parsed_body["trip"]["creator"]["name"]).to eq creator.name
+      expect(parsed_body["trip"]["destination_address"])
+        .to eq attributes_for(:trip)[:destination_address].to_s
+      expect(parsed_body["trip"]["destination_latitude"])
+        .to eq attributes_for(:trip)[:destination_latitude].to_s
+      expect(parsed_body["trip"]["destination_longitude"])
+        .to eq attributes_for(:trip)[:destination_longitude].to_s
+      expect(parsed_body["trip"]["signed_up_users"][0]["name"])
+        .to eq creator.name
     end
 
     def expect_body_to_include_car_attributes_at_path(path)

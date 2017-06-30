@@ -3,7 +3,11 @@ class Api::V1::TripsController < Api::V1::ApiController
     invite_code = InviteCodeGenerator.perform
     trip_params_with_code = trip_params.merge(invite_code: invite_code)
     trip = Trip.create!(trip_params_with_code)
-    render json: trip, serializer: TripSerializer, status: :created
+    Signup.create!(trip: trip, user: current_user)
+    render json: trip,
+           except: [:invite_code, :signups, :users],
+           serializer: TripSerializer,
+           status: :created
   end
 
   def index
