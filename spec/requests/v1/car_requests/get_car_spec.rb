@@ -22,9 +22,9 @@ describe "Car Requests" do
           expect(body).to have_json_path("car")
           expect(body).to have_json_path("car/id")
 
-          expect(parsed_body["car"]["max_seats"]).to eq(1)
-          expect(parsed_body["car"]["name"]).to include("Car ")
-          expect(parsed_body["car"]["status"]).to eq("not_started")
+          expect(json_value_at_path("car/max_seats")).to eq(1)
+          expect(json_value_at_path("car/name")).to include("Car ")
+          expect(json_value_at_path("car/status")).to eq("not_started")
 
           expect(body).to have_json_path("car/trip")
           expect(body).to have_json_path("car/trip/code")
@@ -36,8 +36,8 @@ describe "Car Requests" do
           expect(body).to have_json_path("car/trip/id")
           expect(body).to have_json_path("car/trip/name")
 
-          expect(parsed_body["car"]["locations"]).to be_a(Array)
-          expect(parsed_body["car"]["passengers"]).to be_a(Array)
+          expect(json_value_at_path("car/locations")).to be_a(Array)
+          expect(json_value_at_path("car/passengers")).to be_a(Array)
 
           expect(body).to have_json_path("car/passengers/0/id")
           expect(body).to have_json_path("car/passengers/0/name")

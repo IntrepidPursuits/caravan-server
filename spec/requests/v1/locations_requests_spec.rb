@@ -22,14 +22,14 @@ describe "Location Request" do
           expect_body_to_include_trip_locations_attributes_at_path("trip_locations")
           expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/0")
 
-          expect(parsed_body["trip_locations"]["trip_id"]).to eq(car.trip.id)
-          expect(parsed_body["trip_locations"]["last_locations"][0]["car_id"])
+          expect(json_value_at_path("trip_locations/trip_id")).to eq(car.trip.id)
+          expect(json_value_at_path("trip_locations/last_locations/0/car_id"))
             .to eq(car.id)
-          expect(parsed_body["trip_locations"]["last_locations"][0]["car_name"])
+          expect(json_value_at_path("trip_locations/last_locations/0/car_name"))
             .to eq(car.name)
-          expect(parsed_body["trip_locations"]["last_locations"][0]["latitude"])
+          expect(json_value_at_path("trip_locations/last_locations/0/latitude"))
             .to eq(attributes_for(:location)[:latitude].to_s)
-          expect(parsed_body["trip_locations"]["last_locations"][0]["longitude"])
+          expect(json_value_at_path("trip_locations/last_locations/0/longitude"))
             .to eq(attributes_for(:location)[:longitude].to_s)
         end
       end
@@ -182,7 +182,7 @@ describe "Location Request" do
           expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/0")
           expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/1")
 
-          expect(parsed_body["trip_locations"]["trip_id"]).to eq trip.id
+          expect(json_value_at_path("trip_locations/trip_id")).to eq trip.id
           expect_body_to_include_locations_content(car1, car1_last_location, 0)
           expect_body_to_include_locations_content(car2, car2_last_location, 1)
         end
@@ -200,7 +200,7 @@ describe "Location Request" do
 
           expect(response).to have_http_status :ok
           expect_body_to_include_locations_content(car1, location, 0)
-          expect(parsed_body["trip_locations"]["last_locations"].length).to eq 1
+          expect(json_value_at_path("trip_locations/last_locations").length).to eq 1
         end
       end
 

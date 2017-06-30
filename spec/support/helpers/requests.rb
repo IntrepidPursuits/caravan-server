@@ -4,6 +4,10 @@ module Helpers
       response.body
     end
 
+    def json_value_at_path(path = "")
+      parse_json(body, path)
+    end
+
     def parsed_body
       JSON.parse(body)
     end
