@@ -19,7 +19,7 @@ describe "Trip Request" do
           new_trip_id = json_value_at_path("trip/id")
 
           expect(response).to have_http_status :created
-          expect_response_to_include_basic_trip_attributes_at_path("trip")
+          expect_response_to_include_complete_trip_attributes_at_path("trip")
           expect_reponse_to_include_correct_trip_factory_content(current_user)
           expect(Trip.find(new_trip_id)).to be
           expect(Signup.find_by(user: current_user, trip_id: new_trip_id)).to be
@@ -112,7 +112,7 @@ describe "Trip Request" do
           )
 
           expect(response).to have_http_status :ok
-          expect_response_to_include_basic_trip_attributes_at_path("trip")
+          expect_response_to_include_complete_trip_attributes_at_path("trip")
           expect_reponse_to_include_correct_trip_factory_content(current_user)
           expect_response_to_include_trip_with_cars_attributes_at_path(
             "trip/cars", trip.cars.length)
@@ -129,7 +129,8 @@ describe "Trip Request" do
           )
 
           expect(response).to have_http_status :not_found
-          expect(parsed_body["errors"]).to include "Couldn't find Trip with 'id'=fake_trip"
+          expect(parsed_body["errors"])
+            .to include "Couldn't find Trip with 'id'=fake_trip"
         end
       end
     end
@@ -237,7 +238,7 @@ describe "Trip Request" do
             headers: authorization_headers(current_user)
           )
 
-          expect(response).to have_http_status :forbidden
+          expect_user_forbidden_response
         end
       end
 

@@ -112,7 +112,7 @@ describe "Car Requests" do
               headers: authorization_headers(current_user)
             )
 
-            expect(response).to have_http_status :forbidden
+            expect_user_forbidden_response
           end
         end
 

@@ -96,9 +96,7 @@ describe "Location Request" do
             headers: authorization_headers(current_user)
           )
 
-          expect(response).to have_http_status(:forbidden)
-          expect(parsed_body["errors"])
-            .to include "User is not authorized to perform this action"
+          expect_user_forbidden_response
         end
       end
 
@@ -115,9 +113,7 @@ describe "Location Request" do
             headers: authorization_headers(current_user)
           )
 
-          expect(response).to have_http_status(:forbidden)
-          expect(parsed_body["errors"])
-            .to include "User is not authorized to perform this action"
+          expect_user_forbidden_response
         end
       end
     end

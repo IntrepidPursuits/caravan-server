@@ -40,7 +40,6 @@ module Helpers
 
     def expect_response_to_include_basic_trip_attributes_at_path(path)
       expect(body).to have_json_path("#{path}")
-      expect(body).to have_json_path("#{path}/cars")
       expect(body).to have_json_path("#{path}/code")
       expect(body).to have_json_path("#{path}/creator")
       expect(body).to have_json_path("#{path}/creator/name")
@@ -49,6 +48,11 @@ module Helpers
       expect(body).to have_json_path("#{path}/destination_latitude")
       expect(body).to have_json_path("#{path}/destination_longitude")
       expect(body).to have_json_path("#{path}/name")
+    end
+
+    def expect_response_to_include_complete_trip_attributes_at_path(path)
+      expect_response_to_include_basic_trip_attributes_at_path(path)
+      expect(body).to have_json_path("#{path}/cars")
       expect(body).to have_json_path("#{path}/signed_up_users")
       expect(body).to have_json_path("#{path}/signed_up_users/0/name")
     end
@@ -87,15 +91,7 @@ module Helpers
       expect(body).to have_json_path("#{path}/name")
       expect(body).to have_json_path("#{path}/passengers")
       expect(body).to have_json_path("#{path}/status")
-      expect(body).to have_json_path("#{path}/trip")
-      expect(body).to have_json_path("#{path}/trip/code")
-      expect(body).to have_json_path("#{path}/trip/creator")
-      expect(body).to have_json_path("#{path}/trip/departing_on")
-      expect(body).to have_json_path("#{path}/trip/destination_address")
-      expect(body).to have_json_path("#{path}/trip/destination_latitude")
-      expect(body).to have_json_path("#{path}/trip/destination_longitude")
-      expect(body).to have_json_path("#{path}/trip/id")
-      expect(body).to have_json_path("#{path}/trip/name")
+      expect_response_to_include_basic_trip_attributes_at_path("#{path}/trip")
     end
 
     def expect_body_to_include_passenger_attributes
@@ -112,6 +108,12 @@ module Helpers
       expect(body).to have_json_path("signup/trip_id")
       expect(parsed_body["signup"]["user_id"]).to eq user.id
       expect(parsed_body["signup"]["trip_id"]).to eq trip.id
+    end
+
+    def expect_user_forbidden_response
+      expect(response).to have_http_status :forbidden
+      expect(parsed_body["errors"])
+        .to include "User is not authorized to perform this action"
     end
   end
 end
