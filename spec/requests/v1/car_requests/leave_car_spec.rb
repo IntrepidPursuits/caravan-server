@@ -55,11 +55,11 @@ describe "LeaveCar Request" do
 
           expect(response).to have_http_status :no_content
           expect{ Car.find(car.id) }.to raise_error(ActiveRecord::RecordNotFound)
-          updated_owner_signup = Signup.find(signup.id)
-          # updated_other_signup = Signup.find(signup_2.id)
+          signup.reload
+          # signup_2.reload
 
-          expect(updated_owner_signup.car).to eq nil
-          # expect(updated_other_signup.car).to eq nil
+          expect(signup.car).to eq nil
+          # expect(signup_2.car).to eq nil
         end
       end
 
@@ -101,7 +101,7 @@ describe "LeaveCar Request" do
           )
 
           expect(response).to have_http_status :not_found
-          expect(parsed_body["errors"]).to eq "Couldn't find Car with 'id'=gobbledegook"
+          expect(errors).to eq "Couldn't find Car with 'id'=gobbledegook"
         end
       end
 
@@ -116,7 +116,7 @@ describe "LeaveCar Request" do
           )
 
           expect(response).to have_http_status :unprocessable_entity
-          expect(parsed_body["errors"]).to eq(
+          expect(errors).to eq(
             "Unable to leave car; it doesn't exist or user is not signed up for it.")
         end
       end

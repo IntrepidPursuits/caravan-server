@@ -42,7 +42,7 @@ describe "Signup Request" do
 
           expect(response).to have_http_status :unprocessable_entity
           expect(body).to have_json_path("errors")
-          expect(parsed_body["errors"]).to include ("Invalid invite code.")
+          expect(errors).to include ("Invalid invite code.")
         end
       end
 
@@ -61,7 +61,7 @@ describe "Signup Request" do
 
           expect(response).to have_http_status :bad_request
           expect(body).to have_json_path("errors")
-          expect(parsed_body["errors"]).to include ("Invite code is missing.")
+          expect(errors).to include ("Invite code is missing.")
         end
       end
 
@@ -81,9 +81,9 @@ describe "Signup Request" do
 
           expect(response).to have_http_status :unprocessable_entity
           expect(body).to have_json_path("errors")
-          expect(parsed_body["errors"]).to include ("Validation failed")
-          expect(parsed_body["errors"]).to include ("Trip must exist")
-          expect(parsed_body["errors"]).to include ("Trip can't be blank")
+          expect(errors).to include ("Validation failed")
+          expect(errors).to include ("Trip must exist")
+          expect(errors).to include ("Trip can't be blank")
         end
       end
     end

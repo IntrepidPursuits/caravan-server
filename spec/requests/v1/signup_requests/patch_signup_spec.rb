@@ -89,7 +89,7 @@ describe "Signup Request" do
             )
 
             expect(response).to have_http_status :not_found
-            expect(parsed_body["errors"]).to eq "Couldn't find Signup with 'id'=invalid signup"
+            expect(errors).to eq "Couldn't find Signup with 'id'=invalid signup"
           end
         end
 
@@ -110,7 +110,7 @@ describe "Signup Request" do
             )
 
             expect(response).to have_http_status :not_found
-            expect(parsed_body["errors"]).to eq "Couldn't find Car with 'id'=something invalid here"
+            expect(errors).to eq "Couldn't find Car with 'id'=something invalid here"
           end
         end
 
@@ -132,7 +132,7 @@ describe "Signup Request" do
             )
 
             expect(response).to have_http_status :unprocessable_entity
-            expect(parsed_body["errors"]).to eq "Cannot join a car that doesn't exist or that belongs to a different trip"
+            expect(errors).to eq "Cannot join a car that doesn't exist or that belongs to a different trip"
           end
         end
 

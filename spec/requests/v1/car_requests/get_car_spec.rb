@@ -58,7 +58,7 @@ describe "Car Requests" do
           )
 
           expect(response).to have_http_status :not_found
-          expect(parsed_body["errors"]).to include "Couldn't find Car with 'id'=1"
+          expect(errors).to include "Couldn't find Car with 'id'=1"
         end
       end
     end

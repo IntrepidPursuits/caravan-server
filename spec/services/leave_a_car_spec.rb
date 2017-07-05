@@ -23,8 +23,8 @@ describe "LeaveACar" do
             LeaveACar.perform(car, current_user)
 
             expect(Signup.where(car_id: car.id)).to eq []
-            updated_signup = Signup.find(signup.id)
-            expect(updated_signup.car).to eq nil
+            signup.reload
+            expect(signup.car).to eq nil
           end
         end
 
@@ -35,7 +35,8 @@ describe "LeaveACar" do
 
             LeaveACar.perform(car, current_user)
 
-            expect(Signup.find(signup.id).car).to eq nil
+            signup.reload
+            expect(signup.car).to eq nil
           end
 
           it "leaves the car intact" do
@@ -89,11 +90,12 @@ describe "LeaveACar" do
           expect{ LeaveACar.perform(car, nil) }
             .to raise_error(ArgumentError, "expected a user")
 
-          updated_car = Car.find(car.id)
-          expect(updated_car).to eq car
+          car.reload
+          expect(car).to be
 
-          updated_signup = Signup.find(signup.id)
-          expect(updated_signup).to eq signup
+          signup.reload
+          expect(signup).to be
+          expect(signup.car).to eq car
         end
       end
 

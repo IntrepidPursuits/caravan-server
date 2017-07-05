@@ -56,7 +56,7 @@ describe "Auth requests" do
         )
 
         expect(response).to have_http_status 422
-        expect(parsed_body["errors"]).to eq("Unauthorized Client ID")
+        expect(errors).to eq("Unauthorized Client ID")
       end
     end
   end

@@ -115,7 +115,7 @@ describe "Car Status Requests" do
           )
 
           expect(response).to have_http_status :bad_request
-          expect(parsed_body["errors"]).to eq "'boogityboogityboo' is not a valid status"
+          expect(errors).to eq "'boogityboogityboo' is not a valid status"
 
           patch(
             api_v1_car_status_url(car),
@@ -124,7 +124,7 @@ describe "Car Status Requests" do
           )
 
           expect(response).to have_http_status :bad_request
-          expect(parsed_body["errors"]).to eq "'42' is not a valid status"
+          expect(errors).to eq "'42' is not a valid status"
         end
       end
     end

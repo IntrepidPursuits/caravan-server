@@ -113,7 +113,7 @@ module Helpers
 
     def expect_user_forbidden_response
       expect(response).to have_http_status :forbidden
-      expect(parsed_body["errors"])
+      expect(errors)
         .to include "User is not authorized to perform this action"
     end
   end

@@ -54,9 +54,9 @@ describe "Location Request" do
 
           expect(response).to have_http_status :unprocessable_entity
           expect(body).to have_json_path("errors")
-          expect(parsed_body["errors"]).to include ("Validation failed")
-          expect(parsed_body["errors"]).to include ("Latitude can't be blank")
-          expect(parsed_body["errors"]).to include ("Longitude can't be blank")
+          expect(errors).to include ("Validation failed")
+          expect(errors).to include ("Latitude can't be blank")
+          expect(errors).to include ("Longitude can't be blank")
         end
       end
 
@@ -79,7 +79,7 @@ describe "Location Request" do
 
           expect(response).to have_http_status :unprocessable_entity
           expect(body).to have_json_path("errors")
-          expect(parsed_body["errors"])
+          expect(errors)
             .to include ("Cannot update car's location if it has a status of 'Not Started'")
         end
       end
@@ -207,7 +207,7 @@ describe "Location Request" do
           )
 
           expect(response).to have_http_status :not_found
-          expect(parsed_body["errors"]).to include "Couldn't find Trip with 'id'=fake_trip"
+          expect(errors).to include "Couldn't find Trip with 'id'=fake_trip"
         end
       end
     end
