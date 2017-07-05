@@ -20,8 +20,7 @@ describe "Car Status Requests" do
 
             expect(response).to have_http_status :ok
             expect(body).to have_json_path("car")
-            expect(body).to have_json_path("car/status")
-            expect(parsed_body["car"]["status"]).to eq("in_transit")
+            expect(json_value_at_path("car/status")).to eq("in_transit")
 
             patch(
               api_v1_car_status_url(car),
@@ -31,8 +30,7 @@ describe "Car Status Requests" do
 
             expect(response).to have_http_status :ok
             expect(body).to have_json_path("car")
-            expect(body).to have_json_path("car/status")
-            expect(parsed_body["car"]["status"]).to eq("arrived")
+            expect(json_value_at_path("car/status")).to eq("arrived")
           end
         end
 
@@ -49,8 +47,7 @@ describe "Car Status Requests" do
 
             expect(response).to have_http_status :ok
             expect(body).to have_json_path("car")
-            expect(body).to have_json_path("car/status")
-            expect(parsed_body["car"]["status"]).to eq("in_transit")
+            expect(json_value_at_path("car/status")).to eq("in_transit")
 
             patch(
               api_v1_car_status_url(car),
@@ -60,8 +57,7 @@ describe "Car Status Requests" do
 
             expect(response).to have_http_status :ok
             expect(body).to have_json_path("car")
-            expect(body).to have_json_path("car/status")
-            expect(parsed_body["car"]["status"]).to eq("arrived")
+            expect(json_value_at_path("car/status")).to eq("arrived")
           end
         end
 

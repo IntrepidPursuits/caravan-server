@@ -16,8 +16,8 @@ describe "Trip Request" do
             headers: authorization_headers(current_user)
           )
 
-          new_trip_id = parsed_body["trip"]["id"]
-          
+          new_trip_id = json_value_at_path("trip/id")
+
           expect(response).to have_http_status :created
           expect_response_to_include_basic_trip_attributes_at_path("trip")
           expect_reponse_to_include_correct_trip_factory_content(current_user)

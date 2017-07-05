@@ -38,9 +38,9 @@ describe "Auth requests" do
           headers: accept_headers
         )
 
-        encoded_token = parsed_body["auth"]["access_token"]
+        encoded_token = json_value_at_path("auth/access_token")
         decoded_token = HandleJwt.decode(encoded_token)
-        expect(decoded_token["sub"]).to eq(parsed_body["auth"]["user"]["id"])
+        expect(decoded_token["sub"]).to eq(json_value_at_path("auth/user/id"))
       end
     end
 
