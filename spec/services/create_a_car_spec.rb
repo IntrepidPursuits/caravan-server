@@ -43,8 +43,8 @@ describe "CreateACar" do
         trip_id: trip.id
       }
 
-      expect { CreateACar.perform(car_params, current_user) }.to raise_error(MissingSignup,
-        "You must be signed up for a trip in order to create a car in that trip")
+      expect { CreateACar.perform(car_params, current_user) }
+        .to raise_error(MissingSignup, "You are not signed up for this trip")
     end
   end
 
@@ -75,7 +75,9 @@ describe "CreateACar" do
         name: "My Car",
         trip_id: trip.id
       }
-      expect { CreateACar.perform(car_params, nil) }.to raise_error(ActiveRecord::RecordInvalid,
+
+      expect { CreateACar.perform(car_params, nil) }
+        .to raise_error(ActiveRecord::RecordInvalid,
         "Validation failed: Owner must exist, Owner can't be blank")
     end
   end

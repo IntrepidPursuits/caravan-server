@@ -21,7 +21,9 @@ class Api::V1::ApiController < ApplicationController
   [MissingInviteCodeError,
     ArgumentError,
     ActionController::ParameterMissing,
-    CarOwnerError].each do |error|
+    CarOwnerError,
+    MissingSignup
+  ].each do |error|
     rescue_from error do |exception|
       render json: { errors: exception.message }, status: :bad_request
     end
