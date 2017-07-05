@@ -1,7 +1,7 @@
 class CarSerializer < BaseSerializer
   attributes :max_seats,
     :name,
-    :owner,
+    :owner_id,
     :status,
     :passengers,
     :trip

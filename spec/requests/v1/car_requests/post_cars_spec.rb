@@ -34,6 +34,8 @@ describe "Car Requests" do
             expect(car["name"]).to include("Car ")
             expect(car["status"]).to eq("not_started")
 
+            expect(json_value_at_path("car/owner_id")).to eq current_user.id
+
             trip = @signup.trip
             expect(car["trip"]["id"]).to eq trip.id
             expect(car["trip"]["name"]).to eq trip.name

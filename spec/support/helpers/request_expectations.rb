@@ -89,6 +89,7 @@ module Helpers
       expect(body).to have_json_path("#{path}/locations")
       expect(body).to have_json_path("#{path}/max_seats")
       expect(body).to have_json_path("#{path}/name")
+      expect(body).to have_json_path("#{path}/owner_id")
       expect(body).to have_json_path("#{path}/passengers")
       expect(body).to have_json_path("#{path}/status")
       expect_response_to_include_basic_trip_attributes_at_path("#{path}/trip")
