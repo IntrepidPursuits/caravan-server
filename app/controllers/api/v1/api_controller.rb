@@ -8,6 +8,7 @@ class Api::V1::ApiController < ApplicationController
   end
 
   [ActiveRecord::RecordInvalid,
+    ActionController::UrlGenerationError,
     CarNotStartedError,
     InvalidCarCreation,
     InvalidCarJoin,

@@ -36,7 +36,7 @@ describe "LeaveCar Request" do
         end
       end
 
-      context "user is the car's owner" do
+      context "user is the car's owner, and is signed up for the trip & car" do
         it "deletes the car and updates all relevant signups" do
           # add commented lines when more than one user can be in a car
           car = create(:car, owner: current_user)
@@ -63,8 +63,21 @@ describe "LeaveCar Request" do
         end
       end
 
-      context "user's trip signup does not include a car_id" do
-        context "user is signed up for the trip, just not the car" do
+      context "invalid signup" do
+        context "user is not signed up for the trip or the car" do
+          it "returns 403 Forbidden" do
+            car = create(:car)
+
+            patch(
+            api_v1_car_leave_url(car),
+            headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :forbidden
+          end
+        end
+
+        context "user is signed up for the trip, but not the car" do
           it "returns 403 Forbidden" do
             trip = create(:trip)
             car = create(:car, trip: trip)
@@ -79,16 +92,20 @@ describe "LeaveCar Request" do
           end
         end
 
-        context "user is not signed up for the trip" do
-          it "returns 403 Forbidden" do
-            car = create(:car)
+        context "user is signed up for the car, but not the trip" do
+          it "returns 422 Unprocessable Entity" do
+            trip = create(:trip)
+            car = create(:car, trip: trip)
+            signup = create(:signup, car: car, user: current_user)
 
             patch(
               api_v1_car_leave_url(car),
               headers: authorization_headers(current_user)
             )
 
-            expect(response).to have_http_status :forbidden
+            expect(response).to have_http_status :unprocessable_entity
+            expect(errors).to eq(
+              "Unable to leave car; it doesn't exist or user is not signed up properly.")
           end
         end
       end
@@ -102,6 +119,19 @@ describe "LeaveCar Request" do
 
           expect(response).to have_http_status :not_found
           expect(errors).to eq "Couldn't find Car with 'id'=gobbledegook"
+        end
+      end
+
+      context "missing a car_id" do
+        it "raises URL Generation Error" do
+          expect{
+            patch(
+              api_v1_car_leave_url,
+              headers: authorization_headers(current_user)
+            )
+          }.to raise_error ActionController::UrlGenerationError
+
+          expect(response).to_not be
         end
       end
 

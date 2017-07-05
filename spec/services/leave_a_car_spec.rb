@@ -52,12 +52,62 @@ describe "LeaveACar" do
         end
       end
 
-      context "invalid car" do
+      context "user is signed up for the car but not the trip" do
+        it "raises InvalidCarLeave & leaves the car & any signups intact" do
+          car = create(:car)
+          signup = create(:signup, car: car, user: current_user)
+          users = car.users
+
+          expect{ LeaveACar.perform(car, current_user) }
+            .to raise_invalid_car_leave
+
+          car.reload
+          expect(car).to be
+          expect(car.users).to eq(users)
+        end
+      end
+
+      context "user is signed up for the trip but not the car" do
+        it "raises InvalidCarLeave & leaves the car & any signups intact" do
+          car = create(:car)
+          signup = create(:signup, trip: car.trip, user: current_user)
+          users = car.users
+
+          expect{ LeaveACar.perform(car, current_user) }
+            .to raise_invalid_car_leave
+
+          car.reload
+          expect(car).to be
+          expect(car.users).to eq(users)
+        end
+      end
+
+      context "user is not signed up for the car or the trip" do
+        it "raises InvalidCarLeave & leaves the car & any signups intact" do
+          car = create(:car)
+          users = car.users
+
+          expect{ LeaveACar.perform(car, current_user) }
+            .to raise_invalid_car_leave
+
+          car.reload
+          expect(car).to be
+          expect(car.users).to eq(users)
+        end
+      end
+
+      context "without a valid car" do
         context "nil car" do
           it "raises InvalidCarLeave" do
-            expect{
-              LeaveACar.perform(nil, current_user)
-            }.to raise_invalid_car_leave
+            expect{ LeaveACar.perform(nil, current_user) }
+              .to raise_invalid_car_leave
+          end
+        end
+
+        context "invalid car" do
+          it "raises InvalidCarLeave" do
+            expect{ LeaveACar.perform("bubbagumpshrimp", current_user) }
+              .to raise_invalid_car_leave
           end
         end
 
@@ -69,25 +119,32 @@ describe "LeaveACar" do
           end
         end
       end
-
-      context "user is not signed up for the car" do
-        it "raises InvalidCarLeave" do
-          car = create(:car)
-
-          expect{
-            LeaveACar.perform(car, current_user)
-          }.to raise_invalid_car_leave
-        end
-      end
     end
 
-    context "no user" do
+    context "without a valid user" do
       context "nil user" do
         it "raises InvalidCarLeave & leaves the car & signup intact" do
           car = create(:car)
           signup = create(:signup, trip: car.trip, car: car, user: car.owner)
 
           expect{ LeaveACar.perform(car, nil) }
+            .to raise_error(ArgumentError, "expected a user")
+
+          car.reload
+          expect(car).to be
+
+          signup.reload
+          expect(signup).to be
+          expect(signup.car).to eq car
+        end
+      end
+
+      context "invalid user" do
+        it "raises InvalidCarLeave & leaves the car & signup intact" do
+          car = create(:car)
+          signup = create(:signup, trip: car.trip, car: car, user: car.owner)
+
+          expect{ LeaveACar.perform(car, "pookie") }
             .to raise_error(ArgumentError, "expected a user")
 
           car.reload
