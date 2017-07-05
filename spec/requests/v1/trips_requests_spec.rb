@@ -209,7 +209,11 @@ describe "Trip Request" do
         end
 
         it "does not show trips that the user has not signed up for" do
-          trip_2 = create(:trip, destination_address: "8 Harry Potter Rd")
+          trip_2 = create(
+            :trip,
+            destination_address: "8 Harry Potter Rd",
+            name: "Spelunking Trip"
+          )
 
           get(
             api_v1_user_trips_url(current_user),
@@ -225,7 +229,8 @@ describe "Trip Request" do
             expect(trips[index]["name"]).to_not eq trip_2.name
             expect(trips[index]["code"]).to_not eq trip_2.invite_code.code
             expect(trips[index]["departing_on"]).to_not eq trip_2.departing_on
-            expect(trips[index]["destination_address"]).to_not eq "8 Harry Potter Rd"
+            expect(trips[index]["destination_address"])
+              .to_not eq trip_2.destination_address
           end
         end
       end

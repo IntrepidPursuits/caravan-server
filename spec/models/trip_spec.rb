@@ -18,11 +18,6 @@ RSpec.describe Trip, type: :model do
     it { should validate_presence_of(:destination_longitude) }
     it { should validate_presence_of(:invite_code_id) }
     it { should validate_presence_of(:name) }
-    it do
-      user = create(:user)
-      create(:trip, creator: user)
-      should validate_uniqueness_of(:name)
-    end
   end
 
   describe "last_locations" do
@@ -51,7 +46,7 @@ RSpec.describe Trip, type: :model do
         expect(trip.valid_code?(invite_code.code)).to be true
       end
     end
-    
+
     context "invalid code" do
       it "returns false" do
         invite_code = create(:invite_code)
