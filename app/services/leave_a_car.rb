@@ -2,7 +2,8 @@ class LeaveACar
   def initialize(car, user)
     @car = car
     @user = user
-    @signup = Signup.find_by(trip: car.trip, car: car, user: user)
+    raise ArgumentError, "expected a user" unless @user.class == User
+    raise InvalidCarLeave unless @car.class == Car && @signup = signup
   end
 
   def self.perform(car, user)
@@ -20,5 +21,9 @@ class LeaveACar
       signup.update_attributes!(car: nil)
     end
     @car.destroy
+  end
+
+  def signup
+    Signup.find_by(trip: @car.trip, car: @car, user: @user)
   end
 end

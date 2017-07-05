@@ -44,47 +44,50 @@ describe "LeaveACar" do
 
             LeaveACar.perform(car, current_user)
 
-            expect(Car.find(car.id)).to eq car
+            car.reload
+            expect(car).to be
+            expect(car.users).to_not include(current_user)
           end
         end
       end
 
       context "invalid car" do
         context "nil car" do
-          it "raises NoMethodError" do
+          it "raises InvalidCarLeave" do
             expect{
               LeaveACar.perform(nil, current_user)
-            }.to raise_error(NoMethodError, "undefined method `trip' for nil:NilClass")
+            }.to raise_invalid_car_leave
           end
         end
 
         context "no car argument" do
           it "raises ArgumentError" do
             expect{ LeaveACar.perform(current_user) }
-              .to raise_error(ArgumentError, "wrong number of arguments (given 1, expected 2)")
+              .to raise_error(ArgumentError,
+                "wrong number of arguments (given 1, expected 2)")
           end
         end
       end
 
       context "user is not signed up for the car" do
-        it "raises NoMethodError" do
+        it "raises InvalidCarLeave" do
           car = create(:car)
 
           expect{
             LeaveACar.perform(car, current_user)
-          }.to raise_error(NoMethodError, "undefined method `update_attributes!' for nil:NilClass")
+          }.to raise_invalid_car_leave
         end
       end
     end
 
     context "no user" do
       context "nil user" do
-        it "raises NoMethodError & leaves the car & signup intact" do
+        it "raises InvalidCarLeave & leaves the car & signup intact" do
           car = create(:car)
           signup = create(:signup, trip: car.trip, car: car, user: car.owner)
 
           expect{ LeaveACar.perform(car, nil) }
-            .to raise_error(NoMethodError, "undefined method `update_attributes!' for nil:NilClass")
+            .to raise_error(ArgumentError, "expected a user")
 
           updated_car = Car.find(car.id)
           expect(updated_car).to eq car
@@ -105,5 +108,10 @@ describe "LeaveACar" do
         end
       end
     end
+  end
+
+  def raise_invalid_car_leave
+    raise_error(InvalidCarLeave,
+      "Unable to leave car; it doesn't exist or user is not signed up for it.")
   end
 end

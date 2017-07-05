@@ -53,6 +53,7 @@ describe "LeaveCar Request" do
             headers: authorization_headers(current_user)
           )
 
+          expect(response).to have_http_status :no_content
           expect{ Car.find(car.id) }.to raise_error(ActiveRecord::RecordNotFound)
           updated_owner_signup = Signup.find(signup.id)
           # updated_other_signup = Signup.find(signup_2.id)
@@ -89,6 +90,34 @@ describe "LeaveCar Request" do
 
             expect(response).to have_http_status :forbidden
           end
+        end
+      end
+
+      context "invalid car_id" do
+        it "returns 404 Not Found" do
+          patch(
+            api_v1_car_leave_url("gobbledegook"),
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status :not_found
+          expect(parsed_body["errors"]).to eq "Couldn't find Car with 'id'=gobbledegook"
+        end
+      end
+
+      context "user is signed up for the car, but it exists on a different trip" do
+        it "returns 422 Unprocessable Entity" do
+          car = create(:car)
+          signup = create(:signup, car: car, user: current_user)
+
+          patch(
+            api_v1_car_leave_url(car),
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status :unprocessable_entity
+          expect(parsed_body["errors"]).to eq(
+            "Unable to leave car; it doesn't exist or user is not signed up for it.")
         end
       end
     end
