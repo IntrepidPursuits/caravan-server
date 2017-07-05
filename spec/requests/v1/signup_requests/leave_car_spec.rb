@@ -23,7 +23,7 @@ describe "LeaveCar Request" do
           expect(updated_signup.car_id).to eq nil
         end
 
-        it "returns updated JSON for the car" do
+        it "returns 204 No Content" do
           car = create(:car)
           signup = create(:signup, trip: car.trip, car: car, user: current_user)
 
@@ -32,9 +32,7 @@ describe "LeaveCar Request" do
             headers: authorization_headers(current_user)
           )
 
-          expect(response).to have_http_status :ok
-          updated_car = Car.find(car.id)
-          expect_body_to_include_car_attributes_without_user(updated_car, updated_car.trip, current_user)
+          expect(response).to have_http_status :no_content
         end
       end
 
