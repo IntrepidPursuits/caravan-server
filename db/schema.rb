@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170616140329) do
+ActiveRecord::Schema.define(version: 20170705153335) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,7 +76,6 @@ ActiveRecord::Schema.define(version: 20170616140329) do
     t.datetime "updated_at", null: false
     t.uuid "invite_code_id", null: false
     t.index ["creator_id"], name: "index_trips_on_creator_id"
-    t.index ["name"], name: "index_trips_on_name", unique: true
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
