@@ -36,6 +36,32 @@ describe "LeaveCar Request" do
         end
       end
 
+      context "user is the car's owner" do
+        it "deletes the car and updates all relevant signups" do
+          # add commented lines when more than one user can be in a car
+          car = create(:car, owner: current_user)
+          trip = car.trip
+          signup = create(:signup, trip: trip, car: car, user: current_user)
+          # signup_2 = create(:signup, trip: trip, car: car)
+
+          expect(car.owner).to eq(current_user)
+          expect(car.users).to include(current_user)
+          # expect(car.users.length).to eq 2
+
+          patch(
+            api_v1_signup_leave_url(signup),
+            headers: authorization_headers(current_user)
+          )
+
+          expect{ Car.find(car.id) }.to raise_error(ActiveRecord::RecordNotFound)
+          updated_owner_signup = Signup.find(signup.id)
+          # updated_other_signup = Signup.find(signup_2.id)
+
+          expect(updated_owner_signup.car).to eq nil
+          # expect(updated_other_signup.car).to eq nil
+        end
+      end
+
       context "signup does not include a car_id" do
         context "user is signed up for the trip, just not the car" do
           it "returns 400 Bad Request" do

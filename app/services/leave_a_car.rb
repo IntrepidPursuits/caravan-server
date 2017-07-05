@@ -10,14 +10,15 @@ class LeaveACar
   end
 
   def perform
-    return destroy_dependent_signups if @user == @car.owner
+    return destroy_car if @user == @car.owner
     @signup.update_attributes!(car: nil)
   end
 
-  def destroy_dependent_signups
+  def destroy_car
     signups = Signup.where(car: @car)
     signups.each do |signup|
       signup.update_attributes!(car: nil)
     end
+    @car.destroy
   end
 end

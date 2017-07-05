@@ -35,7 +35,7 @@ describe "CreateACar" do
     let!(:trip) { create(:trip) }
     let!(:current_user) { create(:user) }
 
-    it "raises RecordInvalid" do
+    it "raises MissingSignup" do
       expect(Signup).to receive(:find_by).and_return(nil)
       car_params = {
         name: "My Car",
