@@ -114,6 +114,6 @@ describe "LeaveACar" do
 
   def raise_invalid_car_leave
     raise_error(InvalidCarLeave,
-      "Unable to leave car; it doesn't exist or user is not signed up for it.")
+      "Unable to leave car; it doesn't exist or user is not signed up properly.")
   end
 end

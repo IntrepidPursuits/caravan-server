@@ -117,7 +117,7 @@ describe "LeaveCar Request" do
 
           expect(response).to have_http_status :unprocessable_entity
           expect(errors).to eq(
-            "Unable to leave car; it doesn't exist or user is not signed up for it.")
+            "Unable to leave car; it doesn't exist or user is not signed up properly.")
         end
       end
     end
