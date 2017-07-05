@@ -21,6 +21,7 @@ describe "Location Request" do
           expect(response).to have_http_status :created
           expect_body_to_include_trip_locations_attributes_at_path("trip_locations")
           expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/0")
+          expect(Location.find(parsed_body["trip_locations"]["last_locations"][0]["id"])).to be
 
           expect(json_value_at_path("trip_locations/trip_id")).to eq(car.trip.id)
           expect(json_value_at_path("trip_locations/last_locations/0/car_id"))
@@ -95,9 +96,7 @@ describe "Location Request" do
             headers: authorization_headers(current_user)
           )
 
-          expect(response).to have_http_status(:forbidden)
-          expect(parsed_body["errors"])
-            .to include "User is not authorized to perform this action"
+          expect_user_forbidden_response
         end
       end
 
@@ -114,9 +113,7 @@ describe "Location Request" do
             headers: authorization_headers(current_user)
           )
 
-          expect(response).to have_http_status(:forbidden)
-          expect(parsed_body["errors"])
-            .to include "User is not authorized to perform this action"
+          expect_user_forbidden_response
         end
       end
     end
@@ -173,7 +170,6 @@ describe "Location Request" do
 
           get(
             api_v1_trip_locations_url(trip),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
@@ -194,7 +190,6 @@ describe "Location Request" do
 
           get(
             api_v1_trip_locations_url(trip),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
@@ -208,7 +203,6 @@ describe "Location Request" do
         it "returns JSON with error" do
           get(
             api_v1_trip_locations_url("fake_trip"),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
@@ -225,7 +219,6 @@ describe "Location Request" do
 
           get(
             api_v1_trip_locations_url(trip),
-            params: {},
             headers: accept_headers
           )
 
@@ -239,7 +232,6 @@ describe "Location Request" do
 
           get(
             api_v1_trip_locations_url(trip),
-            params: {},
             headers: invalid_authorization_headers
           )
 

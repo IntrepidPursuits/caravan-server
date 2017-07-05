@@ -18,9 +18,12 @@ describe "Car Status Requests" do
               headers: authorization_headers(current_user)
             )
 
+            car.reload
+
             expect(response).to have_http_status :ok
-            expect(body).to have_json_path("car")
-            expect(json_value_at_path("car/status")).to eq("in_transit")
+            expect_body_to_include_car_attributes(car, car.trip, current_user)
+            expect_body_to_include_car_attributes_at_path("car")
+            expect(parsed_body["car"]["status"]).to eq("in_transit")
 
             patch(
               api_v1_car_status_url(car),
@@ -28,9 +31,12 @@ describe "Car Status Requests" do
               headers: authorization_headers(current_user)
             )
 
+            car.reload
+
             expect(response).to have_http_status :ok
-            expect(body).to have_json_path("car")
-            expect(json_value_at_path("car/status")).to eq("arrived")
+            expect_body_to_include_car_attributes(car, car.trip, current_user)
+            expect_body_to_include_car_attributes_at_path("car")
+            expect(parsed_body["car"]["status"]).to eq("arrived")
           end
         end
 
@@ -45,9 +51,12 @@ describe "Car Status Requests" do
               headers: authorization_headers(current_user)
             )
 
+            car.reload
+
             expect(response).to have_http_status :ok
-            expect(body).to have_json_path("car")
-            expect(json_value_at_path("car/status")).to eq("in_transit")
+            expect_body_to_include_car_attributes(car, car.trip, current_user)
+            expect_body_to_include_car_attributes_at_path("car")
+            expect(parsed_body["car"]["status"]).to eq("in_transit")
 
             patch(
               api_v1_car_status_url(car),
@@ -55,9 +64,12 @@ describe "Car Status Requests" do
               headers: authorization_headers(current_user)
             )
 
+            car.reload
+
             expect(response).to have_http_status :ok
-            expect(body).to have_json_path("car")
-            expect(json_value_at_path("car/status")).to eq("arrived")
+            expect_body_to_include_car_attributes(car, car.trip, current_user)
+            expect_body_to_include_car_attributes_at_path("car")
+            expect(parsed_body["car"]["status"]).to eq("arrived")
           end
         end
 
@@ -71,9 +83,7 @@ describe "Car Status Requests" do
               headers: authorization_headers(current_user)
             )
 
-            expect(response).to have_http_status :forbidden
-            expect(parsed_body["errors"])
-              .to include "User is not authorized to perform this action"
+            expect_user_forbidden_response
           end
         end
 
@@ -88,9 +98,7 @@ describe "Car Status Requests" do
               headers: authorization_headers(current_user)
             )
 
-            expect(response).to have_http_status :forbidden
-            expect(parsed_body["errors"])
-              .to include "User is not authorized to perform this action"
+            expect_user_forbidden_response
           end
         end
       end

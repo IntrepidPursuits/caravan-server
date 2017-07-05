@@ -21,9 +21,8 @@ describe "Signup Request" do
           )
 
           expect(response).to have_http_status :created
-          expect(body).to have_json_path("signup")
-          expect(body).to have_json_path("signup/user_id")
-          expect(body).to have_json_path("signup/trip_id")
+          expect(Signup.find_by(user: current_user, trip: trip)).to be
+          expect_body_to_include_signup_attributes_and_content(current_user, trip)
         end
       end
 

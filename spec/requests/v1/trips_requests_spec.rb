@@ -19,7 +19,7 @@ describe "Trip Request" do
           new_trip_id = json_value_at_path("trip/id")
 
           expect(response).to have_http_status :created
-          expect_response_to_include_basic_trip_attributes_at_path("trip")
+          expect_response_to_include_complete_trip_attributes_at_path("trip")
           expect_reponse_to_include_correct_trip_factory_content(current_user)
           expect(Trip.find(new_trip_id)).to be
           expect(Signup.find_by(user: current_user, trip_id: new_trip_id)).to be
@@ -108,12 +108,11 @@ describe "Trip Request" do
 
           get(
             api_v1_trip_url(trip),
-            params: {},
             headers: authorization_headers(user)
           )
 
           expect(response).to have_http_status :ok
-          expect_response_to_include_basic_trip_attributes_at_path("trip")
+          expect_response_to_include_complete_trip_attributes_at_path("trip")
           expect_reponse_to_include_correct_trip_factory_content(current_user)
           expect_response_to_include_trip_with_cars_attributes_at_path(
             "trip/cars", trip.cars.length)
@@ -126,12 +125,12 @@ describe "Trip Request" do
         it "returns JSON with error" do
           get(
             api_v1_trip_url("fake_trip"),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
           expect(response).to have_http_status :not_found
-          expect(parsed_body["errors"]).to include "Couldn't find Trip with 'id'=fake_trip"
+          expect(parsed_body["errors"])
+            .to include "Couldn't find Trip with 'id'=fake_trip"
         end
       end
     end
@@ -143,7 +142,6 @@ describe "Trip Request" do
         it "returns 401 Unauthorized" do
           get(
             api_v1_trip_url(trip),
-            params: {},
             headers: accept_headers
           )
 
@@ -155,7 +153,6 @@ describe "Trip Request" do
         it "returns 401 Unauthorized" do
           get(
             api_v1_trip_url(trip),
-            params: {},
             headers: invalid_authorization_headers
           )
 
@@ -173,7 +170,6 @@ describe "Trip Request" do
         it "shows and empty array" do
           get(
             api_v1_user_trips_url(current_user),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
@@ -190,7 +186,6 @@ describe "Trip Request" do
         it "shows JSON for all the current user's trips" do
           get(
             api_v1_user_trips_url(current_user),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
@@ -217,7 +212,6 @@ describe "Trip Request" do
 
           get(
             api_v1_user_trips_url(current_user),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
@@ -241,11 +235,10 @@ describe "Trip Request" do
 
           get(
             api_v1_user_trips_url(new_user),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
-          expect(response).to have_http_status :forbidden
+          expect_user_forbidden_response
         end
       end
 
@@ -253,7 +246,6 @@ describe "Trip Request" do
         it "returns JSON with error" do
           get(
             api_v1_user_trips_url(user_id: "1"),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
@@ -270,7 +262,6 @@ describe "Trip Request" do
         it "returns 401 Unauthorized" do
           get(
             api_v1_user_trips_url(user),
-            params: {},
             headers: accept_headers
           )
 
@@ -280,10 +271,8 @@ describe "Trip Request" do
 
       context "invalid access token" do
         it "returns 401 Unauthorized" do
-
           get(
             api_v1_user_trips_url(user),
-            params: {},
             headers: invalid_authorization_headers
           )
 

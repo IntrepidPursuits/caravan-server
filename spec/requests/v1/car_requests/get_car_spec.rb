@@ -14,7 +14,6 @@ describe "Car Requests" do
 
           get(
             api_v1_car_url(car),
-            params: {},
             headers: authorization_headers(passenger)
           )
 
@@ -51,13 +50,10 @@ describe "Car Requests" do
 
           get(
             api_v1_car_url(car),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
-          expect(response).to have_http_status :forbidden
-          expect(parsed_body["errors"])
-            .to include "User is not authorized to perform this action"
+          expect_user_forbidden_response
         end
       end
 
@@ -65,7 +61,6 @@ describe "Car Requests" do
         it "should raise an error" do
           get(
             api_v1_car_url(id: 1),
-            params: {},
             headers: authorization_headers(current_user)
           )
 
@@ -82,7 +77,6 @@ describe "Car Requests" do
 
           get(
             api_v1_car_url(car),
-            params: {},
             headers: accept_headers
           )
 
@@ -96,7 +90,6 @@ describe "Car Requests" do
 
           get(
             api_v1_car_url(car),
-            params: {},
             headers: invalid_authorization_headers
           )
 
