@@ -18,7 +18,7 @@ describe "Car Status Requests" do
               headers: authorization_headers(current_user)
             )
 
-            car = update_car(car)
+            car.reload
 
             expect(response).to have_http_status :ok
             expect_body_to_include_car_attributes(car, car.trip, current_user)
@@ -31,7 +31,7 @@ describe "Car Status Requests" do
               headers: authorization_headers(current_user)
             )
 
-            car = update_car(car)
+            car.reload
 
             expect(response).to have_http_status :ok
             expect_body_to_include_car_attributes(car, car.trip, current_user)
@@ -51,7 +51,7 @@ describe "Car Status Requests" do
               headers: authorization_headers(current_user)
             )
 
-            car = update_car(car)
+            car.reload
 
             expect(response).to have_http_status :ok
             expect_body_to_include_car_attributes(car, car.trip, current_user)
@@ -64,7 +64,7 @@ describe "Car Status Requests" do
               headers: authorization_headers(current_user)
             )
 
-            car = update_car(car)
+            car.reload
 
             expect(response).to have_http_status :ok
             expect_body_to_include_car_attributes(car, car.trip, current_user)
@@ -158,9 +158,5 @@ describe "Car Status Requests" do
         end
       end
     end
-  end
-
-  def update_car(car)
-    Car.find(car.id)
   end
 end
