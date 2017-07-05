@@ -12,7 +12,7 @@ Rails.application.routes.draw do
         resources :locations, only: [:create]
         resource :status, only: [:update], controller: :car_status
       end
-      resources :signups, only: [:create, :update]
+      resources :signups, only: [:create, :destroy, :update]
       resources :trips, only: [:create, :show] do
         resources :locations, only: [:index]
       end
