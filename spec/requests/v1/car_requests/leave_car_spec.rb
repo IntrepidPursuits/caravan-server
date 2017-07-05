@@ -122,19 +122,6 @@ describe "LeaveCar Request" do
         end
       end
 
-      context "missing a car_id" do
-        it "raises URL Generation Error" do
-          expect{
-            patch(
-              api_v1_car_leave_url,
-              headers: authorization_headers(current_user)
-            )
-          }.to raise_error ActionController::UrlGenerationError
-
-          expect(response).to_not be
-        end
-      end
-
       context "user is signed up for the car, but it exists on a different trip" do
         it "returns 422 Unprocessable Entity" do
           car = create(:car)
