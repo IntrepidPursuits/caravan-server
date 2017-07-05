@@ -1,12 +1,12 @@
 class LeaveACar
-  def initialize(car, signup, user)
+  def initialize(car, user)
     @car = car
-    @signup = signup
     @user = user
+    @signup = Signup.find_by(trip: car.trip, car: car, user: user)
   end
 
-  def self.perform(car, signup, user)
-    new(car, signup, user).perform
+  def self.perform(car, user)
+    new(car, user).perform
   end
 
   def perform

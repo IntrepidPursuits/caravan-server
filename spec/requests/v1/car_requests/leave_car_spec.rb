@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe "LeaveCar Request" do
-  describe "PATCH /signups/:signup_id/leave" do
+  describe "PATCH /cars/:car_id/leave" do
     context "authenticated user" do
       let!(:current_user) { create(:user) }
       let!(:google_identity) { create(:google_identity, user: current_user) }
@@ -13,14 +13,14 @@ describe "LeaveCar Request" do
           expect(car.users).to include(current_user)
 
           patch(
-            api_v1_signup_leave_url(signup),
+            api_v1_car_leave_url(car),
             headers: authorization_headers(current_user)
           )
 
-          updated_car = Car.find(car.id)
-          expect(updated_car.users).to_not include(current_user)
-          updated_signup = Signup.find(signup.id)
-          expect(updated_signup.car_id).to eq nil
+          car.reload
+          expect(car.users).to_not include(current_user)
+          signup.reload
+          expect(signup.car_id).to eq nil
         end
 
         it "returns 204 No Content" do
@@ -28,7 +28,7 @@ describe "LeaveCar Request" do
           signup = create(:signup, trip: car.trip, car: car, user: current_user)
 
           patch(
-            api_v1_signup_leave_url(signup),
+            api_v1_car_leave_url(car),
             headers: authorization_headers(current_user)
           )
 
@@ -49,7 +49,7 @@ describe "LeaveCar Request" do
           # expect(car.users.length).to eq 2
 
           patch(
-            api_v1_signup_leave_url(signup),
+            api_v1_car_leave_url(car),
             headers: authorization_headers(current_user)
           )
 
@@ -62,46 +62,33 @@ describe "LeaveCar Request" do
         end
       end
 
-      context "signup does not include a car_id" do
+      context "user's trip signup does not include a car_id" do
         context "user is signed up for the trip, just not the car" do
-          it "returns 400 Bad Request" do
+          it "returns 403 Forbidden" do
             trip = create(:trip)
+            car = create(:car, trip: trip)
             signup = create(:signup, trip: trip, user: current_user)
 
             patch(
-              api_v1_signup_leave_url(signup),
+              api_v1_car_leave_url(car),
               headers: authorization_headers(current_user)
             )
 
-            expect(response).to have_http_status :bad_request
+            expect(response).to have_http_status :forbidden
           end
         end
 
         context "user is not signed up for the trip" do
-          it "returns 400 Bad Request" do
-            signup = create(:signup)
+          it "returns 403 Forbidden" do
+            car = create(:car)
 
             patch(
-              api_v1_signup_leave_url(signup),
+              api_v1_car_leave_url(car),
               headers: authorization_headers(current_user)
             )
 
-            expect(response).to have_http_status :bad_request
+            expect(response).to have_http_status :forbidden
           end
-        end
-      end
-
-      context "signup belongs to a different user" do
-        it "returns 403 Forbidden" do
-          car = create(:car)
-          signup = create(:signup, trip: car.trip, car: car)
-
-          patch(
-            api_v1_signup_leave_url(signup),
-            headers: authorization_headers(current_user)
-          )
-
-          expect(response).to have_http_status :forbidden
         end
       end
     end
@@ -113,7 +100,7 @@ describe "LeaveCar Request" do
           signup = create(:signup, trip: car.trip, car: car)
 
           patch(
-            api_v1_signup_leave_url(signup),
+            api_v1_car_leave_url(car),
             headers: accept_headers
           )
 
@@ -127,7 +114,7 @@ describe "LeaveCar Request" do
           signup = create(:signup, trip: car.trip, car: car)
 
           patch(
-            api_v1_signup_leave_url(signup),
+            api_v1_car_leave_url(car),
             headers: invalid_authorization_headers
           )
 
