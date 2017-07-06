@@ -59,7 +59,9 @@ describe CarPolicy do
     end
 
     it "denies access if the user is not signed up for the trip" do
-      create(:signup, car: car, user: user)
+      car = create(:car)
+      expect{ create(:signup, car: car, user: user) }
+        .to raise_error(ActiveRecord::RecordInvalid)
       expect(CarPolicy).not_to permit(user, car)
     end
 

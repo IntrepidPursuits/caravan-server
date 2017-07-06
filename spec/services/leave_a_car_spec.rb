@@ -17,14 +17,17 @@ describe "LeaveACar" do
           end
 
           it "updates all signups for the car to have a car_id of nil" do
-            car = create(:car, owner: current_user)
+            car = create(:car, owner: current_user, max_seats: 2)
             signup = create(:signup, trip: car.trip, car: car, user: current_user)
+            signup2 = create(:signup, trip: car.trip, car: car)
 
             LeaveACar.perform(car, current_user)
 
             expect(Signup.where(car_id: car.id)).to eq []
             signup.reload
             expect(signup.car).to eq nil
+            signup2.reload
+            expect(signup2.car).to eq nil
           end
         end
 
@@ -40,7 +43,8 @@ describe "LeaveACar" do
           end
 
           it "leaves the car intact" do
-            car = create(:car)
+            car = create(:car, max_seats: 5)
+            owner_signup = create(:signup, car: car, trip: car.trip, user: car.owner)
             signup = create(:signup, trip: car.trip, car: car, user: current_user)
 
             LeaveACar.perform(car, current_user)
@@ -48,14 +52,18 @@ describe "LeaveACar" do
             car.reload
             expect(car).to be
             expect(car.users).to_not include(current_user)
+            owner_signup.reload
+            expect(owner_signup.car).to eq car
           end
         end
       end
 
-      context "user is signed up for the car but not the trip" do
+      context "user tries to sign up for the car but not the trip" do
         it "raises InvalidCarLeave & leaves the car & any signups intact" do
           car = create(:car)
-          signup = create(:signup, car: car, user: current_user)
+          expect { signup = create(:signup, car: car, user: current_user) }
+            .to raise_error(ActiveRecord::RecordInvalid,
+            "Validation failed: Car must belong to the Signup's trip")
           users = car.users
 
           expect{ LeaveACar.perform(car, current_user) }
