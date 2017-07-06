@@ -7,7 +7,7 @@ class CarPolicy < ApplicationPolicy
   end
 
   def create_location?
-    user.cars.include?(car)
+    user.cars.include?(car) && car.trip.users.include?(user)
   end
 
   def show?

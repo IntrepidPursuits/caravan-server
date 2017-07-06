@@ -5,7 +5,7 @@ describe "Location Request" do
     context "authenticated user" do
       let(:current_user) { create(:user) }
 
-      context "with valid attributes" do
+      context "with valid attributes, & user is signed up" do
         it "returns valid JSON with list of locations of other cars in the trip" do
           car = create(:car, status: 1)
           signup = create(:signup, car: car, trip: car.trip, user: current_user)
@@ -39,7 +39,7 @@ describe "Location Request" do
         end
       end
 
-      context "with no direction specified" do
+      context "with no direction specified, & user is signed up" do
         it "defaults direction to zero and returns 201 created" do
           car = create(:car, status: 1)
           signup = create(:signup, car: car, trip: car.trip, user: current_user)
@@ -115,9 +115,9 @@ describe "Location Request" do
 
           expect(response).to have_http_status :unprocessable_entity
           expect(body).to have_json_path("errors")
-          expect(errors).to include ("Validation failed")
-          expect(errors).to include ("Latitude can't be blank")
-          expect(errors).to include ("Longitude can't be blank")
+          expect(errors).to include "Validation failed"
+          expect(errors).to include "Latitude can't be blank"
+          expect(errors).to include "Longitude can't be blank"
         end
       end
 
@@ -223,20 +223,44 @@ describe "Location Request" do
 
       context "with an invalid car_id" do
         it "returns 404 Not Found" do
+          car = create(:car, status: 1)
+          signup = create(:signup, car: car, trip: car.trip, user: current_user)
+          unsaved_location = build(:location, car: car)
+          valid_location_info = { location: unsaved_location }
 
+          post(
+            car_locations_url("Baby You Can Drive My Car"),
+            params: valid_location_info.to_json,
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status :not_found
+          expect(errors).to eq "Couldn't find Car with 'id'=Baby You Can Drive My Car"
         end
       end
 
-      context "car belongs to a different trip than specified" do
-        it "returns 404 Not Found" do
-
-        end
-      end
-
-      context "user is not signed up for the trip" do
+      context "user is signed up for the car but not the trip/car belongs to different trip" do
         it "returns 403 Forbidden" do
           car = create(:car, status: 1)
-          unsaved_location = build(:location, car: nil)
+          trip = create(:trip)
+          signup = create(:signup, car: car, trip: trip, user: current_user)
+          unsaved_location = build(:location, car: car)
+          valid_location_info = { location: unsaved_location }
+
+          post(
+            car_locations_url(car),
+            params: valid_location_info.to_json,
+            headers: authorization_headers(current_user)
+          )
+
+          expect_user_forbidden_response
+        end
+      end
+
+      context "user is not signed up for the trip or the car" do
+        it "returns 403 Forbidden" do
+          car = create(:car, status: 1)
+          unsaved_location = build(:location, car: car)
           valid_location_info = { location: unsaved_location }
 
           post(
