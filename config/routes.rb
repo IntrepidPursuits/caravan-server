@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
     constraints AuthenticatedConstraint.new do
       resources :cars, only: [:create, :show] do
+        resource :leave, only: [:update], controller: :leave_car
         resources :locations, only: [:create]
         resource :status, only: [:update], controller: :car_status
       end

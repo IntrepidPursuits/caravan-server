@@ -36,4 +36,25 @@ describe CarPolicy do
       expect(CarPolicy).not_to permit(user, car)
     end
   end
+
+  permissions :leave_car? do
+    it "grants access if the user is signed up for the car and the trip" do
+      create(:signup, trip: car.trip, car: car, user: user)
+      expect(CarPolicy).to permit(user, car)
+    end
+
+    it "denies access if the user is not signed up for the car" do
+      create(:signup, trip: car.trip, user: user)
+      expect(CarPolicy).not_to permit(user, car)
+    end
+
+    it "denies access if the user is not signed up for the trip" do
+      create(:signup, car: car, user: user)
+      expect(CarPolicy).not_to permit(user, car)
+    end
+
+    it "denies access when the user is signed up for neither car nor trip" do
+      expect(CarPolicy).not_to permit(user, car)
+    end
+  end
 end

@@ -23,17 +23,10 @@ describe "Car Requests" do
 
           expect(json_value_at_path("car/max_seats")).to eq(1)
           expect(json_value_at_path("car/name")).to include("Car ")
+          expect(json_value_at_path("car/owner_id")).to eq car.owner_id
           expect(json_value_at_path("car/status")).to eq("not_started")
 
-          expect(body).to have_json_path("car/trip")
-          expect(body).to have_json_path("car/trip/code")
-          expect(body).to have_json_path("car/trip/creator")
-          expect(body).to have_json_path("car/trip/departing_on")
-          expect(body).to have_json_path("car/trip/destination_address")
-          expect(body).to have_json_path("car/trip/destination_latitude")
-          expect(body).to have_json_path("car/trip/destination_longitude")
-          expect(body).to have_json_path("car/trip/id")
-          expect(body).to have_json_path("car/trip/name")
+          expect_body_to_include_car_attributes_at_path("car")
 
           expect(json_value_at_path("car/locations")).to be_a(Array)
           expect(json_value_at_path("car/passengers")).to be_a(Array)
@@ -65,7 +58,7 @@ describe "Car Requests" do
           )
 
           expect(response).to have_http_status :not_found
-          expect(parsed_body["errors"]).to include "Couldn't find Car with 'id'=1"
+          expect(errors).to include "Couldn't find Car with 'id'=1"
         end
       end
     end

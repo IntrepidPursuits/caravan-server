@@ -1,4 +1,5 @@
 class Car < ApplicationRecord
+  belongs_to :owner, class_name: :User
   belongs_to :trip
 
   has_many :locations
@@ -12,6 +13,6 @@ class Car < ApplicationRecord
   }
 
   validates_numericality_of :max_seats, { equal_to: 1 }
-  validates_presence_of :max_seats, :name, :status, :trip
+  validates_presence_of :max_seats, :name, :owner, :status, :trip
   validates_uniqueness_of :name, { scope: :trip_id }
 end

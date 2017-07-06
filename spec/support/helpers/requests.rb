@@ -8,6 +8,10 @@ module Helpers
       parse_json(body, path)
     end
 
+    def errors
+      parsed_body["errors"]
+    end
+
     def parsed_body
       JSON.parse(body)
     end

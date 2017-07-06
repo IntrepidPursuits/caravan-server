@@ -18,6 +18,7 @@ describe "CreateACar" do
         expect(value).to be_a Car
         expect(value.trip).to eq(trip)
         expect(value.users).to include(current_user)
+        expect(value.owner).to eq(current_user)
       end
     end
 
@@ -35,7 +36,7 @@ describe "CreateACar" do
     let!(:trip) { create(:trip) }
     let!(:current_user) { create(:user) }
 
-    it "raises RecordInvalid" do
+    it "raises MissingSignup" do
       expect(Signup).to receive(:find_by).and_return(nil)
       car_params = {
         name: "My Car",
@@ -51,13 +52,12 @@ describe "CreateACar" do
     let!(:trip) { create(:trip) }
 
     it "raises RecordInvalid" do
-      expect(Signup).to receive(:find_by).and_return(nil)
       car_params = {
         name: "My Car",
         trip_id: trip.id
       }
-      expect { CreateACar.perform(car_params, nil) }.to raise_error(MissingSignup,
-        "You must be signed up for a trip in order to create a car in that trip")
+      expect { CreateACar.perform(car_params, nil) }.to raise_error(ActiveRecord::RecordInvalid,
+        "Validation failed: Owner must exist, Owner can't be blank")
     end
   end
 end

@@ -46,12 +46,12 @@ describe "Trip Request" do
 
           expect(response).to have_http_status :unprocessable_entity
           expect(body).to have_json_path("errors")
-          expect(parsed_body["errors"]).to include ("Validation failed")
-          expect(parsed_body["errors"]).to include ("Departing on can't be blank")
-          expect(parsed_body["errors"]).to include ("Destination address can't be blank")
-          expect(parsed_body["errors"]).to include ("Destination longitude can't be blank")
-          expect(parsed_body["errors"]).to include ("Destination latitude can't be blank")
-          expect(parsed_body["errors"]).to include ("Name can't be blank")
+          expect(errors).to include ("Validation failed")
+          expect(errors).to include ("Departing on can't be blank")
+          expect(errors).to include ("Destination address can't be blank")
+          expect(errors).to include ("Destination longitude can't be blank")
+          expect(errors).to include ("Destination latitude can't be blank")
+          expect(errors).to include ("Name can't be blank")
         end
       end
     end
@@ -129,7 +129,7 @@ describe "Trip Request" do
           )
 
           expect(response).to have_http_status :not_found
-          expect(parsed_body["errors"])
+          expect(errors)
             .to include "Couldn't find Trip with 'id'=fake_trip"
         end
       end
@@ -250,7 +250,7 @@ describe "Trip Request" do
           )
 
           expect(response).to have_http_status :not_found
-          expect(parsed_body["errors"]).to eq "Couldn't find User with 'id'=1"
+          expect(errors).to eq "Couldn't find User with 'id'=1"
         end
       end
     end

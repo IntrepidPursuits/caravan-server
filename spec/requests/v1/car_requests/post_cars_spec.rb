@@ -33,6 +33,9 @@ describe "Car Requests" do
             expect(car["max_seats"]).to eq(1)
             expect(car["name"]).to include("Car ")
             expect(car["status"]).to eq("not_started")
+            expect(car["owner_id"]).to eq current_user.id
+
+            expect(json_value_at_path("car/owner_id")).to eq current_user.id
 
             trip = @signup.trip
             expect(car["trip"]["id"]).to eq trip.id
@@ -65,11 +68,11 @@ describe "Car Requests" do
           )
 
           expect(response).to have_http_status :unprocessable_entity
-          errors = ["Max seats can't be blank", "Max seats is not a number",
+          car_errors = ["Max seats can't be blank", "Max seats is not a number",
             "Name can't be blank", "Status can't be blank"]
 
-          errors.each do |error|
-            expect(parsed_body["errors"]).to include error
+          car_errors.each do |error|
+            expect(errors).to include error
           end
         end
       end
@@ -90,7 +93,7 @@ describe "Car Requests" do
           )
 
           expect(response).to have_http_status :unprocessable_entity
-          expect(parsed_body["errors"])
+          expect(errors)
             .to eq "You must provide a valid trip_id in order to create a car"
         end
       end
@@ -134,7 +137,7 @@ describe "Car Requests" do
             )
 
             expect(response).to have_http_status :not_found
-            expect(parsed_body["errors"])
+            expect(errors)
               .to include "Couldn't find Trip with 'id'=not a trip"
           end
         end
@@ -151,7 +154,7 @@ describe "Car Requests" do
           )
 
           expect(response).to have_http_status :bad_request
-          expect(parsed_body["errors"])
+          expect(errors)
             .to eq "param is missing or the value is empty: car"
         end
       end
