@@ -12,6 +12,7 @@ class Api::V1::LocationsController < Api::V1::ApiController
 
   def index
     trip = Trip.find(params[:trip_id])
+    authorize trip, :index_locations?
     render json: trip,
            except: [:car, :cars],
            serializer: TripLocationsSerializer
