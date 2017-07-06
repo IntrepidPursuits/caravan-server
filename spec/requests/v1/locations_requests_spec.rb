@@ -28,6 +28,8 @@ describe "Location Request" do
             .to eq(car.id)
           expect(json_value_at_path("trip_locations/last_locations/0/car_name"))
             .to eq(car.name)
+          expect(json_value_at_path("trip_locations/last_locations/0/direction"))
+            .to eq(attributes_for(:location)[:direction])
           expect(json_value_at_path("trip_locations/last_locations/0/latitude"))
             .to eq(attributes_for(:location)[:latitude].to_s)
           expect(json_value_at_path("trip_locations/last_locations/0/longitude"))
@@ -35,7 +37,7 @@ describe "Location Request" do
         end
       end
 
-      context "with invalid latitude and longitude" do
+      context "with invalid attributes" do
         it "returns JSON with validation errors" do
           car = create(:car, status: 1)
           signup = create(:signup, car: car, trip: car.trip, user: current_user)

@@ -21,6 +21,7 @@ class Api::V1::LocationsController < Api::V1::ApiController
 
   def location_params
     params.require(:location).permit(
+      :direction,
       :latitude,
       :longitude
     ).merge(
