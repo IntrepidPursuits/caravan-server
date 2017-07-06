@@ -33,6 +33,7 @@ describe "Car Requests" do
             expect(car["max_seats"]).to eq(1)
             expect(car["name"]).to include("Car ")
             expect(car["status"]).to eq("not_started")
+            expect(car["owner_id"]).to eq current_user.id
 
             expect(json_value_at_path("car/owner_id")).to eq current_user.id
 
@@ -67,10 +68,10 @@ describe "Car Requests" do
           )
 
           expect(response).to have_http_status :unprocessable_entity
-          errors = ["Max seats can't be blank", "Max seats is not a number",
+          car_errors = ["Max seats can't be blank", "Max seats is not a number",
             "Name can't be blank", "Status can't be blank"]
 
-          errors.each do |error|
+          car_errors.each do |error|
             expect(errors).to include error
           end
         end

@@ -18,6 +18,7 @@ describe "CreateACar" do
         expect(value).to be_a Car
         expect(value.trip).to eq(trip)
         expect(value.users).to include(current_user)
+        expect(value.owner).to eq(current_user)
       end
     end
 
