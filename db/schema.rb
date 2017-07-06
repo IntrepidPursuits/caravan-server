@@ -108,6 +108,18 @@ ActiveRecord::Schema.define(version: 20170711190447) do
     t.index ["creator_id"], name: "index_trips_on_creator_id"
   end
 
+  create_table "twitter_identities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.text "image"
+    t.string "screen_name"
+    t.string "provider", default: "twitter", null: false
+    t.string "twitter_id", null: false
+    t.uuid "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["twitter_id"], name: "index_twitter_identities_on_twitter_id", unique: true
+    t.index ["user_id"], name: "index_twitter_identities_on_user_id", unique: true
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false

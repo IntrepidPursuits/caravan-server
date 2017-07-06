@@ -10,7 +10,7 @@ class GoogleAuthenticator
   end
 
   def perform
-    raise UnauthorizedAccess if !token_valid?
+    raise UnauthorizedGoogleAccess if !token_valid?
     google_identity = create_or_update_google_identity
     [google_identity.user, google_identity]
   end

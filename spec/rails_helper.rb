@@ -21,6 +21,7 @@ ActiveRecord::Migration.maintain_test_schema!
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
   config.use_transactional_fixtures = true
+  config.include Helpers::AuthExpectations
   config.include Helpers::Requests, type: :request
   config.include Helpers::RequestExpectations, type: :request
   config.include Warden::Test::Helpers
