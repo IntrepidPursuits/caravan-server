@@ -21,7 +21,9 @@ describe "Location Request" do
           expect(response).to have_http_status :created
           expect_body_to_include_trip_locations_attributes_at_path("trip_locations")
           expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/0")
-          expect(Location.find(parsed_body["trip_locations"]["last_locations"][0]["id"])).to be
+
+          location = Location.find(json_value_at_path("trip_locations/last_locations/0/id"))
+          expect(location).to be
 
           expect(json_value_at_path("trip_locations/trip_id")).to eq(car.trip.id)
           expect(json_value_at_path("trip_locations/last_locations/0/car_id"))
@@ -37,12 +39,42 @@ describe "Location Request" do
         end
       end
 
-      context "with invalid attributes" do
+      context "with all invalid attributes" do
         it "returns JSON with validation errors" do
           car = create(:car, status: 1)
           signup = create(:signup, car: car, trip: car.trip, user: current_user)
           invalid_location_info = {
             location: {
+              direction: nil,
+              latitude: nil,
+              longitude: nil
+            }
+          }
+
+          post(
+            car_locations_url(car),
+            params: invalid_location_info.to_json,
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status :unprocessable_entity
+          expect(body).to have_json_path("errors")
+          expect(errors).to include "Validation failed"
+          expect(errors).to include "Latitude can't be blank"
+          expect(errors).to include "Longitude can't be blank"
+          expect(errors).to include "Direction must be between -180 & 180"
+          expect(errors).to include "Direction is not a number"
+          expect(errors).to include "Direction can't be blank"
+        end
+      end
+
+      context "with invalid latitude and longitude, but valid direction" do
+        it "returns JSON with validation errors" do
+          car = create(:car, status: 1)
+          signup = create(:signup, car: car, trip: car.trip, user: current_user)
+          invalid_location_info = {
+            location: {
+              direction: -2,
               latitude: nil,
               longitude: nil
             }
@@ -59,6 +91,109 @@ describe "Location Request" do
           expect(errors).to include ("Validation failed")
           expect(errors).to include ("Latitude can't be blank")
           expect(errors).to include ("Longitude can't be blank")
+        end
+      end
+
+      context "with no direction specified" do
+        it "defaults direction to zero and returns 201 created" do
+          car = create(:car, status: 1)
+          signup = create(:signup, car: car, trip: car.trip, user: current_user)
+          invalid_location_info = {
+            location: {
+              latitude: 12.0,
+              longitude: -36.5
+            }
+          }
+
+          post(
+            car_locations_url(car),
+            params: invalid_location_info.to_json,
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status :created
+          expect_body_to_include_trip_locations_attributes_at_path("trip_locations")
+          expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/0")
+
+          location = Location.find(json_value_at_path("trip_locations/last_locations/0/id"))
+          expect(location).to be
+          expect(location.direction).to eq 0
+        end
+      end
+
+      context "with invalid direction" do
+        context "with nil direction" do
+          it "returns validation errors" do
+            car = create(:car, status: 1)
+            signup = create(:signup, car: car, trip: car.trip, user: current_user)
+            invalid_location_info = {
+              location: {
+                direction: nil,
+                latitude: 1.4,
+                longitude: -70.3
+              }
+            }
+
+            post(
+              car_locations_url(car),
+              params: invalid_location_info.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :unprocessable_entity
+            expect(errors).to include "Validation failed"
+            expect(errors).to include "Direction must be between -180 & 180"
+            expect(errors).to include "Direction is not a number"
+            expect(errors).to include "Direction can't be blank"
+          end
+        end
+
+        context "with a number outside the range" do
+          it "returns validation errors" do
+            car = create(:car, status: 1)
+            signup = create(:signup, car: car, trip: car.trip, user: current_user)
+            invalid_location_info = {
+              location: {
+                direction: -190,
+                latitude: 1.4,
+                longitude: -70.3
+              }
+            }
+
+            post(
+              car_locations_url(car),
+              params: invalid_location_info.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :unprocessable_entity
+            expect(errors).to include "Validation failed"
+            expect(errors).to include "Direction must be between -180 & 180"
+          end
+        end
+
+        context "with a decimal" do
+          it "returns validation errors" do
+            car = create(:car, status: 1)
+            signup = create(:signup, car: car, trip: car.trip, user: current_user)
+            invalid_location_info = {
+              location: {
+                direction: 19.3,
+                latitude: 1.4,
+                longitude: -70.3
+              }
+            }
+
+            post(
+              car_locations_url(car),
+              params: invalid_location_info.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :unprocessable_entity
+            expect(errors).to include "Validation failed"
+            expect(errors).to include "Direction must be an integer"
+          end
         end
       end
 
