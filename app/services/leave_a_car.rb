@@ -11,8 +11,11 @@ class LeaveACar
   end
 
   def perform
-    return destroy_car if @user == @car.owner
-    @signup.update_attributes!(car: nil)
+    if @user == @car.owner
+      destroy_car
+    else
+      @signup.update_attributes!(car: nil)
+    end
   end
 
   def destroy_car
