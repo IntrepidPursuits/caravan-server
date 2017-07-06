@@ -83,7 +83,7 @@ describe "LeaveCar Request" do
         end
 
         context "user is signed up for the car, but not the trip" do
-          it "returns 422 Unprocessable Entity" do
+          it "returns 403 Forbidden" do
             trip = create(:trip)
             car = create(:car, trip: trip)
             signup = create(:signup, car: car, user: current_user)
@@ -93,9 +93,7 @@ describe "LeaveCar Request" do
               headers: authorization_headers(current_user)
             )
 
-            expect(response).to have_http_status :unprocessable_entity
-            expect(errors).to eq(
-              "Unable to leave car; it doesn't exist or user is not signed up properly.")
+            expect_user_forbidden_response
           end
         end
       end
@@ -113,7 +111,7 @@ describe "LeaveCar Request" do
       end
 
       context "user is signed up for the car, but it exists on a different trip" do
-        it "returns 422 Unprocessable Entity" do
+        it "returns 403 Forbidden" do
           car = create(:car)
           signup = create(:signup, car: car, user: current_user)
 
@@ -122,9 +120,7 @@ describe "LeaveCar Request" do
             headers: authorization_headers(current_user)
           )
 
-          expect(response).to have_http_status :unprocessable_entity
-          expect(errors).to eq(
-            "Unable to leave car; it doesn't exist or user is not signed up properly.")
+          expect_user_forbidden_response
         end
       end
     end

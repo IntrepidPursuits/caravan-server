@@ -19,6 +19,6 @@ class CarPolicy < ApplicationPolicy
   end
 
   def leave_car?
-    car.users.include?(user)
+    car.users.include?(user) && car.trip.users.include?(user)
   end
 end

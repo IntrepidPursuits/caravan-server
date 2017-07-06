@@ -11,7 +11,6 @@ class Api::V1::ApiController < ApplicationController
     CarNotStartedError,
     InvalidCarCreation,
     InvalidCarJoin,
-    InvalidCarLeave,
     InvalidInviteCodeError,
     UnauthorizedAccess].each do |error|
     rescue_from error do |exception|
