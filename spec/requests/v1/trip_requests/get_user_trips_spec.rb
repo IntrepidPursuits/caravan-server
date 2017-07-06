@@ -6,7 +6,7 @@ describe "Trip Request" do
       let(:current_user) { create(:user) }
 
       context "when the user is not yet signed up for any trips" do
-        it "shows and empty array" do
+        it "shows an empty array" do
           get(
             api_v1_user_trips_url(current_user),
             headers: authorization_headers(current_user)

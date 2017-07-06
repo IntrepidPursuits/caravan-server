@@ -7,13 +7,12 @@ describe "Trip Request" do
 
       context "valid trip" do
         it "returns valid JSON for an individual trip" do
-          create_list(:user, 3)
           trip = create(:trip)
           create_list(:car, 3, trip: trip)
 
-          user = User.first
-          user2 = User.second
-          user3 = User.third
+          user = create(:user)
+          user2 = create(:user)
+          user3 = create(:user)
           create(:signup, trip: trip, user: user)
           create(:signup, trip: trip, user: user2)
           create(:signup, trip: trip, user: user3)
