@@ -7,7 +7,7 @@ describe "LeaveCar Request" do
       let!(:google_identity) { create(:google_identity, user: current_user) }
 
       context "user is signed up for a car in a trip" do
-        it "removes the user from the car" do
+        it "removes the user from the car & returns 204 No Content" do
           car = create(:car)
           signup = create(:signup, trip: car.trip, car: car, user: current_user)
           expect(car.users).to include(current_user)
@@ -17,22 +17,12 @@ describe "LeaveCar Request" do
             headers: authorization_headers(current_user)
           )
 
+          expect(response).to have_http_status :no_content
+
           car.reload
           expect(car.users).to_not include(current_user)
           signup.reload
           expect(signup.car_id).to eq nil
-        end
-
-        it "returns 204 No Content" do
-          car = create(:car)
-          signup = create(:signup, trip: car.trip, car: car, user: current_user)
-
-          patch(
-            api_v1_car_leave_url(car),
-            headers: authorization_headers(current_user)
-          )
-
-          expect(response).to have_http_status :no_content
         end
       end
 
@@ -73,7 +63,7 @@ describe "LeaveCar Request" do
             headers: authorization_headers(current_user)
             )
 
-            expect(response).to have_http_status :forbidden
+            expect_user_forbidden_response
           end
         end
 
@@ -88,7 +78,7 @@ describe "LeaveCar Request" do
               headers: authorization_headers(current_user)
             )
 
-            expect(response).to have_http_status :forbidden
+            expect_user_forbidden_response
           end
         end
 
