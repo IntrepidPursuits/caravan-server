@@ -48,4 +48,38 @@ module ExternalRequests
     response = JSON.parse load_fixture("not_our_client_id_response.json")
     response.to_json
   end
+
+  def stub_missing_email_request
+    stub_request(:get, /.*googleapis.com\/oauth2\/v3\/tokeninfo.*/)
+    .to_return(body: google_info_missing_email_body, headers: json_content)
+  end
+
+  def google_info_missing_email_body
+    response = JSON.parse load_fixture("google_info_missing_email_response.json")
+    response["aud"] = ENV["GOOGLE_CLIENT_ID"]
+    response.to_json
+  end
+
+  def stub_missing_uid_request
+    stub_request(:get, /.*googleapis.com\/oauth2\/v3\/tokeninfo.*/)
+    .to_return(body: google_info_missing_uid_body, headers: json_content)
+  end
+
+  def google_info_missing_uid_body
+    response = JSON.parse load_fixture("google_info_missing_uid_response.json")
+    response["aud"] = ENV["GOOGLE_CLIENT_ID"]
+    response.to_json
+  end
+
+
+  def stub_missing_name_request
+    stub_request(:get, /.*googleapis.com\/oauth2\/v3\/tokeninfo.*/)
+    .to_return(body: google_info_missing_name_body, headers: json_content)
+  end
+
+  def google_info_missing_name_body
+    response = JSON.parse load_fixture("google_info_missing_name_response.json")
+    response["aud"] = ENV["GOOGLE_CLIENT_ID"]
+    response.to_json
+  end
 end

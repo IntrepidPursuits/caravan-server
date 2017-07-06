@@ -1,0 +1,19 @@
+{
+ "azp": "actualclientid",
+ "aud": "actualclientid",
+ "sub": null,
+ "hd": "intrepid.io",
+ "email": "rkonikoff@intrepid.io",
+ "email_verified": "true",
+ "at_hash": "7gg6xviNymmKZyvGJLo6Yg",
+ "iss": "accounts.google.com",
+ "iat": "1497904515",
+ "exp": "1497908115",
+ "name": "Riki Konikoff",
+ "picture": "https://somepicture.jpg",
+ "given_name": "Riki",
+ "family_name": "Konikoff",
+ "locale": "en",
+ "alg": "RS256",
+ "kid": "db677bbdae8ab4e792f714204b4ee4ba2e0becb3"
+}

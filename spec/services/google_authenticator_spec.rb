@@ -54,12 +54,79 @@ RSpec.describe "GoogleAuthenticator" do
         end
       end
     end
+
+    context "with incomplete credentials" do
+      before(:each) do
+        allow_any_instance_of(GoogleAuthenticator).to receive(:token_valid?).and_return(false)
+      end
+
+      context "with missing required google identity information" do
+        context "missing email" do
+          it "raises an UnauthorizedAccess error" do
+            allow_any_instance_of(GoogleAuthenticator)
+              .to receive(:token_hash).and_return(user_info_missing_email)
+
+            expect { GoogleAuthenticator.perform(SecureRandom.hex(20)) }
+              .to raise_error(UnauthorizedAccess)
+          end
+        end
+
+        context "missing uid" do
+          it "raises an UnauthorizedAccess error" do
+            allow_any_instance_of(GoogleAuthenticator)
+              .to receive(:token_hash).and_return(user_info_missing_uid)
+
+            expect { GoogleAuthenticator.perform(SecureRandom.hex(20)) }
+              .to raise_error(UnauthorizedAccess)
+          end
+        end
+      end
+
+      context "with missing required user information" do
+        context "missing name" do
+          it "raises an UnauthorizedAccess error" do
+            allow_any_instance_of(GoogleAuthenticator)
+              .to receive(:token_hash).and_return(user_info_missing_name)
+
+            expect { GoogleAuthenticator.perform(SecureRandom.hex(20)) }
+              .to raise_error(UnauthorizedAccess)
+          end
+        end
+      end
+    end
   end
 
   def user_info
     {
       email: google_profile_info["email"],
       name: google_profile_info["name"],
+      google_uid: google_profile_info["sub"],
+      image: google_profile_info["picture"]
+    }
+  end
+
+  def user_info_missing_email
+    {
+      email: nil,
+      name: google_profile_info["name"],
+      google_uid: google_profile_info["sub"],
+      image: google_profile_info["picture"]
+    }
+  end
+
+  def user_info_missing_uid
+    {
+      email: google_profile_info["email"],
+      name: google_profile_info["name"],
+      google_uid: nil,
+      image: google_profile_info["picture"]
+    }
+  end
+
+  def user_info_missing_name
+    {
+      email: google_profile_info["email"],
+      name: nil,
       google_uid: google_profile_info["sub"],
       image: google_profile_info["picture"]
     }
