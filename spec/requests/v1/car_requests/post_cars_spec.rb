@@ -42,7 +42,7 @@ describe "Car Requests" do
           end
 
           it "automatically adds the current user to the car" do
-            expect(json_value_at_path("car/passengers").length).to eq 1
+            expect(json_value_at_path("car/passengers").count).to eq 1
             expect_body_to_include_passenger_attributes
           end
         end

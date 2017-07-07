@@ -48,7 +48,7 @@ describe "Location Request" do
 
             expect(response).to have_http_status :ok
             expect_body_to_include_locations_content(car1, location, 0)
-            expect(json_value_at_path("trip_locations/last_locations").length).to eq 1
+            expect(json_value_at_path("trip_locations/last_locations").count).to eq 1
           end
         end
       end

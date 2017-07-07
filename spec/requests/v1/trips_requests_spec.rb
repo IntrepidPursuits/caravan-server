@@ -115,9 +115,9 @@ describe "Trip Request" do
           expect_response_to_include_complete_trip_attributes_at_path("trip")
           expect_reponse_to_include_correct_trip_factory_content(current_user)
           expect_response_to_include_trip_with_cars_attributes_at_path(
-            "trip/cars", trip.cars.length)
+            "trip/cars", trip.cars.count)
           expect_response_to_include_trip_with_signups_attributes_at_path(
-            "trip/signed_up_users", trip.users.length)
+            "trip/signed_up_users", trip.users.count)
         end
       end
 
