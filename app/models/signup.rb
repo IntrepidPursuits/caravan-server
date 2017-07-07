@@ -7,5 +7,5 @@ class Signup < ApplicationRecord
   validates_uniqueness_of :car, scope: [:trip_id, :user_id], allow_nil: true
   validates_uniqueness_of :trip, scope: :user_id
   validates_with CarTripMatchValidator
-  validates_with CarSeatsLimitValidator, on: :update
+  validates_with CarSeatsLimitValidator
 end
