@@ -62,7 +62,7 @@ describe "Location Request" do
 
           location = Location.find(json_value_at_path("trip_locations/last_locations/0/id"))
           expect(location).to be
-          expect(location.direction).to eq 0
+          expect(location.direction).to eq(0)
         end
       end
 
@@ -86,11 +86,20 @@ describe "Location Request" do
 
           expect(response).to have_http_status :unprocessable_entity
           expect(body).to have_json_path("errors")
+<<<<<<< HEAD
           expect(errors).to include "Validation failed"
           expect(errors).to include "Latitude can't be blank"
           expect(errors).to include "Longitude can't be blank"
           expect(errors).to include "Direction is not a number"
           expect(errors).to include "Direction can't be blank"
+=======
+          expect(errors).to include("Validation failed")
+          expect(errors).to include("Latitude can't be blank")
+          expect(errors).to include("Longitude can't be blank")
+          expect(errors).to include("Direction must be between -180 & 180")
+          expect(errors).to include("Direction is not a number")
+          expect(errors).to include("Direction can't be blank")
+>>>>>>> bcdbbb9... fix parentheses
         end
       end
 
@@ -114,9 +123,9 @@ describe "Location Request" do
 
           expect(response).to have_http_status :unprocessable_entity
           expect(body).to have_json_path("errors")
-          expect(errors).to include "Validation failed"
-          expect(errors).to include "Latitude can't be blank"
-          expect(errors).to include "Longitude can't be blank"
+          expect(errors).to include("Validation failed")
+          expect(errors).to include("Latitude can't be blank")
+          expect(errors).to include("Longitude can't be blank")
         end
       end
 
@@ -140,9 +149,9 @@ describe "Location Request" do
             )
 
             expect(response).to have_http_status :unprocessable_entity
-            expect(errors).to include "Validation failed"
-            expect(errors).to include "Direction is not a number"
-            expect(errors).to include "Direction can't be blank"
+            expect(errors).to include("Validation failed")
+            expect(errors).to include("Direction is not a number")
+            expect(errors).to include("Direction can't be blank")
           end
         end
 
@@ -165,8 +174,8 @@ describe "Location Request" do
             )
 
             expect(response).to have_http_status :unprocessable_entity
-            expect(errors).to include "Validation failed"
-            expect(errors).to include "Direction must be greater than or equal to -180"
+            expect(errors).to include("Validation failed")
+            expect(errors).to include("Direction must be greater than or equal to -180")
 
 
             invalid_location_info = {
@@ -184,8 +193,8 @@ describe "Location Request" do
             )
 
             expect(response).to have_http_status :unprocessable_entity
-            expect(errors).to include "Validation failed"
-            expect(errors).to include "Direction must be less than or equal to 180"
+            expect(errors).to include("Validation failed")
+            expect(errors).to include("Direction must be less than or equal to 180")
           end
         end
 
@@ -208,8 +217,8 @@ describe "Location Request" do
             )
 
             expect(response).to have_http_status :unprocessable_entity
-            expect(errors).to include "Validation failed"
-            expect(errors).to include "Direction must be an integer"
+            expect(errors).to include("Validation failed")
+            expect(errors).to include("Direction must be an integer")
           end
         end
       end
@@ -234,7 +243,7 @@ describe "Location Request" do
           expect(response).to have_http_status :unprocessable_entity
           expect(body).to have_json_path("errors")
           expect(errors)
-            .to include ("Cannot update car's location if it has a status of 'Not Started'")
+            .to include("Cannot update car's location if it has a status of 'Not Started'")
         end
       end
 
@@ -252,7 +261,7 @@ describe "Location Request" do
           )
 
           expect(response).to have_http_status :not_found
-          expect(errors).to eq "Couldn't find Car with 'id'=Baby You Can Drive My Car"
+          expect(errors).to eq("Couldn't find Car with 'id'=Baby You Can Drive My Car")
         end
       end
 

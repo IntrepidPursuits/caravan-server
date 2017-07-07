@@ -107,7 +107,7 @@ describe "LeaveCar Request" do
           )
 
           expect(response).to have_http_status :not_found
-          expect(errors).to eq "Couldn't find Car with 'id'=gobbledegook"
+          expect(errors).to eq("Couldn't find Car with 'id'=gobbledegook")
         end
       end
 

@@ -29,20 +29,20 @@ describe "Car Requests" do
 
             car = Car.find(json_value_at_path("car/id"))
             expect(car).to be
-            expect(car.owner).to eq current_user
-            expect(json_value_at_path("car/locations")).to eq []
+            expect(car.owner).to eq(current_user)
+            expect(json_value_at_path("car/locations")).to eq([])
             expect(json_value_at_path("car/max_seats")).to eq(1)
             expect(json_value_at_path("car/name")).to include("Car ")
             expect(json_value_at_path("car/status")).to eq("not_started")
-            expect(json_value_at_path("car/owner_id")).to eq current_user.id
+            expect(json_value_at_path("car/owner_id")).to eq(current_user.id)
 
             trip = @signup.trip
-            expect(json_value_at_path("car/trip/id")).to eq trip.id
-            expect(json_value_at_path("car/trip/name")).to eq trip.name
+            expect(json_value_at_path("car/trip/id")).to eq(trip.id)
+            expect(json_value_at_path("car/trip/name")).to eq(trip.name)
           end
 
           it "automatically adds the current user to the car" do
-            expect(json_value_at_path("car/passengers").count).to eq 1
+            expect(json_value_at_path("car/passengers").count).to eq(1)
             expect_body_to_include_passenger_attributes
           end
         end
@@ -71,7 +71,7 @@ describe "Car Requests" do
             "Name can't be blank", "Status can't be blank"]
 
           car_errors.each do |error|
-            expect(errors).to include error
+            expect(errors).to include(error)
           end
         end
       end
@@ -93,7 +93,7 @@ describe "Car Requests" do
 
           expect(response).to have_http_status :unprocessable_entity
           expect(errors)
-            .to eq "You must provide a valid trip_id in order to create a car"
+            .to eq("You must provide a valid trip_id in order to create a car")
         end
       end
 
@@ -137,7 +137,7 @@ describe "Car Requests" do
 
             expect(response).to have_http_status :not_found
             expect(errors)
-              .to include "Couldn't find Trip with 'id'=not a trip"
+              .to include("Couldn't find Trip with 'id'=not a trip")
           end
         end
       end
@@ -154,7 +154,7 @@ describe "Car Requests" do
 
           expect(response).to have_http_status :bad_request
           expect(errors)
-            .to eq "param is missing or the value is empty: car"
+            .to eq("param is missing or the value is empty: car")
         end
       end
     end

@@ -28,7 +28,7 @@ describe "Location Request" do
             expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/0")
             expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/1")
 
-            expect(json_value_at_path("trip_locations/trip_id")).to eq trip.id
+            expect(json_value_at_path("trip_locations/trip_id")).to eq(trip.id)
             expect_body_to_include_locations_content(car1, car1_last_location, 0)
             expect_body_to_include_locations_content(car2, car2_last_location, 1)
           end
@@ -48,7 +48,7 @@ describe "Location Request" do
 
             expect(response).to have_http_status :ok
             expect_body_to_include_locations_content(car1, location, 0)
-            expect(json_value_at_path("trip_locations/last_locations").count).to eq 1
+            expect(json_value_at_path("trip_locations/last_locations").count).to eq(1)
           end
         end
       end
@@ -61,7 +61,7 @@ describe "Location Request" do
           )
 
           expect(response).to have_http_status :not_found
-          expect(errors).to include "Couldn't find Trip with 'id'=fake_trip"
+          expect(errors).to include("Couldn't find Trip with 'id'=fake_trip")
         end
       end
 

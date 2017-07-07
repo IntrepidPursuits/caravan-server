@@ -23,11 +23,11 @@ describe "LeaveACar" do
 
             LeaveACar.perform(car, current_user)
 
-            expect(Signup.where(car_id: car.id)).to eq []
+            expect(Signup.where(car_id: car.id)).to eq([])
             signup.reload
-            expect(signup.car).to eq nil
+            expect(signup.car).to eq(nil)
             signup2.reload
-            expect(signup2.car).to eq nil
+            expect(signup2.car).to eq(nil)
           end
         end
 
@@ -39,7 +39,7 @@ describe "LeaveACar" do
             LeaveACar.perform(car, current_user)
 
             signup.reload
-            expect(signup.car).to eq nil
+            expect(signup.car).to eq(nil)
           end
 
           it "leaves the car intact" do
@@ -53,7 +53,7 @@ describe "LeaveACar" do
             expect(car).to be
             expect(car.users).to_not include(current_user)
             owner_signup.reload
-            expect(owner_signup.car).to eq car
+            expect(owner_signup.car).to eq(car)
           end
         end
       end
@@ -143,7 +143,7 @@ describe "LeaveACar" do
 
           signup.reload
           expect(signup).to be
-          expect(signup.car).to eq car
+          expect(signup.car).to eq(car)
         end
       end
 
@@ -160,7 +160,7 @@ describe "LeaveACar" do
 
           signup.reload
           expect(signup).to be
-          expect(signup.car).to eq car
+          expect(signup.car).to eq(car)
         end
       end
 
