@@ -22,7 +22,7 @@ describe "LeaveCar Request" do
           car.reload
           expect(car.users).to_not include(current_user)
           signup.reload
-          expect(signup.car_id).to eq nil
+          expect(signup.car_id).to eq(nil)
         end
       end
 
@@ -35,7 +35,7 @@ describe "LeaveCar Request" do
 
           expect(car.owner).to eq(current_user)
           expect(car.users).to include(current_user)
-          expect(car.users.length).to eq 2
+          expect(car.users.count).to eq(2)
 
           patch(
             api_v1_car_leave_url(car),
@@ -47,8 +47,8 @@ describe "LeaveCar Request" do
           signup.reload
           signup_2.reload
 
-          expect(signup.car).to eq nil
-          expect(signup_2.car).to eq nil
+          expect(signup.car).not_to be
+          expect(signup_2.car).not_to be
         end
       end
 

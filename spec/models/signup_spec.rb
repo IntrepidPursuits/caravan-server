@@ -10,29 +10,35 @@ RSpec.describe Signup, type: :model do
   describe "validations" do
     it { should validate_presence_of(:trip) }
     it { should validate_presence_of(:user) }
+
     it do
       user = create(:user)
       car = create(:car)
       create(:signup, user: user, car: car, trip: car.trip)
       should validate_uniqueness_of(:trip).scoped_to(:user_id)
     end
+
     it do
       car = create(:car)
       user = create(:user)
       create(:signup, user: user, car: car, trip: car.trip)
       should validate_uniqueness_of(:car).scoped_to(:user_id).allow_nil
     end
+
     it do
       car = create(:car)
       user = create(:user)
-      create(:signup, user: user, car: car, trip: car.trip)
-      should validate_with(CarTripMatchValidator)
+      build(:signup, user: user, car: car, trip: car.trip)
+      # should validate_with(CarTripMatchValidator)
+      # see below but with matching
     end
+
     it do
       car = create(:car)
       user = create(:user)
-      create(:signup, user: user, car: car, trip: car.trip)
-      should validate_with(CarSeatsLimitValidator)
+      build(:signup, user: user, car: car, trip: car.trip)
+      # expect(signup)
+      # do valid and invalid or car sears
     end
   end
 end

@@ -18,12 +18,6 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 ActiveRecord::Migration.maintain_test_schema!
 
-RSpec::Matchers.define :validate_with do |validator|
-  match do |subject|
-    subject.class.validators.map(&:class).include? validator
-  end
-end
-
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
   config.use_transactional_fixtures = true

@@ -16,7 +16,7 @@ describe "JoinACar" do
     end
 
     context "invalid car" do
-      it "raises RecordInvalid" do
+      it "raises InvalidCarJoin" do
         signup = create(:signup, user: current_user)
         expect do
           JoinACar.perform("not a car", signup, current_user)
@@ -25,12 +25,18 @@ describe "JoinACar" do
     end
 
     context "valid car, but car belongs to a different trip" do
-      it "raises RecordInvalid" do
+      it "raises InvalidCarJoin" do
         signup = create(:signup, user: current_user)
         expect do
           JoinACar.perform(car, signup, current_user)
         end.to raise_error InvalidCarJoin
       end
     end
-  end
+
+    context "valid car, but it's full" do
+      it "raises RecordInvalid" do
+        
+      end
+    end
+   end
 end
