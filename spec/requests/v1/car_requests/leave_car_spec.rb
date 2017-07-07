@@ -8,9 +8,14 @@ describe "LeaveCar Request" do
 
       context "user is signed up for a car in a trip" do
         it "removes the user from the car & returns 204 No Content" do
-          car = create(:car)
-          signup = create(:signup, trip: car.trip, car: car, user: current_user)
+          car = create(:car, max_seats: 2)
+          trip = car.trip
+          signup = create(:signup, trip: trip, car: car, user: current_user)
+          signup_2 = create(:signup, trip: trip, car: car, user: car.owner)
+
+          expect(car.owner).not_to eq(current_user)
           expect(car.users).to include(current_user)
+          expect(car.users.count).to eq(2)
 
           patch(
             api_v1_car_leave_url(car),
@@ -20,9 +25,14 @@ describe "LeaveCar Request" do
           expect(response).to have_http_status :no_content
 
           car.reload
+          expect(car).to be
           expect(car.users).to_not include(current_user)
           signup.reload
+          expect(signup).to be
           expect(signup.car_id).to eq(nil)
+          signup_2.reload
+          expect(signup_2).to be
+          expect(signup_2.car).to eq(car)
         end
       end
 
@@ -44,10 +54,10 @@ describe "LeaveCar Request" do
 
           expect(response).to have_http_status :no_content
           expect{ Car.find(car.id) }.to raise_error(ActiveRecord::RecordNotFound)
-          signup.reload
-          signup_2.reload
 
+          signup.reload
           expect(signup.car).not_to be
+          signup_2.reload
           expect(signup_2.car).not_to be
         end
       end

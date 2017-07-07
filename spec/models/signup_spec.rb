@@ -33,7 +33,7 @@ RSpec.describe Signup, type: :model do
       end
 
       context "when the car does not belong to the trip" do
-        it "does not save" do
+        it "does not save due to car/trip mismatch" do
           signup = build(:signup, car: car)
 
           expect(signup.valid?).to eq(false)
@@ -45,7 +45,7 @@ RSpec.describe Signup, type: :model do
 
     context "when the car is full" do
       context "when the car belongs to the trip" do
-        it "does not allow users to sign up" do
+        it "does not save due to full car" do
           create(:signup, car: car, trip: car.trip)
           signup = build(:signup, car: car, trip: car.trip)
 
@@ -56,7 +56,7 @@ RSpec.describe Signup, type: :model do
       end
 
       context "when the car does not belong to the trip" do
-        it "does not allow users to sign up" do
+        it "does not save due to full car and car/trip mismatch" do
           create(:signup, car: car, trip: car.trip)
           signup = build(:signup, car: car)
 
