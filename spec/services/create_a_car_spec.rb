@@ -23,11 +23,22 @@ describe "CreateACar" do
     end
 
     context "with invalid car info" do
-      it "raises RecordInvalid" do
-        signup = create(:signup, trip: trip, user: current_user)
-        expect do
-          CreateACar.perform({ name: nil }, current_user)
-        end.to raise_error ActiveRecord::RecordInvalid
+      context "missing name" do
+        it "raises RecordInvalid" do
+          signup = create(:signup, trip: trip, user: current_user)
+          expect do
+            CreateACar.perform({ name: nil, trip_id: trip.id }, current_user)
+          end.to raise_error ActiveRecord::RecordInvalid
+        end
+      end
+
+      context "missing trip_id" do
+        it "raises RecordInvalid" do
+          signup = create(:signup, trip: trip, user: current_user)
+          expect do
+            CreateACar.perform({ name: "Hogwarts Express", trip_id: nil }, current_user)
+          end.to raise_error ActiveRecord::RecordInvalid
+        end
       end
     end
   end
@@ -54,23 +65,22 @@ describe "CreateACar" do
     let!(:car) { create(:car, owner: current_user, trip: trip) }
     let!(:signup) { create(:signup, user: current_user, trip: trip, car: car) }
 
-    it "raises CarOwnerError" do
-      expect(Signup).to receive(:find_by).and_return(signup)
-
+    it "raises RecordInvalid" do
       car_params = {
         name: "My Car",
         trip_id: trip.id
       }
 
-      expect { CreateACar.perform(car_params, current_user) }.to raise_error(CarOwnerError,
-        "User already owns a car for this trip")
+      expect { CreateACar.perform(car_params, current_user) }
+        .to raise_error(ActiveRecord::RecordInvalid,
+        "Validation failed: Owner User already owns a car for this trip")
     end
   end
 
   context "no user" do
     let!(:trip) { create(:trip) }
 
-    it "raises RecordInvalid" do
+    it "raises MissingSignup" do
       car_params = {
         name: "My Car",
         trip_id: trip.id

@@ -9,6 +9,5 @@ UNPROCESSABLE_ENTITY_ERRORS =
 BAD_REQUEST_ERRORS =
 [ActionController::ParameterMissing,
   ArgumentError,
-  CarOwnerError,
   MissingInviteCodeError,
   MissingSignup]
