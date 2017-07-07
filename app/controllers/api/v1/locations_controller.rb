@@ -5,7 +5,7 @@ class Api::V1::LocationsController < Api::V1::ApiController
     authorize car, :create_location?
     location = Location.create!(location_params)
     render json: location.trip,
-           except: [:cars, :google_identity, :locations, :signups, :trip, :users],
+           except: [:car, :cars, :google_identity, :locations, :signups, :trip, :users],
            serializer: TripLocationsSerializer,
            status: :created
   end
