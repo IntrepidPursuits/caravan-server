@@ -256,11 +256,14 @@ describe "Location Request" do
         end
       end
 
-      context "user is signed up for the car but not the trip/car belongs to different trip" do
+      context "user tried to signed up for the car but not the trip/car belongs to different trip" do
         it "returns 403 Forbidden" do
           car = create(:car, status: 1)
           trip = create(:trip)
-          signup = create(:signup, car: car, trip: trip, user: current_user)
+
+          expect{ create(:signup, car: car, user: current_user) }
+            .to raise_error(ActiveRecord::RecordInvalid)
+
           unsaved_location = build(:location, car: car)
           valid_location_info = { location: unsaved_location }
 

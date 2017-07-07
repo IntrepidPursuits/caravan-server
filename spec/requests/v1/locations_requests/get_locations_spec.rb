@@ -79,12 +79,13 @@ describe "Location Request" do
         end
       end
 
-      context "user is signed up for a car in the trip, but not the trip itself" do
+      context "user tries to signed for a car in the trip, but not the trip itself" do
         it "returns 403 Forbidden" do
           trip = create(:trip)
           car = create(:car, trip: trip)
           locations = create_list(:location, 3, trip: trip, car: car)
-          create(:signup, car: car, user: current_user)
+          expect{ create(:signup, car: car, user: current_user) }
+            .to raise_error(ActiveRecord::RecordInvalid)
 
           get(
             api_v1_trip_locations_url(trip),
