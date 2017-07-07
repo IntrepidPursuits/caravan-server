@@ -27,19 +27,18 @@ describe "Car Requests" do
             expect(response).to have_http_status :created
             expect_body_to_include_car_attributes_at_path("car")
 
-            car = parsed_body["car"]
-            expect(Car.find(car["id"])).to be
-            expect(car["locations"]).to eq []
-            expect(car["max_seats"]).to eq(1)
-            expect(car["name"]).to include("Car ")
-            expect(car["status"]).to eq("not_started")
-            expect(car["owner_id"]).to eq current_user.id
-
+            car = Car.find(json_value_at_path("car/id"))
+            expect(car).to be
+            expect(car.owner).to eq current_user
+            expect(json_value_at_path("car/locations")).to eq []
+            expect(json_value_at_path("car/max_seats")).to eq(1)
+            expect(json_value_at_path("car/name")).to include("Car ")
+            expect(json_value_at_path("car/status")).to eq("not_started")
             expect(json_value_at_path("car/owner_id")).to eq current_user.id
 
             trip = @signup.trip
-            expect(car["trip"]["id"]).to eq trip.id
-            expect(car["trip"]["name"]).to eq trip.name
+            expect(json_value_at_path("car/trip/id")).to eq trip.id
+            expect(json_value_at_path("car/trip/name")).to eq trip.name
           end
 
           it "automatically adds the current user to the car" do

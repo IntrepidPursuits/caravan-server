@@ -26,6 +26,7 @@ describe "Signup Request" do
 
             expect(response).to have_http_status :ok
             expect_body_to_include_car_attributes(car, trip, current_user)
+            expect(json_value_at_path("car/status")).to eq car.status
           end
         end
 
@@ -50,6 +51,8 @@ describe "Signup Request" do
 
             expect(response).to have_http_status :ok
             expect_body_to_include_car_attributes(car, trip, current_user)
+            expect(json_value_at_path("car/status")).to eq car.status
+
           end
         end
 

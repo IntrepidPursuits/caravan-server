@@ -28,5 +28,11 @@ RSpec.describe Signup, type: :model do
       create(:signup, user: user, car: car, trip: car.trip)
       should validate_with(CarTripMatchValidator)
     end
+    it do
+      car = create(:car)
+      user = create(:user)
+      create(:signup, user: user, car: car, trip: car.trip)
+      should validate_with(CarSeatsLimitValidator)
+    end
   end
 end
