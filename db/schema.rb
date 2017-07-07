@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170706142841) do
+ActiveRecord::Schema.define(version: 20170706202014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -62,7 +62,7 @@ ActiveRecord::Schema.define(version: 20170706142841) do
     t.uuid "car_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["car_id", "trip_id"], name: "index_signups_on_car_id_and_trip_id", unique: true
+    t.index ["car_id", "trip_id", "user_id"], name: "index_signups_on_car_id_and_trip_id_and_user_id", unique: true
     t.index ["car_id"], name: "index_signups_on_car_id"
     t.index ["trip_id", "user_id"], name: "index_signups_on_trip_id_and_user_id", unique: true
   end

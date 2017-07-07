@@ -10,7 +10,7 @@ RSpec.describe Car, type: :model do
   end
 
   describe "validations" do
-    it { should validate_numericality_of(:max_seats).is_equal_to(1) }
+    it { should validate_numericality_of(:max_seats).in?(1..10) }
     it { should validate_presence_of(:max_seats) }
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:owner) }
