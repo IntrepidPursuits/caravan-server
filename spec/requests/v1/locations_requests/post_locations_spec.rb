@@ -89,7 +89,6 @@ describe "Location Request" do
           expect(errors).to include "Validation failed"
           expect(errors).to include "Latitude can't be blank"
           expect(errors).to include "Longitude can't be blank"
-          expect(errors).to include "Direction must be between -180 & 180"
           expect(errors).to include "Direction is not a number"
           expect(errors).to include "Direction can't be blank"
         end
@@ -142,7 +141,6 @@ describe "Location Request" do
 
             expect(response).to have_http_status :unprocessable_entity
             expect(errors).to include "Validation failed"
-            expect(errors).to include "Direction must be between -180 & 180"
             expect(errors).to include "Direction is not a number"
             expect(errors).to include "Direction can't be blank"
           end
@@ -168,7 +166,26 @@ describe "Location Request" do
 
             expect(response).to have_http_status :unprocessable_entity
             expect(errors).to include "Validation failed"
-            expect(errors).to include "Direction must be between -180 & 180"
+            expect(errors).to include "Direction must be greater than or equal to -180"
+
+
+            invalid_location_info = {
+              location: {
+                direction: 190,
+                latitude: 1.4,
+                longitude: -70.3
+              }
+            }
+
+            post(
+              car_locations_url(car),
+              params: invalid_location_info.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :unprocessable_entity
+            expect(errors).to include "Validation failed"
+            expect(errors).to include "Direction must be less than or equal to 180"
           end
         end
 
