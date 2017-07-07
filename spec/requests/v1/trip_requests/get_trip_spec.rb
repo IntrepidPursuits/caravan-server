@@ -7,19 +7,17 @@ describe "Trip Request" do
 
       context "valid trip" do
         it "returns valid JSON for an individual trip" do
-          trip = create(:trip)
+          trip = create(:trip, creator: current_user)
           create_list(:car, 3, trip: trip)
 
-          user = create(:user)
-          user2 = create(:user)
-          user3 = create(:user)
-          create(:signup, trip: trip, user: user)
-          create(:signup, trip: trip, user: user2)
-          create(:signup, trip: trip, user: user3)
+          passengers = create_list(:user, 3)
+          passengers.each do |passenger|
+            create(:signup, trip: trip, user: passenger)
+          end
 
           get(
             api_v1_trip_url(trip),
-            headers: authorization_headers(user)
+            headers: authorization_headers(current_user)
           )
 
           expect(response).to have_http_status :ok
