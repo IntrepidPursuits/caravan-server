@@ -7,23 +7,13 @@ class Api::V1::ApiController < ApplicationController
     @warden ||= request.env["warden"]
   end
 
-  [ActiveRecord::RecordInvalid,
-    CarNotStartedError,
-    InvalidCarCreation,
-    InvalidCarJoin,
-    InvalidInviteCodeError,
-    UnauthorizedAccess].each do |error|
+  UNPROCESSABLE_ENTITY_ERRORS.each do |error|
     rescue_from error do |exception|
        render json: { errors: exception.message }, status: :unprocessable_entity
     end
   end
 
-  [MissingInviteCodeError,
-    ArgumentError,
-    ActionController::ParameterMissing,
-    CarOwnerError,
-    MissingSignup
-  ].each do |error|
+  BAD_REQUEST_ERRORS.each do |error|
     rescue_from error do |exception|
       render json: { errors: exception.message }, status: :bad_request
     end
