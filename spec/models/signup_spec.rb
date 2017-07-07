@@ -20,7 +20,7 @@ RSpec.describe Signup, type: :model do
       car = create(:car)
       user = create(:user)
       create(:signup, user: user, car: car, trip: car.trip)
-      should validate_uniqueness_of(:car).scoped_to([:trip_id, :user_id]).allow_nil
+      should validate_uniqueness_of(:car).scoped_to(:user_id).allow_nil
     end
     it do
       car = create(:car)

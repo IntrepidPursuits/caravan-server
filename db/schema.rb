@@ -62,9 +62,11 @@ ActiveRecord::Schema.define(version: 20170706202014) do
     t.uuid "car_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["car_id", "trip_id", "user_id"], name: "index_signups_on_car_id_and_trip_id_and_user_id", unique: true
+    t.index ["car_id", "user_id"], name: "index_signups_on_car_id_and_user_id", unique: true
     t.index ["car_id"], name: "index_signups_on_car_id"
     t.index ["trip_id", "user_id"], name: "index_signups_on_trip_id_and_user_id", unique: true
+    t.index ["trip_id"], name: "index_signups_on_trip_id"
+    t.index ["user_id"], name: "index_signups_on_user_id"
   end
 
   create_table "trips", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
