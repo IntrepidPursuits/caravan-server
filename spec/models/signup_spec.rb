@@ -11,34 +11,60 @@ RSpec.describe Signup, type: :model do
     it { should validate_presence_of(:trip) }
     it { should validate_presence_of(:user) }
 
+    let!(:car)  { create(:car) }
+
     it do
-      user = create(:user)
-      car = create(:car)
-      create(:signup, user: user, car: car, trip: car.trip)
+      create(:signup, car: car, trip: car.trip)
       should validate_uniqueness_of(:trip).scoped_to(:user_id)
     end
 
     it do
-      car = create(:car)
-      user = create(:user)
-      create(:signup, user: user, car: car, trip: car.trip)
+      create(:signup, car: car, trip: car.trip)
       should validate_uniqueness_of(:car).scoped_to(:user_id).allow_nil
     end
 
-    it do
-      car = create(:car)
-      user = create(:user)
-      build(:signup, user: user, car: car, trip: car.trip)
-      # should validate_with(CarTripMatchValidator)
-      # see below but with matching
+    context "when the car has at least one empty seat" do
+      context "when the car belongs to the trip" do
+        it "allows users to sign up" do
+          signup = build(:signup, car: car, trip: car.trip)
+
+          expect(signup.valid?).to eq(true)
+        end
+      end
+
+      context "when the car does not belong to the trip" do
+        it "does not save" do
+          signup = build(:signup, car: car)
+
+          expect(signup.valid?).to eq(false)
+          expect{ signup.save! }.to raise_error(ActiveRecord::RecordInvalid,
+            "Validation failed: Car must belong to the Signup's trip")
+        end
+      end
     end
 
-    it do
-      car = create(:car)
-      user = create(:user)
-      build(:signup, user: user, car: car, trip: car.trip)
-      # expect(signup)
-      # do valid and invalid or car sears
+    context "when the car is full" do
+      context "when the car belongs to the trip" do
+        it "does not allow users to sign up" do
+          create(:signup, car: car, trip: car.trip)
+          signup = build(:signup, car: car, trip: car.trip)
+
+          expect(signup.valid?).to eq(false)
+          expect{ signup.save! }.to raise_error(ActiveRecord::RecordInvalid,
+            "Validation failed: Car is full! Sorry!")
+        end
+      end
+
+      context "when the car does not belong to the trip" do
+        it "does not allow users to sign up" do
+          create(:signup, car: car, trip: car.trip)
+          signup = build(:signup, car: car)
+
+          expect(signup.valid?).to eq(false)
+          expect{ signup.save! }.to raise_error(ActiveRecord::RecordInvalid,
+            "Validation failed: Car must belong to the Signup's trip, Car is full! Sorry!")
+        end
+      end
     end
   end
 end
