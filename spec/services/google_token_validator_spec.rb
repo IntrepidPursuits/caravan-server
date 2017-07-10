@@ -27,7 +27,7 @@ RSpec.describe "GoogleTokenValidator" do
 
   context "with an invalid token" do
     describe ".perform" do
-      describe "with expired token" do
+      context "with expired token" do
         it "returns false" do
           stub_expired_token_request
           response = GoogleTokenValidator.perform(google_token)
@@ -35,7 +35,7 @@ RSpec.describe "GoogleTokenValidator" do
         end
       end
 
-      describe "with non-google token" do
+      context "with non-google token" do
         it "returns false" do
           stub_non_google_token_request
           response = GoogleTokenValidator.perform(google_token)
@@ -43,9 +43,33 @@ RSpec.describe "GoogleTokenValidator" do
         end
       end
 
-      describe "with token from a different client id" do
+      context "with token from a different client id" do
         it "returns false" do
           stub_invalid_client_id_request
+          response = GoogleTokenValidator.perform(google_token)
+          expect(response).to be(false)
+        end
+      end
+
+      context "with a token missing email" do
+        it "returns false" do
+          stub_missing_email_request
+          response = GoogleTokenValidator.perform(google_token)
+          expect(response).to be(false)
+        end
+      end
+
+      context "with a token missing uid" do
+        it "returns false" do
+          stub_missing_uid_request
+          response = GoogleTokenValidator.perform(google_token)
+          expect(response).to be(false)
+        end
+      end
+
+      context "with a token missing name" do
+        it "returns false" do
+          stub_missing_name_request
           response = GoogleTokenValidator.perform(google_token)
           expect(response).to be(false)
         end

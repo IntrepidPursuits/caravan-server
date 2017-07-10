@@ -10,7 +10,7 @@ class GoogleTokenValidator
   end
 
   def perform
-    return false if token_invalid? || !client_id_valid?
+    return false if token_invalid? || !client_id_valid? || missing_required_info?
     token_hash
     true
   end
@@ -21,6 +21,10 @@ class GoogleTokenValidator
 
   def client_id_valid?
     VALID_GOOGLE_CLIENT_IDS.include?(client_id)
+  end
+
+  def missing_required_info?
+    response["sub"].nil? || response["email"].nil? || response["name"].nil?
   end
 
   def client_id
