@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(version: 20170710210713) do
     t.integer "direction", default: 0, null: false
     t.uuid "stop_id"
     t.index ["car_id"], name: "index_locations_on_car_id"
+    t.index ["stop_id", "car_id"], name: "index_locations_on_stop_id_and_car_id", unique: true
     t.index ["stop_id"], name: "index_locations_on_stop_id"
   end
 

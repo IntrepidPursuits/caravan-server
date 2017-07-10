@@ -11,6 +11,7 @@ class CreateStops < ActiveRecord::Migration[5.1]
     end
     add_column :locations, :stop_id, :uuid, foreign_key: true
     add_index :locations, :stop_id
+    add_index :locations, [:stop_id, :car_id], unique: true
     add_index :stops, :trip_id
   end
 end
