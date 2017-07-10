@@ -12,7 +12,8 @@ class CreateACar
   def perform
     car = Car.create!(@params)
     raise MissingSignup unless signup = Signup.find_by(trip: @trip, user: @user)
-    signup.update_attributes(car: car)
+    raise CarOwnerError if @user.owned_cars.include?(signup.car)
+    signup.update_attributes!(car: car)
     car
   end
 end

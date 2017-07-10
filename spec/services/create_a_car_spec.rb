@@ -48,6 +48,25 @@ describe "CreateACar" do
     end
   end
 
+  context "user already owns another car on the trip" do
+    let!(:trip) { create(:trip) }
+    let!(:current_user) { create(:user) }
+    let!(:car) { create(:car, owner: current_user, trip: trip) }
+    let!(:signup) { create(:signup, user: current_user, trip: trip, car: car) }
+
+    it "raises CarOwnerError" do
+      expect(Signup).to receive(:find_by).and_return(signup)
+
+      car_params = {
+        name: "My Car",
+        trip_id: trip.id
+      }
+
+      expect { CreateACar.perform(car_params, current_user) }.to raise_error(CarOwnerError,
+        "User already owns a car for this trip")
+    end
+  end
+
   context "no user" do
     let!(:trip) { create(:trip) }
 
