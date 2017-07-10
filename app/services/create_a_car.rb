@@ -2,7 +2,7 @@ class CreateACar
   def initialize(params, user)
     @params = params.merge(owner: user)
     @user = user
-    @trip = params["trip_id"]
+    @trip = params[:trip_id]
   end
 
   def self.perform(params, user)
