@@ -20,7 +20,7 @@ describe "Trip Request" do
 
           expect(response).to have_http_status :created
           expect_response_to_include_complete_trip_attributes_at_path("trip")
-          expect_reponse_to_include_correct_trip_factory_content(current_user)
+          expect_response_to_include_correct_trip_factory_content(current_user)
           expect(Trip.find(new_trip_id)).to be
           expect(Signup.find_by(user: current_user, trip_id: new_trip_id)).to be
         end
@@ -113,7 +113,7 @@ describe "Trip Request" do
 
           expect(response).to have_http_status :ok
           expect_response_to_include_complete_trip_attributes_at_path("trip")
-          expect_reponse_to_include_correct_trip_factory_content(current_user)
+          expect_response_to_include_correct_trip_factory_content(current_user)
           expect_response_to_include_trip_with_cars_attributes_at_path(
             "trip/cars", trip.cars.length)
           expect_response_to_include_trip_with_signups_attributes_at_path(

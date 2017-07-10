@@ -9,4 +9,8 @@ class TripPolicy < ApplicationPolicy
   def create_car?
     trip.users.include?(user)
   end
+
+  def index_locations?
+    trip.users.include?(user)
+  end
 end

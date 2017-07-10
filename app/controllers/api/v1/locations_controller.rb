@@ -5,13 +5,14 @@ class Api::V1::LocationsController < Api::V1::ApiController
     authorize car, :create_location?
     location = Location.create!(location_params)
     render json: location.trip,
-           except: [:cars, :locations, :signups, :users],
+           except: [:car, :cars],
            serializer: TripLocationsSerializer,
            status: :created
   end
 
   def index
     trip = Trip.find(params[:trip_id])
+    authorize trip, :index_locations?
     render json: trip,
            except: [:car, :cars],
            serializer: TripLocationsSerializer
@@ -21,6 +22,7 @@ class Api::V1::LocationsController < Api::V1::ApiController
 
   def location_params
     params.require(:location).permit(
+      :direction,
       :latitude,
       :longitude
     ).merge(
