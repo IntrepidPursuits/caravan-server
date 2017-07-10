@@ -14,8 +14,4 @@ class Trip < ApplicationRecord
   def last_locations
     self.cars.map { |car| car.locations.order("updated_at").last }.compact
   end
-
-  def valid_code?(code)
-    self.invite_code.code == code
-  end
 end

@@ -1,6 +1,6 @@
 class Api::V1::CarsController < Api::V1::ApiController
   def create
-    raise InvalidCarCreation unless trip_id = car_params["trip_id"]
+    raise InvalidCarCreation unless trip_id = car_params[:trip_id]
     authorize Trip.find(trip_id), :create_car?
     car = CreateACar.perform(car_params, current_user)
     render json: car, status: :created, serializer: CarSerializer, except: exclusions

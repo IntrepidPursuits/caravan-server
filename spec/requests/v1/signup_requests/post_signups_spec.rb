@@ -5,12 +5,10 @@ describe "Signup Request" do
     context "authenticated user" do
       let(:current_user) { create(:user) }
 
-      context "with valid trip and signup code" do
+      context "with valid signup code for a valid trip" do
         it "returns valid JSON for a new signup" do
           trip = create(:trip)
-          unsaved_signup = build(:signup, trip: trip)
           valid_signup_info = {
-            signup: unsaved_signup,
             invite_code: trip.invite_code.code
           }
 
@@ -27,10 +25,8 @@ describe "Signup Request" do
       end
 
       context "with an invalid signup code" do
-        it "returns JSON with error" do
-          unsaved_signup_invalid_code = build(:signup)
+        it "returns 422 Unprocessable Entity" do
           signup_info_invalid_code = {
-            signup: unsaved_signup_invalid_code,
             invite_code: "abcdef"
           }
 
@@ -42,48 +38,60 @@ describe "Signup Request" do
 
           expect(response).to have_http_status :unprocessable_entity
           expect(body).to have_json_path("errors")
-          expect(errors).to include ("Invalid invite code.")
+          expect(errors).to eq("Invalid invite code. Please verify that you have the correct code.")
         end
       end
 
-      context "without a signup code" do
-        it "returns JSON with error" do
-          unsaved_signup_missing_code = build(:signup)
-          signup_info_missing_code = {
-            signup: unsaved_signup_missing_code
+      context "with nil signup code" do
+        it "returns 422 Unprocessable Entity" do
+          signup_info_nil_code = {
+            invite_code: nil
           }
 
           post(
             signups_url,
-            params: signup_info_missing_code.to_json,
+            params: signup_info_nil_code.to_json,
             headers: authorization_headers(current_user)
           )
 
           expect(response).to have_http_status :bad_request
           expect(body).to have_json_path("errors")
-          expect(errors).to include ("Invite code is missing.")
+          expect(errors).to eq("Invite code is missing.")
         end
       end
 
-      context "without a trip" do
+      context "without a signup code" do
+        it "returns 400 Bad Request" do
+          post(
+            signups_url,
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status :bad_request
+          expect(body).to have_json_path("errors")
+          expect(errors).to eq("Invite code is missing.")
+        end
+      end
+
+      context "invite code belongs to a deleted trip" do
         it "returns JSON with error" do
-          unsaved_signup_missing_trip = build(:signup, trip: nil)
-          signup_info_missing_trip = {
-            signup: unsaved_signup_missing_trip,
-            invite_code: "123456"
+          trip = create(:trip)
+          code = trip.invite_code.code
+          trip.destroy
+
+          signup_info_deleted_trip = {
+            invite_code: code
           }
 
           post(
             signups_url,
-            params: signup_info_missing_trip.to_json,
+            params: signup_info_deleted_trip.to_json,
             headers: authorization_headers(current_user)
           )
 
           expect(response).to have_http_status :unprocessable_entity
           expect(body).to have_json_path("errors")
-          expect(errors).to include ("Validation failed")
-          expect(errors).to include ("Trip must exist")
-          expect(errors).to include ("Trip can't be blank")
+          expect(errors).to eq("Validation failed: Trip must exist, Trip can't be blank")
         end
       end
     end
@@ -92,9 +100,7 @@ describe "Signup Request" do
       context "no authorization header" do
         it "returns 401 Unauthorized" do
           trip = create(:trip)
-          unsaved_signup = build(:signup, trip: trip)
           valid_signup_info = {
-            signup: unsaved_signup,
             invite_code: trip.invite_code.code
           }
 
@@ -111,9 +117,7 @@ describe "Signup Request" do
       context "invalid access token" do
         it "returns 401 Unauthorized" do
           trip = create(:trip)
-          unsaved_signup = build(:signup, trip: trip)
           valid_signup_info = {
-            signup: unsaved_signup,
             invite_code: trip.invite_code.code
           }
 
