@@ -5,6 +5,6 @@ class TripLocationsSerializer < ActiveModel::Serializer
   has_many :last_locations, serializer: LocationSerializer
 
   def trip_id
-    self.object.id
+    object.id
   end
 end

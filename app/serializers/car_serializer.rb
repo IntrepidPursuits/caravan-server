@@ -15,10 +15,6 @@ class CarSerializer < BaseSerializer
     serializer: PassengerSerializer, key: :passengers
 
   def passengers
-    self.users
-  end
-
-  def seats_remaining
-    self.max_seats - self.users.count
+    object.users
   end
 end

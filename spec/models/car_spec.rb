@@ -36,4 +36,25 @@ RSpec.describe Car, type: :model do
         .with([:not_started, :in_transit, :arrived])
     end
   end
+
+  describe "seats_remaining" do
+    context "when max_seats is greater than one" do
+      it "should equal max_seats less associated users count" do
+        car = create(:car, max_seats: 5)
+        signup = create(:signup, car: car, user: car.owner, trip: car.trip)
+        create(:signup, car: car, trip: car.trip)
+
+        expect(car.seats_remaining).to eq(3)
+      end
+    end
+
+    context "when no max_seats was specified" do
+      it "should equal zero once owner is signed up" do
+        car = create(:car)
+        signup = create(:signup, car: car, user: car.owner, trip: car.trip)
+
+        expect(car.seats_remaining).to eq(0)
+      end
+    end
+  end
 end
