@@ -5,6 +5,7 @@ module Helpers
       expect(parsed_body["car"]["locations"]).to eq([])
       expect(parsed_body["car"]["max_seats"]).to eq(car.max_seats)
       expect(parsed_body["car"]["name"]).to eq(car.name)
+      expect(parsed_body["car"]["seats_remaining"]).to eq(car.max_seats - car.users.count)
       expect(parsed_body["car"]["trip"]["id"]).to eq(trip.id)
       expect(parsed_body["car"]["trip"]["name"]).to eq(trip.name)
       expect(parsed_body["car"]["passengers"][0]["id"]).to eq(user.id)
@@ -88,6 +89,7 @@ module Helpers
       expect(body).to have_json_path("#{path}/name")
       expect(body).to have_json_path("#{path}/owner_id")
       expect(body).to have_json_path("#{path}/passengers")
+      expect(body).to have_json_path("#{path}/seats_remaining")
       expect(body).to have_json_path("#{path}/status")
       expect_response_to_include_basic_trip_attributes_at_path("#{path}/trip")
     end

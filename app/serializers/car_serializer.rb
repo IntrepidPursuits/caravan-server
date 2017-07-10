@@ -3,6 +3,7 @@ class CarSerializer < BaseSerializer
     :name,
     :owner_id,
     :passengers,
+    :seats_remaining,
     :status,
     :trip
 
@@ -15,5 +16,9 @@ class CarSerializer < BaseSerializer
 
   def passengers
     self.users
+  end
+
+  def seats_remaining
+    self.max_seats - self.users.count
   end
 end
