@@ -42,8 +42,35 @@ describe "Car Requests" do
           end
 
           it "automatically adds the current user to the car" do
-            expect(json_value_at_path("car/passengers").count).to eq(1)
+            car = Car.find(json_value_at_path("car/id"))
+            expect(car.owner).to eq(current_user)
+            expect(car.users).to include(current_user)
+            expect(current_user.owned_cars).to include(car)
+            expect(json_value_at_path("car/passengers").length).to eq 1
             expect_body_to_include_passenger_attributes
+          end
+        end
+
+        context "user owns another car on the trip" do
+          it "returns 400 Bad Request" do
+            trip = create(:trip)
+            car = create(:car, owner: current_user, trip: trip)
+            signup = create(:signup, trip: trip, user: current_user, car: car)
+
+            unsaved_car = build(:car, trip: trip)
+
+            valid_car_info = {
+              car: unsaved_car
+            }
+
+            post(
+              api_v1_cars_url,
+              params: valid_car_info.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :bad_request
+            expect(errors).to eq "User already owns a car for this trip"
           end
         end
       end
