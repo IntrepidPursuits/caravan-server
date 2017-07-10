@@ -3,6 +3,7 @@ class Car < ApplicationRecord
   belongs_to :trip
 
   has_many :locations
+  has_many :stops, through: :locations
   has_many :signups
   has_many :users, through: :signups
 

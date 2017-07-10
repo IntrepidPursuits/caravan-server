@@ -15,6 +15,11 @@ RSpec.describe Location, type: :model do
     it { should validate_presence_of(:direction) }
     it { should validate_presence_of(:latitude) }
     it { should validate_presence_of(:longitude) }
-    it { should validate_uniqueness_of(:stop).scoped_to(:car_id).allow_nil }
+
+    it do
+      stop = create(:stop)
+      create(:location, stop: stop)
+      should validate_uniqueness_of(:stop).scoped_to(:car_id).allow_nil
+    end
   end
 end
