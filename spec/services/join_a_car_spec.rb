@@ -42,5 +42,5 @@ describe "JoinACar" do
         end.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
-   end
+  end
 end

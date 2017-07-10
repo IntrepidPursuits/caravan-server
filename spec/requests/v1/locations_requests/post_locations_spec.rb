@@ -86,20 +86,11 @@ describe "Location Request" do
 
           expect(response).to have_http_status :unprocessable_entity
           expect(body).to have_json_path("errors")
-<<<<<<< HEAD
-          expect(errors).to include "Validation failed"
-          expect(errors).to include "Latitude can't be blank"
-          expect(errors).to include "Longitude can't be blank"
-          expect(errors).to include "Direction is not a number"
-          expect(errors).to include "Direction can't be blank"
-=======
           expect(errors).to include("Validation failed")
           expect(errors).to include("Latitude can't be blank")
           expect(errors).to include("Longitude can't be blank")
-          expect(errors).to include("Direction must be between -180 & 180")
           expect(errors).to include("Direction is not a number")
           expect(errors).to include("Direction can't be blank")
->>>>>>> bcdbbb9... fix parentheses
         end
       end
 
