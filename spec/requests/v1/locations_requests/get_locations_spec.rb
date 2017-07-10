@@ -28,7 +28,7 @@ describe "Location Request" do
             expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/0")
             expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/1")
 
-            expect(json_value_at_path("trip_locations/trip_id")).to eq trip.id
+            expect(json_value_at_path("trip_locations/trip_id")).to eq(trip.id)
             expect_body_to_include_locations_content(car1, car1_last_location, 0)
             expect_body_to_include_locations_content(car2, car2_last_location, 1)
           end
@@ -48,7 +48,7 @@ describe "Location Request" do
 
             expect(response).to have_http_status :ok
             expect_body_to_include_locations_content(car1, location, 0)
-            expect(json_value_at_path("trip_locations/last_locations").length).to eq 1
+            expect(json_value_at_path("trip_locations/last_locations").count).to eq(1)
           end
         end
       end
@@ -61,7 +61,7 @@ describe "Location Request" do
           )
 
           expect(response).to have_http_status :not_found
-          expect(errors).to include "Couldn't find Trip with 'id'=fake_trip"
+          expect(errors).to include("Couldn't find Trip with 'id'=fake_trip")
         end
       end
 
@@ -79,12 +79,13 @@ describe "Location Request" do
         end
       end
 
-      context "user is signed up for a car in the trip, but not the trip itself" do
+      context "user tries to signed for a car in the trip, but not the trip itself" do
         it "returns 403 Forbidden" do
           trip = create(:trip)
           car = create(:car, trip: trip)
           locations = create_list(:location, 3, trip: trip, car: car)
-          create(:signup, car: car, user: current_user)
+          expect{ create(:signup, car: car, user: current_user) }
+            .to raise_error(ActiveRecord::RecordInvalid)
 
           get(
             api_v1_trip_locations_url(trip),

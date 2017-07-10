@@ -10,26 +10,36 @@ describe "JoinACar" do
         signup = create(:signup, trip: car.trip, user: current_user)
         value = JoinACar.perform(car, signup, current_user)
 
-        expect(value).to be_a Car
+        expect(value).to be_a(Car)
         expect(value).to eq(car)
       end
     end
 
     context "invalid car" do
-      it "raises RecordInvalid" do
+      it "raises InvalidCarJoin" do
         signup = create(:signup, user: current_user)
         expect do
           JoinACar.perform("not a car", signup, current_user)
-        end.to raise_error InvalidCarJoin
+        end.to raise_error(InvalidCarJoin)
       end
     end
 
     context "valid car, but car belongs to a different trip" do
-      it "raises RecordInvalid" do
+      it "raises InvalidCarJoin" do
         signup = create(:signup, user: current_user)
         expect do
           JoinACar.perform(car, signup, current_user)
-        end.to raise_error InvalidCarJoin
+        end.to raise_error(InvalidCarJoin)
+      end
+    end
+
+    context "valid car, but it's full" do
+      it "raises RecordInvalid" do
+        create(:signup, car: car, trip: car.trip)
+        signup = create(:signup, trip: car.trip, user: current_user)
+        expect do
+          JoinACar.perform(car, signup, current_user)
+        end.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
   end

@@ -1,16 +1,15 @@
 module Helpers
   module RequestExpectations
     def expect_body_to_include_car_attributes(car, trip, user)
-      expect(parsed_body["car"]["id"]).to eq car.id
-      expect(parsed_body["car"]["locations"]).to eq []
-      expect(parsed_body["car"]["max_seats"]).to eq car.max_seats
-      expect(parsed_body["car"]["name"]).to eq car.name
-      expect(parsed_body["car"]["status"]).to eq car.status
-      expect(parsed_body["car"]["trip"]["id"]).to eq trip.id
-      expect(parsed_body["car"]["trip"]["name"]).to eq trip.name
-      expect(parsed_body["car"]["passengers"][0]["id"]).to eq user.id
-      expect(parsed_body["car"]["passengers"][0]["name"]).to eq user.name
-      expect(parsed_body["car"]["passengers"][0]["email"]).to eq user.google_identity.email
+      expect(parsed_body["car"]["id"]).to eq(car.id)
+      expect(parsed_body["car"]["locations"]).to eq([])
+      expect(parsed_body["car"]["max_seats"]).to eq(car.max_seats)
+      expect(parsed_body["car"]["name"]).to eq(car.name)
+      expect(parsed_body["car"]["trip"]["id"]).to eq(trip.id)
+      expect(parsed_body["car"]["trip"]["name"]).to eq(trip.name)
+      expect(parsed_body["car"]["passengers"][0]["id"]).to eq(user.id)
+      expect(parsed_body["car"]["passengers"][0]["name"]).to eq(user.name)
+      expect(parsed_body["car"]["passengers"][0]["email"]).to eq(user.google_identity.email)
     end
 
     def expect_body_to_include_trip_locations_attributes_at_path(path)
@@ -74,7 +73,7 @@ module Helpers
       end
     end
 
-    def expect_reponse_to_include_correct_trip_factory_content(creator)
+    def expect_response_to_include_correct_trip_factory_content(creator)
       expect(parsed_body["trip"]["creator"]["name"]).to eq creator.name
       expect(parsed_body["trip"]["destination_address"])
         .to eq attributes_for(:trip)[:destination_address].to_s

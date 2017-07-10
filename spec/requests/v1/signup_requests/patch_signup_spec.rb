@@ -7,25 +7,54 @@ describe "Signup Request" do
 
       context "user tries to join a car" do
         context "with valid car_id and trip_id (for a trip the user is signed up for)" do
-          it "returns valid JSON for the updated car and passengers" do
-            google_identity = create(:google_identity, user: current_user)
-            car = create(:car)
-            trip = car.trip
-            signup = create(:signup, user: current_user, trip: trip)
+          context "the car is not yet full" do
+            it "returns valid JSON for the updated car and passengers" do
+              google_identity = create(:google_identity, user: current_user)
+              car = create(:car)
+              trip = car.trip
+              signup = create(:signup, user: current_user, trip: trip)
 
-            signup_params = { signup: {
-              trip_id: signup.trip_id,
-              car_id: car.id
-            } }
+              signup_params = { signup: {
+                trip_id: signup.trip_id,
+                car_id: car.id
+              } }
 
-            patch(
-              api_v1_signup_url(signup),
-              params: signup_params.to_json,
-              headers: authorization_headers(current_user)
-            )
+              patch(
+                api_v1_signup_url(signup),
+                params: signup_params.to_json,
+                headers: authorization_headers(current_user)
+              )
 
-            expect(response).to have_http_status :ok
-            expect_body_to_include_car_attributes(car, trip, current_user)
+              expect(response).to have_http_status :ok
+              expect_body_to_include_car_attributes(car, trip, current_user)
+              expect(json_value_at_path("car/status")).to eq(car.status)
+            end
+          end
+
+          context "the car is full" do
+            it "returns 422 Unprocessable Entity" do
+              user = create(:user)
+              create(:google_identity, user: user)
+              google_identity = create(:google_identity, user: current_user)
+              car = create(:car)
+              trip = car.trip
+              create(:signup, car: car, trip: trip, user: user)
+              signup = create(:signup, user: current_user, trip: trip)
+
+              signup_params = { signup: {
+                trip_id: signup.trip_id,
+                car_id: car.id
+              } }
+
+              patch(
+                api_v1_signup_url(signup),
+                params: signup_params.to_json,
+                headers: authorization_headers(current_user)
+              )
+
+              expect(response).to have_http_status :unprocessable_entity
+              expect(errors).to eq("Validation failed: Car is full! Sorry!")
+            end
           end
         end
 
@@ -50,6 +79,8 @@ describe "Signup Request" do
 
             expect(response).to have_http_status :ok
             expect_body_to_include_car_attributes(car, trip, current_user)
+            expect(json_value_at_path("car/status")).to eq(car.status)
+
           end
         end
 
@@ -68,7 +99,7 @@ describe "Signup Request" do
             )
 
             expect(response).to have_http_status :ok
-            expect(updated).to eq signup.updated_at
+            expect(updated).to eq(signup.updated_at)
           end
         end
 
@@ -89,7 +120,7 @@ describe "Signup Request" do
             )
 
             expect(response).to have_http_status :not_found
-            expect(errors).to eq "Couldn't find Signup with 'id'=invalid signup"
+            expect(errors).to eq("Couldn't find Signup with 'id'=invalid signup")
           end
         end
 
@@ -110,7 +141,7 @@ describe "Signup Request" do
             )
 
             expect(response).to have_http_status :not_found
-            expect(errors).to eq "Couldn't find Car with 'id'=something invalid here"
+            expect(errors).to eq("Couldn't find Car with 'id'=something invalid here")
           end
         end
 
@@ -132,7 +163,7 @@ describe "Signup Request" do
             )
 
             expect(response).to have_http_status :unprocessable_entity
-            expect(errors).to eq "Cannot join a car that doesn't exist or that belongs to a different trip"
+            expect(errors).to eq("Cannot join a car that doesn't exist or that belongs to a different trip")
           end
         end
 
