@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe Location, type: :model do
   describe "associations" do
     it { should belong_to(:car) }
+    it { should belong_to(:stop) }
   end
 
   describe "validations" do
@@ -14,5 +15,6 @@ RSpec.describe Location, type: :model do
     it { should validate_presence_of(:direction) }
     it { should validate_presence_of(:latitude) }
     it { should validate_presence_of(:longitude) }
+    it { should validate_uniqueness_of(:stop).scoped_to(:car_id).allow_nil }
   end
 end
