@@ -15,15 +15,18 @@ RSpec.describe Car, type: :model do
         .is_greater_than_or_equal_to(1).is_less_than_or_equal_to(10)
         .only_integer
     end
+
     it { should validate_presence_of(:max_seats) }
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:owner) }
     it { should validate_presence_of(:status) }
     it { should validate_presence_of(:trip) }
+
     it do
       car = create(:car)
       should validate_uniqueness_of(:name).scoped_to(:trip_id)
     end
+    
     it do
       car = create(:car)
       should validate_uniqueness_of(:owner).scoped_to(:trip_id).with_message("User already owns a car for this trip")
