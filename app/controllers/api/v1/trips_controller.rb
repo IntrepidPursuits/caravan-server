@@ -5,7 +5,7 @@ class Api::V1::TripsController < Api::V1::ApiController
     trip = Trip.create!(trip_params_with_code)
     Signup.create!(trip: trip, user: current_user)
     render json: trip,
-           except: [:invite_code, :signups, :users],
+           except: [:invite_code],
            serializer: TripSerializer,
            status: :created
   end
@@ -15,7 +15,7 @@ class Api::V1::TripsController < Api::V1::ApiController
     authorize user, :current_user?
     trips = user.trips
     render json: trips,
-      except: [:cars, :creator, :invite_code, :signups, :users],
+      except: [:creator, :invite_code],
       each_serializer: SimpleTripSerializer,
       status: :ok
   end
@@ -23,7 +23,7 @@ class Api::V1::TripsController < Api::V1::ApiController
   def show
     trip = Trip.find(params[:id])
     render json: trip,
-           except: [:invite_code, :signups, :users],
+           except: [:google_identity, :invite_code, :locations, :trip],
            serializer: TripSerializer,
            status: :ok
   end

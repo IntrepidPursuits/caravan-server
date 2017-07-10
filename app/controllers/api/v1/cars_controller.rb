@@ -19,6 +19,6 @@ class Api::V1::CarsController < Api::V1::ApiController
   end
 
   def exclusions
-    [:car, :cars, :google_identity, :invite_code, :signups]
+    [:car, :google_identity, :invite_code, :signups]
   end
 end

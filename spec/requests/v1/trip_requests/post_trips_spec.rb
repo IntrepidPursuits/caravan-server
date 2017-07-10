@@ -46,12 +46,12 @@ describe "Trip Request" do
 
           expect(response).to have_http_status :unprocessable_entity
           expect(body).to have_json_path("errors")
-          expect(errors).to include ("Validation failed")
-          expect(errors).to include ("Departing on can't be blank")
-          expect(errors).to include ("Destination address can't be blank")
-          expect(errors).to include ("Destination longitude can't be blank")
-          expect(errors).to include ("Destination latitude can't be blank")
-          expect(errors).to include ("Name can't be blank")
+          expect(errors).to include("Validation failed")
+          expect(errors).to include("Departing on can't be blank")
+          expect(errors).to include("Destination address can't be blank")
+          expect(errors).to include("Destination longitude can't be blank")
+          expect(errors).to include("Destination latitude can't be blank")
+          expect(errors).to include("Name can't be blank")
         end
       end
     end
