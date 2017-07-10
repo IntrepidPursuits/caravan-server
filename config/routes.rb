@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       end
       resources :signups, only: [:create, :update]
       resources :trips, only: [:create, :show] do
+        resource :leave, only: [:destroy], controller: :leave_trip
         resources :locations, only: [:index]
       end
       resources :users, only: [] do

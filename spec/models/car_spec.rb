@@ -24,6 +24,10 @@ RSpec.describe Car, type: :model do
       car = create(:car)
       should validate_uniqueness_of(:name).scoped_to(:trip_id)
     end
+    it do
+      car = create(:car)
+      should validate_uniqueness_of(:owner).scoped_to(:trip_id).with_message("User already owns a car for this trip")
+    end
   end
 
   describe "set enum" do

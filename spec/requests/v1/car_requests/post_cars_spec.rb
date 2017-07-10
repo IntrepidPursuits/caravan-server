@@ -52,7 +52,7 @@ describe "Car Requests" do
         end
 
         context "user owns another car on the trip" do
-          it "returns 400 Bad Request" do
+          it "returns Unprocessable Entity" do
             trip = create(:trip)
             car = create(:car, owner: current_user, trip: trip)
             signup = create(:signup, trip: trip, user: current_user, car: car)
@@ -69,8 +69,8 @@ describe "Car Requests" do
               headers: authorization_headers(current_user)
             )
 
-            expect(response).to have_http_status :bad_request
-            expect(errors).to eq "User already owns a car for this trip"
+            expect(response).to have_http_status :unprocessable_entity
+            expect(errors).to eq "Validation failed: Owner User already owns a car for this trip"
           end
         end
       end

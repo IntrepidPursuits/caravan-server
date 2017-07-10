@@ -1,5 +1,5 @@
 class MissingSignup < StandardError
   def message
-    "You must be signed up for a trip in order to create a car in that trip"
+    "You are not signed up for this trip"
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170706202014) do
+ActiveRecord::Schema.define(version: 20170707202059) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20170706202014) do
     t.string "name", null: false
     t.uuid "owner_id", null: false
     t.index ["name", "trip_id"], name: "index_cars_on_name_and_trip_id", unique: true
+    t.index ["owner_id", "trip_id"], name: "index_cars_on_owner_id_and_trip_id", unique: true
     t.index ["trip_id"], name: "index_cars_on_trip_id"
   end
 
