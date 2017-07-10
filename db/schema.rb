@@ -82,6 +82,8 @@ ActiveRecord::Schema.define(version: 20170710210713) do
     t.decimal "longitude", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["address", "trip_id"], name: "index_stops_on_address_and_trip_id", unique: true
+    t.index ["name", "trip_id"], name: "index_stops_on_name_and_trip_id", unique: true
     t.index ["trip_id"], name: "index_stops_on_trip_id"
   end
 

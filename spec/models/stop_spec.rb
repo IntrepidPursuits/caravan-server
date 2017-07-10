@@ -9,5 +9,15 @@ describe Stop, type: :model do
 
   describe "validations" do
     it { should validate_presence_of(:trip) }
+
+    it do
+      create(:stop)
+      should validate_uniqueness_of(:address).scoped_to(:trip_id)
+    end
+
+    it do
+      create(:stop)
+      should validate_uniqueness_of(:name).scoped_to(:trip_id)
+    end
   end
 end
