@@ -10,6 +10,10 @@ class TripPolicy < ApplicationPolicy
     trip.users.include?(user)
   end
 
+  def create_stop?
+    trip.users.include?(user)
+  end
+
   def index_locations?
     trip.users.include?(user)
   end
