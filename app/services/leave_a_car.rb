@@ -3,7 +3,7 @@ class LeaveACar
     @car = car
     @user = user
     raise ArgumentError, "expected a user" unless @user.class == User
-    raise InvalidCarLeave unless @car.class == Car && @signup = signup
+    raise InvalidCarLeave unless @car.class == Car && signup
   end
 
   def self.perform(car, user)
@@ -27,6 +27,6 @@ class LeaveACar
   end
 
   def signup
-    Signup.find_by(trip: @car.trip, car: @car, user: @user)
+    @signup ||= Signup.find_by(trip: @car.trip, car: @car, user: @user)
   end
 end
