@@ -8,11 +8,12 @@ describe "Trip Request" do
       context "valid trip" do
         it "returns valid JSON for an individual trip" do
           trip = create(:trip, creator: current_user)
-          create_list(:car, 3, trip: trip)
 
           passengers = create_list(:user, 3)
           passengers.each do |passenger|
-            create(:signup, trip: trip, user: passenger)
+            create(:google_identity, user: passenger)
+            car = create(:car, owner: passenger, trip: trip)
+            create(:signup, trip: trip, user: passenger, car: car)
           end
 
           get(
@@ -25,8 +26,6 @@ describe "Trip Request" do
           expect_response_to_include_correct_trip_factory_content(current_user)
           expect_response_to_include_trip_with_cars_attributes_at_path(
             "trip/cars", trip.cars.length)
-          expect_response_to_include_trip_with_signups_attributes_at_path(
-            "trip/signed_up_users", trip.users.length)
         end
       end
 

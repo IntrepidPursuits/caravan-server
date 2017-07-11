@@ -34,6 +34,7 @@ describe "Car Requests" do
           expect(body).to have_json_path("car/passengers/0/id")
           expect(body).to have_json_path("car/passengers/0/name")
           expect(body).to have_json_path("car/passengers/0/email")
+          expect(body).to have_json_path("car/passengers/0/image")
         end
       end
 
