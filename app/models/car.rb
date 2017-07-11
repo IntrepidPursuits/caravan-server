@@ -22,6 +22,6 @@ class Car < ApplicationRecord
   validates_uniqueness_of :owner, { scope: :trip_id, message: "User already owns a car for this trip" }
 
   def seats_remaining
-    self.max_seats - self.users.count
+    max_seats - users.count
   end
 end
