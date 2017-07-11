@@ -59,6 +59,27 @@ describe "Stop Request" do
             end
           end
 
+          context "too many characters in name" do
+            it "returns 422 Unprocessable Entity" do
+              stop_params = { stop: {
+                address: "an address",
+                name: "It's Supercalifragilisticexpialidocious! Even though the sound of it is something quite atrocious",
+                latitude: 1.0,
+                longitude: 2.3
+                } }
+
+              post(
+                api_v1_trip_stops_url(trip),
+                params: stop_params.to_json,
+                headers: authorization_headers(current_user)
+              )
+
+              expect(response).to have_http_status :unprocessable_entity
+              expect(errors).to include("Validation failed")
+              expect(errors).to include("Name is too long (maximum is 50 characters)")
+            end
+          end
+
           context "invalid latitude & longitude" do
             context "strings" do
               it "raises 422 Unprocessable Entity" do

@@ -8,6 +8,7 @@ describe Stop, type: :model do
   end
 
   describe "validations" do
+    it { should validate_length_of(:name).is_at_most(50) }
     it { should validate_numericality_of(:latitude)
       .is_greater_than_or_equal_to(-90).is_less_than_or_equal_to(90) }
     it { should validate_numericality_of(:longitude)
