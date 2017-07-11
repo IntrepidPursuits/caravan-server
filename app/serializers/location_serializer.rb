@@ -4,6 +4,6 @@ class LocationSerializer <  BaseSerializer
   has_one :car
 
   def car_name
-    self.car.name
+    object.car.name
   end
 end

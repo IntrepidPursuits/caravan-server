@@ -13,6 +13,6 @@ class TripSerializer < BaseSerializer
   has_many :cars, serializer: CarSerializer
 
   def code
-    self.invite_code.code
+    object.invite_code.code
   end
 end

@@ -3,6 +3,7 @@ class CarSerializer < BaseSerializer
     :name,
     :owner_id,
     :passengers,
+    :seats_remaining,
     :status,
     :trip
 
@@ -14,6 +15,6 @@ class CarSerializer < BaseSerializer
     serializer: PassengerSerializer, key: :passengers
 
   def passengers
-    self.users
+    object.users
   end
 end

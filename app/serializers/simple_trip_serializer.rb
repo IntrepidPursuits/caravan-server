@@ -11,6 +11,6 @@ class SimpleTripSerializer < BaseSerializer
   has_one :invite_code
 
   def code
-    self.invite_code.code
+    object.invite_code.code
   end
 end

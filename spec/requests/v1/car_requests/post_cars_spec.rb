@@ -33,6 +33,7 @@ describe "Car Requests" do
             expect(json_value_at_path("car/locations")).to eq([])
             expect(json_value_at_path("car/max_seats")).to eq(1)
             expect(json_value_at_path("car/name")).to include("Car ")
+            expect(json_value_at_path("car/seats_remaining")).to eq(0)
             expect(json_value_at_path("car/status")).to eq("not_started")
             expect(json_value_at_path("car/owner_id")).to eq(current_user.id)
 

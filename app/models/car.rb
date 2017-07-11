@@ -20,4 +20,8 @@ class Car < ApplicationRecord
   validates_presence_of :max_seats, :name, :owner, :status, :trip
   validates_uniqueness_of :name, { scope: :trip_id }
   validates_uniqueness_of :owner, { scope: :trip_id, message: "User already owns a car for this trip" }
+
+  def seats_remaining
+    max_seats - users.count
+  end
 end
