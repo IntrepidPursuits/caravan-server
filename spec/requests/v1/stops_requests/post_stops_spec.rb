@@ -60,24 +60,70 @@ describe "Stop Request" do
           end
 
           context "invalid latitude & longitude" do
-            it "raises 422 Unprocessable Entity" do
-              stop_params = { stop: {
-                address: 1.4,
-                name: 2,
-                latitude: "hey there",
-                longitude: "Marjie is pretty and smart"
-                } }
+            context "strings" do
+              it "raises 422 Unprocessable Entity" do
+                stop_params = { stop: {
+                  address: 1.4,
+                  name: 2,
+                  latitude: "hey there",
+                  longitude: "Marjie is pretty and smart"
+                  } }
 
-              post(
-                api_v1_trip_stops_url(trip),
-                params: stop_params.to_json,
-                headers: authorization_headers(current_user)
-              )
+                post(
+                  api_v1_trip_stops_url(trip),
+                  params: stop_params.to_json,
+                  headers: authorization_headers(current_user)
+                )
 
-              expect(response).to have_http_status :unprocessable_entity
-              expect(errors).to include("Validation failed")
-              expect(errors).to include("Latitude is not a number")
-              expect(errors).to include("Longitude is not a number")
+                expect(response).to have_http_status :unprocessable_entity
+                expect(errors).to include("Validation failed")
+                expect(errors).to include("Latitude is not a number")
+                expect(errors).to include("Longitude is not a number")
+              end
+            end
+
+            context "too big numbers" do
+              it "raises 422 Unprocessable Entity" do
+                stop_params = { stop: {
+                  address: 1.4,
+                  name: 2,
+                  latitude: 100,
+                  longitude: 190
+                  } }
+
+                post(
+                  api_v1_trip_stops_url(trip),
+                  params: stop_params.to_json,
+                  headers: authorization_headers(current_user)
+                )
+
+                expect(response).to have_http_status :unprocessable_entity
+                expect(errors).to include("Validation failed")
+                expect(errors).to include("Latitude must be less than or equal to 90")
+                expect(errors).to include("Longitude must be less than or equal to 180")
+              end
+            end
+
+            context "too small numbers" do
+              it "raises 422 Unprocessable Entity" do
+                stop_params = { stop: {
+                  address: 1.4,
+                  name: 2,
+                  latitude: -100,
+                  longitude: -190
+                  } }
+
+                post(
+                  api_v1_trip_stops_url(trip),
+                  params: stop_params.to_json,
+                  headers: authorization_headers(current_user)
+                )
+
+                expect(response).to have_http_status :unprocessable_entity
+                expect(errors).to include("Validation failed")
+                expect(errors).to include("Latitude must be greater than or equal to -90")
+                expect(errors).to include("Longitude must be greater than or equal to -180")
+              end
             end
           end
 
