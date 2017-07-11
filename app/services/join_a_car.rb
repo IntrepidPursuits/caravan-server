@@ -1,4 +1,7 @@
 class JoinACar
+  attr_reader :car, :user
+  attr_accessor :signup
+
   def initialize(car, signup, user)
     @car = car
     @signup = signup
@@ -10,18 +13,18 @@ class JoinACar
   end
 
   def perform
-    return @car if @car == @signup.car
-    raise InvalidCarJoin unless car_matches_trip
-    raise UserOwnsCarError if user_owns_signed_up_car
-    @signup.update_attributes!(car: @car)
-    @car
+    return car if car == signup.car
+    raise InvalidCarJoin unless car_matches_trip?
+    raise UserOwnsCarError if user_owns_signed_up_car?
+    signup.update_attributes!(car: car)
+    car
   end
 
-  def car_matches_trip
-    @car.is_a?(Car) && @car.trip == @signup.trip
+  def car_matches_trip?
+    car.is_a?(Car) && car.trip == signup.trip
   end
 
-  def user_owns_signed_up_car
-    @signup.car.is_a?(Car) && @signup.car.owner == @user
+  def user_owns_signed_up_car?
+    signup.car.is_a?(Car) && signup.car.owner == user
   end
 end

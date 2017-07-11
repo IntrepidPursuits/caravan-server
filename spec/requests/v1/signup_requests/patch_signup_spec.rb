@@ -59,8 +59,8 @@ describe "Signup Request" do
         end
 
         context "user is signed up for a different car in the trip" do
-          context "user owns the other car" do
-            it "returns 400 Bad Request" do
+          context "user owns the other car they are currently signed up for" do
+            it "returns 422 Unprocessable Entity" do
               google_identity = create(:google_identity, user: current_user)
               owned_car = create(:car, owner: current_user)
               trip = owned_car.trip
@@ -78,12 +78,12 @@ describe "Signup Request" do
                 headers: authorization_headers(current_user)
               )
 
-              expect(response).to have_http_status :bad_request
+              expect(response).to have_http_status :unprocessable_entity
               expect(errors).to eq("Could not join car: user owns another car for this trip")
             end
           end
 
-          context "user does not own the other car" do
+          context "user does not own the other car they're currently signed up for" do
             it "updates the signup from one car to the other" do
               google_identity = create(:google_identity, user: current_user)
               car = create(:car)

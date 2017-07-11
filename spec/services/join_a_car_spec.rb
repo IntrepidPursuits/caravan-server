@@ -19,9 +19,11 @@ describe "JoinACar" do
       context "user owns the other car they're signed up for" do
         it "raises UserOwnsCarError" do
           owned_car = create(:car, trip: car.trip, owner: current_user)
+
           expect(current_user.owned_cars).to include(owned_car)
 
           signup = create(:signup, trip: car.trip, car: owned_car, user: current_user)
+
           expect do
             JoinACar.perform(car, signup, current_user)
           end.to raise_error(UserOwnsCarError,
@@ -29,7 +31,7 @@ describe "JoinACar" do
         end
       end
 
-      context "user does not own the other car" do
+      context "user does not own the other car they're signed up for" do
         it "returns a car object" do
           other_car = create(:car, trip: car.trip)
           signup = create(:signup, trip: car.trip, user: current_user, car: other_car)
@@ -44,6 +46,7 @@ describe "JoinACar" do
     context "invalid car" do
       it "raises InvalidCarJoin" do
         signup = create(:signup, user: current_user)
+
         expect do
           JoinACar.perform("not a car", signup, current_user)
         end.to raise_error(InvalidCarJoin)
@@ -53,6 +56,7 @@ describe "JoinACar" do
     context "valid car, but car belongs to a different trip" do
       it "raises InvalidCarJoin" do
         signup = create(:signup, user: current_user)
+
         expect do
           JoinACar.perform(car, signup, current_user)
         end.to raise_error(InvalidCarJoin)
@@ -63,6 +67,7 @@ describe "JoinACar" do
       it "raises RecordInvalid" do
         create(:signup, car: car, trip: car.trip)
         signup = create(:signup, trip: car.trip, user: current_user)
+
         expect do
           JoinACar.perform(car, signup, current_user)
         end.to raise_error(ActiveRecord::RecordInvalid)
