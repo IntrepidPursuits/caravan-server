@@ -14,7 +14,7 @@ class Car < ApplicationRecord
 
   validates_numericality_of :max_seats, {
     greater_than_or_equal_to: 1,
-    less_than_or_equal_to: 10,
+    less_than_or_equal_to: 6,
     only_integer: true
   }
   validates_presence_of :max_seats, :name, :owner, :status, :trip
