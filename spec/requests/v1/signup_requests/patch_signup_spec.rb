@@ -68,8 +68,8 @@ describe "Signup Request" do
               new_car = create(:car, trip: trip)
 
               signup_params = { signup: {
-                  trip_id: signup.trip_id,
-                  car_id: new_car.id
+                trip_id: signup.trip_id,
+                car_id: new_car.id
               } }
 
               patch(
