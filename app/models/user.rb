@@ -13,7 +13,11 @@ class User < ApplicationRecord
   end
 
   def image
-    google_identity&.image
+    identity&.image
+  end
+
+  def identity
+    google_identity ? google_identity : twitter_identity
   end
 
   def upcoming_trips

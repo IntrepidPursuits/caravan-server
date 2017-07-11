@@ -41,7 +41,24 @@ RSpec.describe User, type: :model do
       end
     end
 
-    context "user does not have a google_identity" do
+    context "user has a twitter identity" do
+      it "returns the image from the twitter identity" do
+        twitter_identity = create(:twitter_identity)
+
+        expect(twitter_identity.user.image).to eq(twitter_identity.image)
+      end
+    end
+
+    context "user has a twitter identity and a google identity" do
+      it "returns the image from the google identity" do
+        google_identity = create(:google_identity)
+        twitter_identity = create(:twitter_identity, user: google_identity.user)
+
+        expect(google_identity.user.image).to eq(google_identity.image)
+      end
+    end
+
+    context "user does not have a google_identity or a twitter identity" do
       it "returns nil" do
         user = create(:user)
 
