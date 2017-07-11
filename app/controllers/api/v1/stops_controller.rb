@@ -2,9 +2,9 @@ class Api::V1::StopsController < Api::V1::ApiController
   def create
     trip = Trip.find(params[:trip_id])
     authorize trip, :create_stop?
-    stop = Stop.create!(stop_params, trip: trip)
+    stop = Stop.create!(stop_params.merge(trip: trip))
 
-    render json: stop, status: :created
+    render json: stop, serializer: StopSerializer, status: :created
   end
 
   private
