@@ -3,7 +3,9 @@ class Location < ApplicationRecord
   belongs_to :stop, optional: true
   has_one :trip, through: :car
 
-  validates_numericality_of :direction, greater_than_or_equal_to: -180,
-    less_than_or_equal_to: 180, only_integer: true
-  validates_presence_of :car, :direction, :latitude, :longitude
+  validates :car, presence: true
+  validates :direction, numericality: { greater_than_or_equal_to: -180,
+    less_than_or_equal_to: 180, only_integer: true }, presence: true
+  validates :latitude, numericality: true, presence: true
+  validates :longitude, numericality: true, presence: true
 end

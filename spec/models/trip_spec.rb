@@ -11,6 +11,8 @@ RSpec.describe Trip, type: :model do
   end
 
   describe "validations" do
+    it { should validate_numericality_of(:destination_latitude) }
+    it { should validate_numericality_of(:destination_longitude) }
     it { should validate_presence_of(:creator) }
     it { should validate_presence_of(:departing_on) }
     it { should validate_presence_of(:destination_address) }
