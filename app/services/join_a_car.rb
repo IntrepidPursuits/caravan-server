@@ -20,6 +20,8 @@ class JoinACar
     car
   end
 
+  private
+
   def car_matches_trip?
     car.is_a?(Car) && car.trip == signup.trip
   end
