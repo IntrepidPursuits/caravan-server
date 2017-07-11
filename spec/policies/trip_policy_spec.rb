@@ -7,6 +7,7 @@ describe "TripPolicy" do
   permissions :create_car? do
     it "grants access if the user is signed up for the trip" do
       create(:signup, trip: trip, user: user)
+      
       expect(TripPolicy).to permit(user, trip)
     end
 
@@ -18,6 +19,7 @@ describe "TripPolicy" do
   permissions :create_stop? do
     it "grants access if the user is signed up for the trip" do
       create(:signup, trip: trip, user: user)
+
       expect(TripPolicy).to permit(user, trip)
     end
 
@@ -29,6 +31,7 @@ describe "TripPolicy" do
   permissions :index_locations? do
     it "grants access if the user is signed up for the trip" do
       create(:signup, trip: trip, user: user)
+
       expect(TripPolicy).to permit(user, trip)
     end
 
