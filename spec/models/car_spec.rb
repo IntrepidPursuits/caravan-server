@@ -4,9 +4,10 @@ RSpec.describe Car, type: :model do
   describe "associations" do
     it { should belong_to(:owner) }
     it { should belong_to(:trip) }
+    it { should have_many(:checkins) }
     it { should have_many(:locations) }
-    it { should have_many(:stops).through(:locations) }
     it { should have_many(:signups) }
+    it { should have_many(:stops).through(:checkins) }
     it { should have_many(:users).through(:signups) }
   end
 
@@ -27,7 +28,7 @@ RSpec.describe Car, type: :model do
       car = create(:car)
       should validate_uniqueness_of(:name).scoped_to(:trip_id)
     end
-    
+
     it do
       car = create(:car)
       should validate_uniqueness_of(:owner).scoped_to(:trip_id).with_message("User already owns a car for this trip")

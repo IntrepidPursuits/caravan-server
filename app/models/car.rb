@@ -2,9 +2,10 @@ class Car < ApplicationRecord
   belongs_to :owner, class_name: :User
   belongs_to :trip
 
+  has_many :checkins
   has_many :locations
-  has_many :stops, through: :locations
   has_many :signups
+  has_many :stops, through: :checkins
   has_many :users, through: :signups
 
   enum status: {

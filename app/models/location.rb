@@ -1,6 +1,5 @@
 class Location < ApplicationRecord
   belongs_to :car
-  belongs_to :stop, optional: true
   has_one :trip, through: :car
 
   validates :car, presence: true

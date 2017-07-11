@@ -3,11 +3,10 @@ require "rails_helper"
 RSpec.describe Location, type: :model do
   describe "associations" do
     it { should belong_to(:car) }
-    it { should belong_to(:stop) }
+    it { should have_one(:trip).through(:car) }
   end
 
   describe "validations" do
-    it { should have_one(:trip).through(:car) }
     it { should validate_numericality_of(:direction)
       .is_greater_than_or_equal_to(-180).is_less_than_or_equal_to(180)
       .only_integer }

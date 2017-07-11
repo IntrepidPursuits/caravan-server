@@ -1,7 +1,7 @@
 class Stop < ApplicationRecord
   belongs_to :trip
-  has_many :locations
-  has_many :cars, through: :locations
+  has_many :checkins
+  has_many :cars, through: :checkins
 
   validates :address, presence: true, uniqueness: { scope: :trip_id }
   validates :name, presence: true, uniqueness: { scope: :trip_id }

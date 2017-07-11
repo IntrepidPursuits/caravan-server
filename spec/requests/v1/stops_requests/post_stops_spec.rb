@@ -23,7 +23,7 @@ describe "Stop Request" do
             expect(response).to have_http_status :created
             stop = Stop.find_by(trip: trip, name: unsaved_stop.name)
             expect(stop).to be
-            expect(json_value_at_path("stop/id")).to be
+            expect(json_value_at_path("stop/id")).to eq(stop.id)
             expect(json_value_at_path("stop/trip_id")).to eq(trip.id)
             expect(json_value_at_path("stop/name")).to eq(unsaved_stop.name)
             expect(json_value_at_path("stop/address")).to eq(unsaved_stop.address)

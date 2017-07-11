@@ -3,8 +3,8 @@ require "rails_helper"
 describe Stop, type: :model do
   describe "associations" do
     it { should belong_to(:trip) }
-    it { should have_many(:locations) }
-    it { should have_many(:cars).through(:locations) }
+    it { should have_many(:checkins) }
+    it { should have_many(:cars).through(:checkins) }
   end
 
   describe "validations" do
