@@ -10,4 +10,5 @@ BAD_REQUEST_ERRORS =
 [ActionController::ParameterMissing,
   ArgumentError,
   MissingInviteCodeError,
-  MissingSignup]
+  MissingSignup,
+  UserOwnsCarError]

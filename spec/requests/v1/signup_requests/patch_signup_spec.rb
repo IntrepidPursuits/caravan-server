@@ -59,28 +59,53 @@ describe "Signup Request" do
         end
 
         context "user is signed up for a different car in the trip" do
-          it "updates the signup from one car to the other" do
-            google_identity = create(:google_identity, user: current_user)
-            car = create(:car)
-            trip = car.trip
-            other_car = create(:car, trip: trip)
-            signup = create(:signup, user: current_user, trip: trip, car: other_car)
+          context "user owns the other car" do
+            it "returns 400 Bad Request" do
+              google_identity = create(:google_identity, user: current_user)
+              owned_car = create(:car, owner: current_user)
+              trip = owned_car.trip
+              signup = create(:signup, user: current_user, trip: trip, car: owned_car)
+              new_car = create(:car, trip: trip)
 
-            signup_params = { signup: {
-              trip_id: signup.trip_id,
-              car_id: car.id
-            } }
+              signup_params = { signup: {
+                  trip_id: signup.trip_id,
+                  car_id: new_car.id
+              } }
 
-            patch(
-              api_v1_signup_url(signup),
-              params: signup_params.to_json,
-              headers: authorization_headers(current_user)
-            )
+              patch(
+                api_v1_signup_url(signup),
+                params: signup_params.to_json,
+                headers: authorization_headers(current_user)
+              )
 
-            expect(response).to have_http_status :ok
-            expect_body_to_include_car_attributes(car, trip, current_user)
-            expect(json_value_at_path("car/status")).to eq(car.status)
+              expect(response).to have_http_status :bad_request
+              expect(errors).to eq("Could not join car: user owns another car for this trip")
+            end
+          end
 
+          context "user does not own the other car" do
+            it "updates the signup from one car to the other" do
+              google_identity = create(:google_identity, user: current_user)
+              car = create(:car)
+              trip = car.trip
+              other_car = create(:car, trip: trip)
+              signup = create(:signup, user: current_user, trip: trip, car: other_car)
+
+              signup_params = { signup: {
+                trip_id: signup.trip_id,
+                car_id: car.id
+                } }
+
+                patch(
+                  api_v1_signup_url(signup),
+                  params: signup_params.to_json,
+                  headers: authorization_headers(current_user)
+                )
+
+                expect(response).to have_http_status :ok
+                expect_body_to_include_car_attributes(car, trip, current_user)
+                expect(json_value_at_path("car/status")).to eq(car.status)
+              end
           end
         end
 
