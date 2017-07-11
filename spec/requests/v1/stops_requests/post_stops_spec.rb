@@ -96,28 +96,68 @@ describe "Stop Request" do
 
         context "user is not signed up for the trip" do
           it "returns 403 Forbidden" do
+            trip = create(:trip)
+            unsaved_stop = build(:stop, trip: nil)
+            stop_params = { stop: unsaved_stop }
 
+            post(
+              api_v1_trip_stops_url(trip),
+              params: stop_params.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect_user_forbidden_response
           end
         end
 
         context "invalid trip_id" do
           it "returns 404 Not Found" do
+            unsaved_stop = build(:stop, trip: nil)
+            stop_params = { stop: unsaved_stop }
 
+            post(
+              api_v1_trip_stops_url("This is not a pipe"),
+              params: stop_params.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :not_found
+            expect(errors).to eq("Couldn't find Trip with 'id'=This is not a pipe")
           end
         end
       end
     end
 
     context "unauthenticated user" do
+      let!(:trip) { create(:trip) }
+
       context "no authorization header" do
         it "returns 401 Unauthorized" do
+          valid_stop = build(:stop, trip: nil)
+          stop_params = { stop: valid_stop }
 
+          post(
+            api_v1_trip_stops_url(trip),
+            params: stop_params.to_json,
+            headers: accept_headers
+          )
+
+          expect(response).to have_http_status :unauthorized
         end
       end
 
       context "with invalid token" do
         it "returns 401 Unauthorized" do
+          valid_stop = build(:stop, trip: nil)
+          stop_params = { stop: valid_stop }
 
+          post(
+            api_v1_trip_stops_url(trip),
+            params: stop_params.to_json,
+            headers: invalid_authorization_headers
+          )
+
+          expect(response).to have_http_status :unauthorized
         end
       end
     end
