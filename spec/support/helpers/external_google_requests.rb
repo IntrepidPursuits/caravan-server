@@ -1,4 +1,4 @@
-module ExternalRequests
+module ExternalGoogleRequests
   def stub_google_token_request
     stub_request(:get, /.*googleapis.com\/oauth2\/v3\/tokeninfo.*/)
       .to_return(body: valid_token_request_body, headers: json_content)

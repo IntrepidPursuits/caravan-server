@@ -6,7 +6,7 @@ RSpec.describe "GoogleAuthenticator" do
       it "should raise an error" do
         expect_any_instance_of(GoogleAuthenticator).to receive(:token_valid?).and_return(false)
 
-        expect { GoogleAuthenticator.perform("bah") }.to raise_error(UnauthorizedAccess)
+        expect { GoogleAuthenticator.perform("bah") }.to raise_error(UnauthorizedGoogleAccess)
       end
     end
 
@@ -62,34 +62,34 @@ RSpec.describe "GoogleAuthenticator" do
 
       context "with missing required google identity information" do
         context "missing email" do
-          it "raises an UnauthorizedAccess error" do
+          it "raises an UnauthorizedGoogleAccess error" do
             allow_any_instance_of(GoogleAuthenticator)
               .to receive(:token_hash).and_return(user_info_missing_email)
 
             expect { GoogleAuthenticator.perform(SecureRandom.hex(20)) }
-              .to raise_error(UnauthorizedAccess)
+              .to raise_error(UnauthorizedGoogleAccess)
           end
         end
 
         context "missing uid" do
-          it "raises an UnauthorizedAccess error" do
+          it "raises an UnauthorizedGoogleAccess error" do
             allow_any_instance_of(GoogleAuthenticator)
               .to receive(:token_hash).and_return(user_info_missing_uid)
 
             expect { GoogleAuthenticator.perform(SecureRandom.hex(20)) }
-              .to raise_error(UnauthorizedAccess)
+              .to raise_error(UnauthorizedGoogleAccess)
           end
         end
       end
 
       context "with missing required user information" do
         context "missing name" do
-          it "raises an UnauthorizedAccess error" do
+          it "raises an UnauthorizedGoogleAccess error" do
             allow_any_instance_of(GoogleAuthenticator)
               .to receive(:token_hash).and_return(user_info_missing_name)
 
             expect { GoogleAuthenticator.perform(SecureRandom.hex(20)) }
-              .to raise_error(UnauthorizedAccess)
+              .to raise_error(UnauthorizedGoogleAccess)
           end
         end
       end

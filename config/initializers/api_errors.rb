@@ -4,7 +4,8 @@ UNPROCESSABLE_ENTITY_ERRORS =
     InvalidCarCreation,
     InvalidCarJoin,
     InvalidInviteCodeError,
-    UnauthorizedAccess,
+    UnauthorizedGoogleAccess,
+    UnauthorizedTwitterAccess,
     UserOwnsCarError]
 
 BAD_REQUEST_ERRORS =
