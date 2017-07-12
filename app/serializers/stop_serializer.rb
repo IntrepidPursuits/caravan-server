@@ -1,3 +1,8 @@
 class StopSerializer < BaseSerializer
-  attributes :address, :name, :description, :latitude, :longitude, :trip_id
+  attributes :address,
+             :description,
+             :latitude,
+             :longitude,
+             :name,
+             :trip_id
 end
