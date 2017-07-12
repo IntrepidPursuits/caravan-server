@@ -4,7 +4,8 @@ UNPROCESSABLE_ENTITY_ERRORS =
     InvalidCarCreation,
     InvalidCarJoin,
     InvalidInviteCodeError,
-    UnauthorizedAccess]
+    UnauthorizedAccess,
+    UserOwnsCarError]
 
 BAD_REQUEST_ERRORS =
 [ActionController::ParameterMissing,
