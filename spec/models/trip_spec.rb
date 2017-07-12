@@ -11,6 +11,10 @@ RSpec.describe Trip, type: :model do
   end
 
   describe "validations" do
+    it { should validate_numericality_of(:destination_latitude)
+      .is_greater_than_or_equal_to(-90).is_less_than_or_equal_to(90) }
+    it { should validate_numericality_of(:destination_longitude)
+      .is_greater_than_or_equal_to(-180).is_less_than_or_equal_to(180) }
     it { should validate_presence_of(:creator) }
     it { should validate_presence_of(:departing_on) }
     it { should validate_presence_of(:destination_address) }

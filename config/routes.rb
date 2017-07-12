@@ -17,6 +17,7 @@ Rails.application.routes.draw do
       resources :trips, only: [:create, :show] do
         resource :leave, only: [:destroy], controller: :leave_trip
         resources :locations, only: [:index]
+        resources :stops, only: [:create]
       end
       resources :users, only: [] do
         resources :trips, only: [:index]

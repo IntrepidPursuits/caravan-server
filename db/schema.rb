@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170707202059) do
+ActiveRecord::Schema.define(version: 20170711190447) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,17 @@ ActiveRecord::Schema.define(version: 20170707202059) do
     t.index ["name", "trip_id"], name: "index_cars_on_name_and_trip_id", unique: true
     t.index ["owner_id", "trip_id"], name: "index_cars_on_owner_id_and_trip_id", unique: true
     t.index ["trip_id"], name: "index_cars_on_trip_id"
+  end
+
+  create_table "checkins", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "car_id", null: false
+    t.uuid "stop_id", null: false
+    t.boolean "currently_checked_in?", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["car_id", "stop_id"], name: "index_checkins_on_car_id_and_stop_id", unique: true
+    t.index ["car_id"], name: "index_checkins_on_car_id"
+    t.index ["stop_id"], name: "index_checkins_on_stop_id"
   end
 
   create_table "google_identities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -68,6 +79,20 @@ ActiveRecord::Schema.define(version: 20170707202059) do
     t.index ["trip_id", "user_id"], name: "index_signups_on_trip_id_and_user_id", unique: true
     t.index ["trip_id"], name: "index_signups_on_trip_id"
     t.index ["user_id"], name: "index_signups_on_user_id"
+  end
+
+  create_table "stops", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "trip_id", null: false
+    t.string "name", null: false
+    t.string "address", null: false
+    t.text "description"
+    t.decimal "latitude", null: false
+    t.decimal "longitude", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["address", "trip_id"], name: "index_stops_on_address_and_trip_id", unique: true
+    t.index ["name", "trip_id"], name: "index_stops_on_name_and_trip_id", unique: true
+    t.index ["trip_id"], name: "index_stops_on_trip_id"
   end
 
   create_table "trips", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
