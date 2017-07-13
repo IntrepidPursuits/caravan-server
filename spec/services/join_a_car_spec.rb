@@ -2,16 +2,19 @@ require "rails_helper"
 
 describe "JoinACar" do
   context "authorized user" do
-    let!(:car) { create(:car) }
+    let!(:car) { create(:car, max_seats: 2) }
+    let!(:owner_signup) { create(:signup, trip: car.trip, car: car, user: car.owner) }
     let!(:current_user) { create(:user) }
+    let!(:google_identity) { create(:google_identity, user: current_user) }
 
     context "user is signed up for the trip and car belongs to the trip" do
-      it "returns a car object" do
+      it "updates the signup with the car" do
         signup = create(:signup, trip: car.trip, user: current_user)
-        value = JoinACar.perform(car, signup, current_user)
 
-        expect(value).to be_a(Car)
-        expect(value).to eq(car)
+        JoinACar.perform(car, current_user)
+
+        signup.reload
+        expect(signup.car).to eq(car)
       end
     end
 
@@ -25,51 +28,40 @@ describe "JoinACar" do
           signup = create(:signup, trip: car.trip, car: owned_car, user: current_user)
 
           expect do
-            JoinACar.perform(car, signup, current_user)
+            JoinACar.perform(car, current_user)
           end.to raise_error(UserOwnsCarError,
             "Could not join car: user owns another car for this trip")
         end
       end
 
       context "user does not own the other car they're signed up for" do
-        it "returns a car object" do
+        it "updates the signup from one car to the other" do
           other_car = create(:car, trip: car.trip)
           signup = create(:signup, trip: car.trip, user: current_user, car: other_car)
-          value = JoinACar.perform(car, signup, current_user)
 
-          expect(value).to be_a(Car)
-          expect(value).to eq(car)
+          JoinACar.perform(car, current_user)
+
+          signup.reload
+          expect(signup.car).to eq(car)
         end
       end
     end
 
-    context "invalid car" do
+    context "user is not signed up for the car's trip" do
       it "raises InvalidCarJoin" do
-        signup = create(:signup, user: current_user)
-
         expect do
-          JoinACar.perform("not a car", signup, current_user)
-        end.to raise_error(InvalidCarJoin)
+          JoinACar.perform(car, current_user)
+        end.to raise_error(MissingSignup)
       end
     end
 
-    context "valid car, but car belongs to a different trip" do
-      it "raises InvalidCarJoin" do
-        signup = create(:signup, user: current_user)
-
-        expect do
-          JoinACar.perform(car, signup, current_user)
-        end.to raise_error(InvalidCarJoin)
-      end
-    end
-
-    context "valid car, but it's full" do
+    context "user is signed up for trip but the car is already full" do
       it "raises RecordInvalid" do
         create(:signup, car: car, trip: car.trip)
-        signup = create(:signup, trip: car.trip, user: current_user)
+        create(:signup, trip: car.trip, user: current_user)
 
         expect do
-          JoinACar.perform(car, signup, current_user)
+          JoinACar.perform(car, current_user)
         end.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
