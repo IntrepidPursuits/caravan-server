@@ -19,3 +19,5 @@
 .env
 
 *.DS_Store
+
+/spec/services/demo_locations_spec.rb
