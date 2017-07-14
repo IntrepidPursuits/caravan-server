@@ -18,6 +18,10 @@ class CarPolicy < ApplicationPolicy
     user.cars.include?(car)
   end
 
+  def join_car?
+    car.trip.users.include?(user)
+  end
+
   def leave_car?
     car.users.include?(user) && car.trip.users.include?(user)
   end

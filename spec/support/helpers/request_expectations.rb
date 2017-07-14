@@ -2,7 +2,6 @@ module Helpers
   module RequestExpectations
     def expect_body_to_include_car_attributes(car, trip, user)
       expect(parsed_body["car"]["id"]).to eq(car.id)
-      expect(parsed_body["car"]["locations"]).to eq([])
       expect(parsed_body["car"]["max_seats"]).to eq(car.max_seats)
       expect(parsed_body["car"]["name"]).to eq(car.name)
       expect(parsed_body["car"]["seats_remaining"]).to eq(car.max_seats - car.users.count)
