@@ -15,4 +15,8 @@ class TripSerializer < BaseSerializer
   def code
     object.invite_code.code
   end
+
+  def cars
+    object.cars.order(:name)
+  end
 end

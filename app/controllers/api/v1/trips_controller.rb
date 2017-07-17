@@ -13,7 +13,7 @@ class Api::V1::TripsController < Api::V1::ApiController
   def index
     user = User.includes(:trips).find(params[:user_id])
     authorize user, :current_user?
-    trips = user.trips
+    trips = user.trips.order(:departing_on)
     render json: trips,
       except: [:creator, :invite_code],
       each_serializer: SimpleTripSerializer,
