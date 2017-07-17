@@ -40,4 +40,27 @@ RSpec.describe Trip, type: :model do
       expect(trip.last_locations[1].longitude).to eq car2_last_location.longitude
     end
   end
+
+  describe "upcoming?" do
+    context "departure date in the future" do
+      it "returns true" do
+        trip = create(:trip, departing_on: "2021/12/31")
+        expect(trip.upcoming?).to eq(true)
+      end
+    end
+
+    context "departure date is today" do
+      it "returns true" do
+        trip = create(:trip, departing_on: Date.today)
+        expect(trip.upcoming?).to eq(true)
+      end
+    end
+
+    context "departure date in the past" do
+      it "returns false" do
+        trip = create(:trip, departing_on: "2017/6/1")
+        expect(trip.upcoming?).to eq(false)
+      end
+    end
+  end
 end

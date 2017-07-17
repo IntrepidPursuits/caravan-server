@@ -70,9 +70,9 @@ describe "Trip Request" do
 
       context "when a user is signed up for multiple trips" do
         it "returns the trips in order of departure date" do
-          trip_1 = create(:trip, departing_on: "2017/9/1")
-          trip_2 = create(:trip, departing_on: "2017/9/3")
-          trip_3 = create(:trip, departing_on: "2017/9/2")
+          trip_1 = create(:trip, departing_on: "2020/9/1")
+          trip_2 = create(:trip, departing_on: "2020/9/3")
+          trip_3 = create(:trip, departing_on: "2020/9/2")
 
           Trip.all.each do |trip|
             create(:signup, trip: trip, user: current_user)
@@ -87,6 +87,24 @@ describe "Trip Request" do
           expect(json_value_at_path("trips/0/id")).to eq(trip_1.id)
           expect(json_value_at_path("trips/1/id")).to eq(trip_3.id)
           expect(json_value_at_path("trips/2/id")).to eq(trip_2.id)
+        end
+
+        it "filters out trips with departure dates in the past" do
+          trip_1 = create(:trip, departing_on: "2017/6/1")
+          trip_2 = create(:trip, departing_on: "2020/9/3")
+
+          Trip.all.each do |trip|
+            create(:signup, trip: trip, user: current_user)
+          end
+
+          get(
+            api_v1_user_trips_url(current_user),
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status(:ok)
+          expect(json_value_at_path("trips").length).to eq(1)
+          expect(json_value_at_path("trips/0/id")).to eq(trip_2.id)
         end
       end
 
