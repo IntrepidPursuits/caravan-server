@@ -8,7 +8,7 @@ RSpec.describe Location, type: :model do
 
   describe "validations" do
     it { should validate_numericality_of(:direction)
-      .is_greater_than_or_equal_to(-180).is_less_than_or_equal_to(180)
+      .is_greater_than_or_equal_to(0).is_less_than_or_equal_to(360)
       .only_integer }
     it { should validate_numericality_of(:latitude)
       .is_greater_than_or_equal_to(-90).is_less_than_or_equal_to(90) }
