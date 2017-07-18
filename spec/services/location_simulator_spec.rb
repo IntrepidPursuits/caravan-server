@@ -44,6 +44,8 @@ RSpec.describe "LocationSimulator" do
     it "adds the original locations back to the cars" do
       stub_reset_locations
       allow_any_instance_of(LocationSimulator).to receive(:sleep)
+      allow_any_instance_of(LocationSimulator).to receive(:print_resetting)
+      allow_any_instance_of(LocationSimulator).to receive(:print_success)
       simulator = LocationSimulator.new
       response = simulator.reset_locations
 
@@ -63,6 +65,8 @@ RSpec.describe "LocationSimulator" do
     it "adds the correct list of locations to the cars, and ends up at the right place" do
       stub_post_locations
       allow_any_instance_of(LocationSimulator).to receive(:sleep)
+      allow_any_instance_of(LocationSimulator).to receive(:print_resetting)
+      allow_any_instance_of(LocationSimulator).to receive(:print_success)
       simulator = LocationSimulator.new
       response = simulator.perform
 

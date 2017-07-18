@@ -34,7 +34,7 @@ class LocationSimulator
   end
 
   def reset_locations
-    puts "Resetting the car locations..."
+    print_resetting
     add_location(owner1_token, car1_id, 200, "42.367124", "-71.081569")
     add_location(owner2_token, car2_id, 190, "42.366565", "-71.077874")
   end
@@ -52,12 +52,24 @@ class LocationSimulator
     response = http.request(request)
 
     if response.code == "201"
-      puts "Location added at #{latitude}, #{longitude} to car with id #{car_id}"
+      print_success(latitude, longitude, car_id)
     else
-      puts "Something went wrong: #{response.code} #{response.message}"
+      print_failure(response)
     end
 
     response.read_body
+  end
+
+  def print_resetting
+    puts "Resetting the car locations..."
+  end
+
+  def print_success(latitude, longitude, car_id)
+    puts "Location added at #{latitude}, #{longitude} to car with id #{car_id}"
+  end
+
+  def print_failure(response)
+    puts "Something went wrong: #{response.code} #{response.message}"
   end
 
   def build_stops_data
