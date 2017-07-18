@@ -32,7 +32,6 @@ describe "Trip Request" do
           expect(parsed_body["trips"]).to be_a(Array)
 
           trips = parsed_body["trips"]
-
           expect(trips[0]["code"]).to eq(trip_1.invite_code.code)
           expect(trips[0]["departing_on"]).to match(trip_1.departing_on)
           expect(trips[0]["destination_address"]).to eq(trip_1.destination_address)
@@ -70,9 +69,9 @@ describe "Trip Request" do
 
       context "when a user is signed up for multiple trips" do
         it "returns the trips in order of departure date" do
-          trip_1 = create(:trip, departing_on: "2020/9/1")
-          trip_2 = create(:trip, departing_on: "2020/9/3")
-          trip_3 = create(:trip, departing_on: "2020/9/2")
+          trip_1 = create(:trip)
+          trip_2 = create(:trip, departing_on: DateTime.now + 2.day)
+          trip_3 = create(:trip, departing_on: DateTime.now + 1.day)
 
           Trip.all.each do |trip|
             create(:signup, trip: trip, user: current_user)
@@ -90,8 +89,8 @@ describe "Trip Request" do
         end
 
         it "filters out trips with departure dates in the past" do
-          trip_1 = create(:trip, departing_on: "2017/6/1")
-          trip_2 = create(:trip, departing_on: "2020/9/3")
+          trip_1 = create(:trip, departing_on: DateTime.now - 1.day)
+          trip_2 = create(:trip)
 
           Trip.all.each do |trip|
             create(:signup, trip: trip, user: current_user)
