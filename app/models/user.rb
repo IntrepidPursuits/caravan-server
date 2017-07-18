@@ -7,4 +7,10 @@ class User < ApplicationRecord
   has_many :signups
   has_many :cars, through: :signups
   has_many :trips, through: :signups
+
+  def upcoming_trips
+    trips.order(:departing_on).select do |trip|
+      trip.upcoming?
+    end
+  end
 end

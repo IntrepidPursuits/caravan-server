@@ -27,6 +27,23 @@ describe "Trip Request" do
           expect_response_to_include_trip_with_cars_attributes_at_path(
             "trip/cars", trip.cars.length)
         end
+
+        it "returns the cars in alphabetical order" do
+          trip = create(:trip, creator: current_user)
+          car_1 = create(:car, trip: trip, name: "A")
+          car_2 = create(:car, trip: trip, name: "C")
+          car_3 = create(:car, trip: trip, name: "B")
+
+          get(
+            api_v1_trip_url(trip),
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status :ok
+          expect(json_value_at_path("trip/cars/0/name")).to eq("A")
+          expect(json_value_at_path("trip/cars/1/name")).to eq("B")
+          expect(json_value_at_path("trip/cars/2/name")).to eq("C")
+        end
       end
 
       context "not a real trip id" do

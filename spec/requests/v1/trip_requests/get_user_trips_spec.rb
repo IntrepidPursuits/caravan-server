@@ -32,7 +32,6 @@ describe "Trip Request" do
           expect(parsed_body["trips"]).to be_a(Array)
 
           trips = parsed_body["trips"]
-
           expect(trips[0]["code"]).to eq(trip_1.invite_code.code)
           expect(trips[0]["departing_on"]).to match(trip_1.departing_on)
           expect(trips[0]["destination_address"]).to eq(trip_1.destination_address)
@@ -65,6 +64,46 @@ describe "Trip Request" do
             expect(trips[index]["destination_address"])
               .to_not eq trip_2.destination_address
           end
+        end
+      end
+
+      context "when a user is signed up for multiple trips" do
+        it "returns the trips in order of departure date" do
+          trip_1 = create(:trip)
+          trip_2 = create(:trip, departing_on: DateTime.now + 2.day)
+          trip_3 = create(:trip, departing_on: DateTime.now + 1.day)
+
+          Trip.all.each do |trip|
+            create(:signup, trip: trip, user: current_user)
+          end
+
+          get(
+            api_v1_user_trips_url(current_user),
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status(:ok)
+          expect(json_value_at_path("trips/0/id")).to eq(trip_1.id)
+          expect(json_value_at_path("trips/1/id")).to eq(trip_3.id)
+          expect(json_value_at_path("trips/2/id")).to eq(trip_2.id)
+        end
+
+        it "filters out trips with departure dates in the past" do
+          trip_1 = create(:trip, departing_on: DateTime.now - 1.day)
+          trip_2 = create(:trip)
+
+          Trip.all.each do |trip|
+            create(:signup, trip: trip, user: current_user)
+          end
+
+          get(
+            api_v1_user_trips_url(current_user),
+            headers: authorization_headers(current_user)
+          )
+
+          expect(response).to have_http_status(:ok)
+          expect(json_value_at_path("trips").length).to eq(1)
+          expect(json_value_at_path("trips/0/id")).to eq(trip_2.id)
         end
       end
 

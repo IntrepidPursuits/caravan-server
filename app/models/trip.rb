@@ -14,10 +14,14 @@ class Trip < ApplicationRecord
     less_than_or_equal_to: 180 }, presence: true
 
   validates :invite_code_id, presence: true, uniqueness: true
-  
+
   validates_presence_of :creator, :departing_on, :destination_address, :name
 
   def last_locations
-    self.cars.map { |car| car.locations.order("updated_at").last }.compact
+    cars.map { |car| car.locations.order(:updated_at).last }.compact
+  end
+
+  def upcoming?
+    departing_on >= DateTime.now.beginning_of_day
   end
 end
