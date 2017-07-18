@@ -1,7 +1,7 @@
 class Api::V1::LocationsController < Api::V1::ApiController
   def create
     car = Car.find(location_params[:car_id])
-    raise CarNotStartedError.new if car.status == "not_started"
+    raise CarNotInTransit.new unless car.status == "in_transit"
     authorize car, :create_location?
     if current_user == car.owner
       location = Location.create!(location_params)

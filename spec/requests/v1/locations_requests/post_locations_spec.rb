@@ -220,7 +220,27 @@ describe "Location Request" do
             expect(response).to have_http_status :unprocessable_entity
             expect(body).to have_json_path("errors")
             expect(errors)
-              .to include("Cannot update car's location if it has a status of 'Not Started'")
+              .to include("Cannot update car's location unless it has a status of 'In Transit'")
+          end
+        end
+
+        context "with car that has arrived at its destination" do
+          it "returns JSON with validation errors" do
+            car = create(:car, owner: current_user, status: 2)
+            signup = create(:signup, car: car, trip: car.trip, user: current_user)
+            unsaved_location = build(:location, car: nil)
+            valid_location_info = { location: unsaved_location }
+
+            post(
+              car_locations_url(car),
+              params: valid_location_info.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :unprocessable_entity
+            expect(body).to have_json_path("errors")
+            expect(errors)
+              .to include("Cannot update car's location unless it has a status of 'In Transit'")
           end
         end
 
@@ -427,9 +447,32 @@ describe "Location Request" do
             )
 
             expect(response).to have_http_status :unprocessable_entity
+            expect(Location.count).to eq(location_count)
             expect(body).to have_json_path("errors")
             expect(errors)
-              .to include("Cannot update car's location if it has a status of 'Not Started'")
+              .to include("Cannot update car's location unless it has a status of 'In Transit'")
+          end
+        end
+
+        context "car has already arrived at its destination" do
+          it "returns JSON with validation errors" do
+            location_count = Location.count
+            car = create(:car, status: 2)
+            signup = create(:signup, car: car, trip: car.trip, user: current_user)
+            unsaved_location = build(:location, car: nil)
+            valid_location_info = { location: unsaved_location }
+
+            post(
+              car_locations_url(car),
+              params: valid_location_info.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :unprocessable_entity
+            expect(Location.count).to eq(location_count)
+            expect(body).to have_json_path("errors")
+            expect(errors)
+              .to include("Cannot update car's location unless it has a status of 'In Transit'")
           end
         end
 
