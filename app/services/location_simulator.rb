@@ -1,4 +1,4 @@
-class DemoLocations
+class LocationSimulator
   attr_reader :car1_id,
               :car2_id,
               :owner1_token,
@@ -8,8 +8,8 @@ class DemoLocations
   def initialize
     @car1_id = "797b99d0-9984-4302-9b7a-c5a8b32a8153"
     @car2_id = "1a31a607-1bcc-46b3-98e0-b125c36d52eb"
-    @owner1_token = DEMO_USER1_TOKEN
-    @owner2_token = DEMO_USER2_TOKEN
+    @owner1_token = SIMULATOR_USER1_TOKEN
+    @owner2_token = SIMULATOR_USER2_TOKEN
     @stops_data = build_stops_data
   end
 
@@ -28,7 +28,7 @@ class DemoLocations
       stop.each do |car|
         last_locations = add_location(car[:owner_token], car[:car_id], car[:location][:direction], car[:location][:latitude], car[:location][:longitude])
       end
-      sleep 1
+      sleep SIMULATOR_SLEEP_INTERVAL
     end
     last_locations
   end

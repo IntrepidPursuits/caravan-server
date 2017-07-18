@@ -8,7 +8,7 @@
         "updated_at": "2017-07-14T19:37:03.811Z",
         "car_id": "797b99d0-9984-4302-9b7a-c5a8b32a8153",
         "car_name": "Car1 Test",
-        "direction": 0,
+        "direction": 200,
         "latitude": "42.367124",
         "longitude": "-71.081569"
       },
@@ -18,7 +18,7 @@
         "updated_at": "2017-07-14T19:22:49.759Z",
         "car_id": "1a31a607-1bcc-46b3-98e0-b125c36d52eb",
         "car_name": "Car2 Test",
-        "direction": 0,
+        "direction": 190,
         "latitude": "42.366565",
         "longitude": "-71.077874"
       },
