@@ -144,7 +144,7 @@ describe "Location Request" do
             it "returns validation errors" do
               invalid_location_info = {
                 location: {
-                  direction: -190,
+                  direction: -10,
                   latitude: 1.4,
                   longitude: -70.3
                 }
@@ -158,12 +158,12 @@ describe "Location Request" do
 
               expect(response).to have_http_status :unprocessable_entity
               expect(errors).to include("Validation failed")
-              expect(errors).to include("Direction must be greater than or equal to -180")
+              expect(errors).to include("Direction must be greater than or equal to 0")
 
 
               invalid_location_info = {
                 location: {
-                  direction: 190,
+                  direction: 370,
                   latitude: 1.4,
                   longitude: -70.3
                 }
@@ -177,7 +177,7 @@ describe "Location Request" do
 
               expect(response).to have_http_status :unprocessable_entity
               expect(errors).to include("Validation failed")
-              expect(errors).to include("Direction must be less than or equal to 180")
+              expect(errors).to include("Direction must be less than or equal to 360")
             end
           end
 
@@ -367,7 +367,7 @@ describe "Location Request" do
             location_count = Location.count
             invalid_location_info = {
               location: {
-                direction: -2,
+                direction: 270,
                 latitude: nil,
                 longitude: nil
               }
