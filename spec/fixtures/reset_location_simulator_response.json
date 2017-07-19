@@ -1,0 +1,37 @@
+{
+  "trip_locations": {
+    "trip_id": "6ebf7a47-1c96-4376-94a7-d78525b8bfe6",
+    "last_locations": [
+      {
+        "id": "75960b1a-c6a2-489c-8d45-99b7f73b19c1",
+        "created_at": "2017-07-14T19:37:03.811Z",
+        "updated_at": "2017-07-14T19:37:03.811Z",
+        "car_id": "ac87465c-a4ee-4b9a-81ee-f881f98ab500",
+        "car_name": "Car1 Test",
+        "direction": 200,
+        "latitude": "42.367124",
+        "longitude": "-71.081569"
+      },
+      {
+        "id": "f9e86719-492b-48e8-aa0e-60a1156011dd",
+        "created_at": "2017-07-14T19:22:49.759Z",
+        "updated_at": "2017-07-14T19:22:49.759Z",
+        "car_id": "1cf79c82-2407-425e-b816-45f305773698",
+        "car_name": "Car2 Test",
+        "direction": 190,
+        "latitude": "42.366565",
+        "longitude": "-71.077874"
+      },
+     {
+        "id": "29db16b1-dcc9-4ddb-a451-cbba3f2b1a9e",
+        "created_at": "2017-07-14T13:24:11.309Z",
+        "updated_at": "2017-07-14T13:24:11.309Z",
+        "car_id": "8684bfe1-33ac-4298-a858-30bc2b22da64",
+        "car_name": "Demo test car",
+        "direction": 0,
+        "latitude": "42.366237",
+        "longitude": "-71.0775054"
+      }
+    ]
+  }
+}

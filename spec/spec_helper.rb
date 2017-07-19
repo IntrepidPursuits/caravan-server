@@ -12,6 +12,7 @@ RSpec.configure do |config|
   config.include Helpers::Requests, type: :request
   config.include ExternalGoogleRequests
   config.include ExternalTwitterRequests
+  config.include LocationSimulatorRequests
   config.include JsonSpec::Helpers
 
   # rspec-expectations config goes here. You can use an alternate
