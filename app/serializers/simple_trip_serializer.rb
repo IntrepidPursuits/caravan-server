@@ -1,5 +1,6 @@
 class SimpleTripSerializer < BaseSerializer
-  attributes :code,
+  attributes :car_owners,
+             :code,
              :creator,
              :departing_on,
              :destination_address,
@@ -9,6 +10,8 @@ class SimpleTripSerializer < BaseSerializer
 
   has_one :creator, class_name: :user
   has_one :invite_code
+
+  has_many :car_owners, serializer: PassengerSerializer
 
   def code
     object.invite_code.code

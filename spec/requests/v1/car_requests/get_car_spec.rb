@@ -7,9 +7,11 @@ describe "Car Requests" do
 
       context "for a valid car" do
         it "returns valid JSON for the car and its passengers" do
-          car = create(:car)
+          car = create(:car, max_seats: 2)
+          owner_identity = create(:google_identity, user: car.owner)
           passenger = create(:user)
           identity = create(:google_identity, user: passenger)
+          Signup.create(trip: car.trip, car: car, user: car.owner)
           signup = Signup.find_or_create_by(trip: car.trip, car: car, user: passenger)
 
           get(
@@ -18,24 +20,16 @@ describe "Car Requests" do
           )
 
           expect(response).to have_http_status :ok
-          expect(body).to have_json_path("car")
-          expect(body).to have_json_path("car/id")
-
-          expect(json_value_at_path("car/max_seats")).to eq(1)
-          expect(json_value_at_path("car/name")).to include("Car ")
-          expect(json_value_at_path("car/owner_id")).to eq(car.owner_id)
-          expect(json_value_at_path("car/seats_remaining")).to eq(0)
-          expect(json_value_at_path("car/status")).to eq("not_started")
-
           expect_body_to_include_car_attributes_at_path("car")
+          expect_body_to_include_car_attributes(car, car.trip)
+          expect_body_to_include_owner_attributes_in_car(car, car.owner)
+          expect_body_to_include_passenger_attributes_in_car(car, passenger)
 
           expect(json_value_at_path("car/locations")).to be_a(Array)
-          expect(json_value_at_path("car/passengers")).to be_a(Array)
-
-          expect(body).to have_json_path("car/passengers/0/id")
-          expect(body).to have_json_path("car/passengers/0/name")
-          expect(body).to have_json_path("car/passengers/0/email")
-          expect(body).to have_json_path("car/passengers/0/image")
+          expect(json_value_at_path("car/locations")).to eq(car.locations)
+          expect(json_value_at_path("car/max_seats")).to eq(2)
+          expect(json_value_at_path("car/seats_remaining")).to eq(0)
+          expect(json_value_at_path("car/status")).to eq("not_started")
         end
       end
 

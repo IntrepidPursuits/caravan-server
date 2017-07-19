@@ -23,7 +23,7 @@ class Api::V1::TripsController < Api::V1::ApiController
   def show
     trip = Trip.find(params[:id])
     render json: trip,
-           except: [:google_identity, :invite_code, :locations, :trip],
+           except: [:invite_code, :locations, :trip],
            serializer: TripSerializer,
            status: :ok
   end

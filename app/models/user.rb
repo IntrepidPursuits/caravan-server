@@ -13,4 +13,24 @@ class User < ApplicationRecord
       trip.upcoming?
     end
   end
+
+  def email
+    if google_identity_exists?
+      google_identity.email
+    else
+      nil
+    end
+  end
+
+  def image
+    if google_identity_exists?
+      google_identity.image
+    else
+      nil
+    end
+  end
+
+  def google_identity_exists?
+    google_identity.present?
+  end
 end
