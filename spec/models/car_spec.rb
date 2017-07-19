@@ -62,4 +62,49 @@ RSpec.describe Car, type: :model do
       end
     end
   end
+
+  describe "last_location" do
+    it "returns the most recent location for a car" do
+      car = create(:car)
+      location_1 = create(:location, car: car)
+      location_2 = create(:location, car: car)
+
+      expect(car.last_location).to eq(location_2)
+    end
+
+    it "does not return locations attached to a different car" do
+      car_1 = create(:car)
+      car_2 = create(:car)
+      location_1 = create(:location, car: car_1)
+      location_2 = create(:location, car: car_2)
+
+      expect(car_1.last_location).to eq(location_1)
+      expect(car_2.last_location).to eq(location_2)
+    end
+  end
+
+  describe "near_destination?" do
+    it "returns true if the car's last location is within 0.1 miles of the trip's destination" do
+      car = create(:car)
+      location_1 = create(:location, car: car)
+      location_2 = create(:location, car: car, latitude: "42.366137", longitude: "-71.0784625")
+
+      expect(car.near_destination?).to be(true)
+    end
+
+    it "returns true if the car's last location is the same as the car's destination" do
+      car = create(:car)
+      location_1 = create(:location, car: car)
+      location_2 = create(:location, car: car, latitude: "42.3662828", longitude: "-71.0799026")
+
+      expect(car.near_destination?).to be(true)
+    end
+
+    it "returns false if the car's last location is more than 0.1 miles from the trip's destination" do
+      car = create(:car)
+      location = create(:location, car: car)
+
+      expect(car.near_destination?).to be(false)
+    end
+  end
 end

@@ -1,29 +1,33 @@
 class Api::V1::LocationsController < Api::V1::ApiController
   def create
     car = Car.find(location_params[:car_id])
-    raise CarNotInTransit unless car.status == "in_transit"
 
-    trip_ended = car.trip.departing_on < DateTime.now.beginning_of_day
-    if trip_ended
-      car.update!(status: "arrived")
+    if !car.trip.upcoming?
+      car.arrived!
     end
 
-    authorize car, :create_location?
+    if car.in_transit?
+      authorize car, :create_location?
 
-    if current_user == car.owner && !trip_ended
-      location = Location.create!(location_params)
-      if location.distance_to_destination < 0.1
-        car.update!(status: "arrived")
+      if current_user == car.owner
+        location = Location.create!(location_params)
+
+        if car.near_destination?
+          car.arrived!
+        end
+
+        render json: location.trip,
+               except: [:car, :cars],
+               serializer: TripLocationsSerializer,
+               status: :created
+      else
+        render json: car.trip,
+               except: [:car, :cars],
+               serializer: TripLocationsSerializer,
+               status: :ok
       end
-      render json: location.trip,
-             except: [:car, :cars],
-             serializer: TripLocationsSerializer,
-             status: :created
     else
-      render json: car.trip,
-             except: [:car, :cars],
-             serializer: TripLocationsSerializer,
-             status: :ok
+      raise CarNotInTransit
     end
   end
 

@@ -33,15 +33,15 @@ describe "Location Request" do
 
               expect(json_value_at_path("trip_locations/trip_id")).to eq(car.trip.id)
               expect(json_value_at_path("trip_locations/last_locations/0/car_id"))
-              .to eq(car.id)
+                .to eq(car.id)
               expect(json_value_at_path("trip_locations/last_locations/0/car_name"))
-              .to eq(car.name)
+                .to eq(car.name)
               expect(json_value_at_path("trip_locations/last_locations/0/direction"))
-              .to eq(attributes_for(:location)[:direction])
+                .to eq(attributes_for(:location)[:direction])
               expect(json_value_at_path("trip_locations/last_locations/0/latitude"))
-              .to eq(attributes_for(:location)[:latitude].to_s)
+                .to eq(attributes_for(:location)[:latitude].to_s)
               expect(json_value_at_path("trip_locations/last_locations/0/longitude"))
-              .to eq(attributes_for(:location)[:longitude].to_s)
+                .to eq(attributes_for(:location)[:longitude].to_s)
             end
           end
 
@@ -68,20 +68,20 @@ describe "Location Request" do
 
               expect(json_value_at_path("trip_locations/trip_id")).to eq(car.trip.id)
               expect(json_value_at_path("trip_locations/last_locations/0/car_id"))
-              .to eq(car.id)
+                .to eq(car.id)
               expect(json_value_at_path("trip_locations/last_locations/0/car_name"))
-              .to eq(car.name)
+                .to eq(car.name)
               expect(json_value_at_path("trip_locations/last_locations/0/direction"))
-              .to eq(attributes_for(:location)[:direction])
+                .to eq(attributes_for(:location)[:direction])
               expect(json_value_at_path("trip_locations/last_locations/0/latitude"))
-              .to eq("42.366137")
+                .to eq("42.366137")
               expect(json_value_at_path("trip_locations/last_locations/0/longitude"))
-              .to eq("-71.0784625")
+                .to eq("-71.0784625")
             end
           end
 
           context "the day after the departure date of the trip" do
-            it "does not create the location and updates the status of the trip to arrived" do
+            it "updates the status of the trip to arrived and returns an error" do
               trip = create(:trip, departing_on: DateTime.now - 1.day)
               car = create(:car, status: 1, owner: current_user, trip: trip)
               create(:signup, car: car, trip: trip, user: current_user)
@@ -98,10 +98,9 @@ describe "Location Request" do
               car.reload
               expect(car.status).to eq("arrived")
 
-              expect(response).to have_http_status :ok
-              expect_body_to_include_trip_locations_attributes_at_path("trip_locations")
-              expect(json_value_at_path("trip_locations/last_locations")).to eq([])
-              expect(json_value_at_path("trip_locations/trip_id")).to eq(trip.id)
+              expect(response).to have_http_status :unprocessable_entity
+              expect(errors).to eq("Cannot update car's location unless it has a status of 'In Transit'")
+              expect(Location.count).to eq(location_count)
             end
           end
         end
@@ -398,7 +397,7 @@ describe "Location Request" do
           end
 
           context "after the departure date of the trip" do
-            it "does not create the location, updates the status, returns the locations of the cars in the trip" do
+            it "updates the status rand returns an error" do
               trip = create(:trip, departing_on: DateTime.now - 1.day)
               car = create(:car, status: 1, trip: trip)
               create(:signup, car: car, trip: trip, user: current_user)
@@ -415,10 +414,9 @@ describe "Location Request" do
               car.reload
               expect(car.status).to eq("arrived")
 
-              expect(response).to have_http_status :ok
-              expect_body_to_include_trip_locations_attributes_at_path("trip_locations")
-              expect(json_value_at_path("trip_locations/last_locations")).to eq([])
-              expect(json_value_at_path("trip_locations/trip_id")).to eq(trip.id)
+              expect(response).to have_http_status :unprocessable_entity
+              expect(errors).to eq("Cannot update car's location unless it has a status of 'In Transit'")
+              expect(Location.count).to eq(location_count)
             end
           end
         end

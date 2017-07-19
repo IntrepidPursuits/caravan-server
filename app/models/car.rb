@@ -26,4 +26,12 @@ class Car < ApplicationRecord
   def seats_remaining
     max_seats - users.count
   end
+
+  def last_location
+    locations.order(:updated_at).last
+  end
+
+  def near_destination?
+    last_location.distance_to_destination < 0.1
+  end
 end
