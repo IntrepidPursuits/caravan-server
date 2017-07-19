@@ -1,26 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "LocationSimulator" do
-  describe ".location_data" do
-    it "is an array of arrays of valid floats" do
-      simulator = LocationSimulator.new
-
-      expect(simulator.location_data).to be_a(Array)
-      simulator.location_data.each do |stop|
-        expect(stop).to be_a(Array)
-        expect(stop.length).to eq(2)
-
-        stop.each do |location|
-          expect(location[:direction]).to be_a(Integer)
-          expect(location[:direction]).to be >= 0
-          expect(location[:direction]).to be <= 360
-          expect(valid_float?(location[:latitude])).to be(true)
-          expect(valid_float?(location[:longitude])).to be(true)
-        end
-      end
-    end
-  end
-
   describe ".build_stops_data" do
     it "returns an array of stops with two cars in each stop and correct data" do
       simulator = LocationSimulator.new
@@ -72,17 +52,13 @@ RSpec.describe "LocationSimulator" do
 
       last_locations = JSON.parse(response)["trip_locations"]["last_locations"]
       expect(last_locations[0]["car_id"]).to eq(simulator.car1_id)
-      expect(last_locations[0]["direction"]).to eq(simulator.location_data.last[0][:direction])
-      expect(last_locations[0]["latitude"]).to eq(simulator.location_data.last[0][:latitude])
-      expect(last_locations[0]["longitude"]).to eq(simulator.location_data.last[0][:longitude])
+      expect(last_locations[0]["direction"]).to eq(SIMULATOR_LOCATION_DATA.last[0][:direction])
+      expect(last_locations[0]["latitude"]).to eq(SIMULATOR_LOCATION_DATA.last[0][:latitude])
+      expect(last_locations[0]["longitude"]).to eq(SIMULATOR_LOCATION_DATA.last[0][:longitude])
       expect(last_locations[1]["car_id"]).to eq(simulator.car2_id)
-      expect(last_locations[1]["direction"]).to eq(simulator.location_data.last[1][:direction])
-      expect(last_locations[1]["latitude"]).to eq(simulator.location_data.last[1][:latitude])
-      expect(last_locations[1]["longitude"]).to eq(simulator.location_data.last[1][:longitude])
+      expect(last_locations[1]["direction"]).to eq(SIMULATOR_LOCATION_DATA.last[1][:direction])
+      expect(last_locations[1]["latitude"]).to eq(SIMULATOR_LOCATION_DATA.last[1][:latitude])
+      expect(last_locations[1]["longitude"]).to eq(SIMULATOR_LOCATION_DATA.last[1][:longitude])
     end
   end
-end
-
-def valid_float?(str)
-  true if Float(str) rescue false
 end
