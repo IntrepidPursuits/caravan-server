@@ -5,6 +5,9 @@ class Api::V1::LocationsController < Api::V1::ApiController
     authorize car, :create_location?
     if current_user == car.owner
       location = Location.create!(location_params)
+      if location.distance_to_destination < 0.1
+        car.update!(status: "arrived")
+      end
       render json: location.trip,
              except: [:car, :cars],
              serializer: TripLocationsSerializer,

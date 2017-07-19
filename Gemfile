@@ -8,6 +8,7 @@ end
 ruby "2.4.1"
 
 gem "active_model_serializers", "0.8.3"
+gem "geocoder"
 gem "httparty"
 gem "oauth"
 gem "omniauth-google-oauth2"
