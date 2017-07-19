@@ -24,6 +24,25 @@ RSpec.describe Trip, type: :model do
     it { should validate_presence_of(:name) }
   end
 
+  describe "car_owners" do
+    context "there are no cars in the trip" do
+      it "returns an empty array" do
+        trip = create(:trip)
+
+        expect(trip.car_owners).to eq([])
+      end
+    end
+
+    context "there are cars in the trip" do
+      it "returns an array of the owners of the trip's cars" do
+        trip = create(:trip)
+        car1, car2 = create_list(:car, 2, trip: trip)
+
+        expect(trip.car_owners).to eq([car1.owner, car2.owner])
+      end
+    end
+  end
+
   describe "last_locations" do
     it "returns the most recent locations for each car in the trip" do
       trip = create(:trip)

@@ -12,6 +12,65 @@ RSpec.describe User, type: :model do
     it { should have_many(:trips).through(:signups) }
   end
 
+  describe "email" do
+    context "user has a google identity" do
+      it "returns the email from the associated google_identity" do
+        google_identity = create(:google_identity)
+        user = google_identity.user
+
+        expect(user.email).to eq(google_identity.email)
+      end
+    end
+
+    context "user does not have a google_identity" do
+      it "returns nil" do
+        user = create(:user)
+
+        expect(user.email).to eq(nil)
+      end
+    end
+  end
+
+  describe "image" do
+    context "user has a google identity" do
+      it "returns the image from the associated google_identity" do
+        google_identity = create(:google_identity)
+        user = google_identity.user
+
+        expect(user.image).to eq(google_identity.image)
+      end
+    end
+
+    context "user does not have a google_identity" do
+      it "returns nil" do
+        user = create(:user)
+
+        expect(user.image).to eq(nil)
+      end
+    end
+  end
+
+  describe "google_identity_exists?" do
+    context "checks for the presence of an associated google_identity" do
+      context "user has no google_identity" do
+        it "returns false" do
+          user = create(:user)
+
+          expect(user.google_identity_exists?).to eq(false)
+        end
+      end
+
+      context "user does have a google_identity" do
+        it "returns true" do
+          google_identity = create(:google_identity)
+          user = google_identity.user
+
+          expect(user.google_identity_exists?).to eq(true)
+        end
+      end
+    end
+  end
+
   describe "upcoming_trips" do
     it "returns only the trips in the future, in order of departure date" do
       user = create(:user)

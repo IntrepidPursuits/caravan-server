@@ -7,6 +7,7 @@ module Helpers
       expect(json_value_at_path("car/owner_id")).to eq(car.owner_id)
       expect(json_value_at_path("car/passengers")).to be_a(Array)
       expect(json_value_at_path("car/seats_remaining")).to eq(car.max_seats - car.users.count)
+      expect(json_value_at_path("car/status")).to eq(car.status)
       expect(json_value_at_path("car/trip/id")).to eq(trip.id)
       expect(json_value_at_path("car/trip/name")).to eq(trip.name)
       expect_body_to_include_trip_car_owners(car)
@@ -18,6 +19,20 @@ module Helpers
       expect(json_value_at_path("car/trip/car_owners/0/name")).to eq(car.owner.name)
       expect(json_value_at_path("car/trip/car_owners/0/email")).to eq(car.owner.email)
       expect(json_value_at_path("car/trip/car_owners/0/image")).to eq(car.owner.image)
+    end
+
+    def expect_body_to_include_owner_attributes_in_car(car, user)
+      expect(json_value_at_path("car/passengers/0/id")).to eq(user.id)
+      expect(json_value_at_path("car/passengers/0/name")).to eq(user.name)
+      expect(json_value_at_path("car/passengers/0/email")).to eq(user.google_identity.email)
+      expect(json_value_at_path("car/passengers/0/image")).to eq(user.google_identity.image)
+    end
+
+    def expect_body_to_include_passenger_attributes_in_car(car, user)
+      expect(json_value_at_path("car/passengers/1/id")).to eq(user.id)
+      expect(json_value_at_path("car/passengers/1/name")).to eq(user.name)
+      expect(json_value_at_path("car/passengers/1/email")).to eq(user.google_identity.email)
+      expect(json_value_at_path("car/passengers/1/image")).to eq(user.google_identity.image)
     end
 
     def expect_body_to_include_car_attributes_at_path(path)
@@ -44,20 +59,6 @@ module Helpers
       expect(body).to have_json_path("#{path}/destination_latitude")
       expect(body).to have_json_path("#{path}/destination_longitude")
       expect(body).to have_json_path("#{path}/name")
-    end
-
-    def expect_body_to_include_owner_attributes_in_car(car, user)
-      expect(json_value_at_path("car/passengers/0/id")).to eq(user.id)
-      expect(json_value_at_path("car/passengers/0/name")).to eq(user.name)
-      expect(json_value_at_path("car/passengers/0/email")).to eq(user.google_identity.email)
-      expect(json_value_at_path("car/passengers/0/image")).to eq(user.google_identity.image)
-    end
-
-    def expect_body_to_include_passenger_attributes_in_car(car, user)
-      expect(json_value_at_path("car/passengers/1/id")).to eq(user.id)
-      expect(json_value_at_path("car/passengers/1/name")).to eq(user.name)
-      expect(json_value_at_path("car/passengers/1/email")).to eq(user.google_identity.email)
-      expect(json_value_at_path("car/passengers/1/image")).to eq(user.google_identity.image)
     end
 
     def expect_body_to_include_trip_locations_attributes_at_path(path)
@@ -106,36 +107,27 @@ module Helpers
     end
 
     def expect_response_to_include_correct_trip_factory_content(creator)
-      expect(parsed_body["trip"]["creator"]["name"]).to eq creator.name
-      expect(parsed_body["trip"]["destination_address"])
+      expect(json_value_at_path("trip/creator/name")).to eq creator.name
+      expect(json_value_at_path("trip/destination_address"))
         .to eq(attributes_for(:trip)[:destination_address].to_s)
-      expect(parsed_body["trip"]["destination_latitude"])
+      expect(json_value_at_path("trip/destination_latitude"))
         .to eq(attributes_for(:trip)[:destination_latitude].to_s)
-      expect(parsed_body["trip"]["destination_longitude"])
+      expect(json_value_at_path("trip/destination_longitude"))
         .to eq(attributes_for(:trip)[:destination_longitude].to_s)
-    end
-
-    def expect_body_to_include_passenger_attributes
-      json_value_at_path("car/passengers").first do |passenger|
-        expect(passenger["id"]).to eq(current_user.id)
-        expect(passenger["name"]).to eq(current_user.name)
-        expect(passenger["email"]).to eq(google_identity.email)
-        expect(passenger["image"]).to eq(google_identity.image)
-      end
     end
 
     def expect_body_to_include_signup_attributes_and_content(user, trip)
       expect(body).to have_json_path("signup")
-      expect(body).to have_json_path("signup/user_id")
+      expect(body).to have_json_path("signup/car_id")
       expect(body).to have_json_path("signup/trip_id")
-      expect(parsed_body["signup"]["user_id"]).to eq(user.id)
-      expect(parsed_body["signup"]["trip_id"]).to eq(trip.id)
+      expect(body).to have_json_path("signup/user_id")
+      expect(json_value_at_path("signup/trip_id")).to eq(trip.id)
+      expect(json_value_at_path("signup/user_id")).to eq(user.id)
     end
 
     def expect_user_forbidden_response
       expect(response).to have_http_status :forbidden
-      expect(errors)
-        .to include("User is not authorized to perform this action")
+      expect(errors).to eq("User is not authorized to perform this action")
     end
   end
 end

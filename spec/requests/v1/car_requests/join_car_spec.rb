@@ -16,7 +16,8 @@ describe "Join Car Request" do
 
             expect(response).to have_http_status :ok
             expect_body_to_include_car_attributes(car, car.trip)
-            expect(json_value_at_path("car/status")).to eq(car.status)
+            expect_body_to_include_owner_attributes_in_car(car, current_user)
+
             signup.reload
             expect(signup.car).to eq(car)
           end
@@ -80,7 +81,6 @@ describe "Join Car Request" do
 
           expect(response).to have_http_status :ok
           expect_body_to_include_car_attributes(car, car.trip)
-          expect(json_value_at_path("car/status")).to eq(car.status)
           signup.reload
           expect(signup.car).to eq(car)
         end

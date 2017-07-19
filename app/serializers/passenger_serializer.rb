@@ -1,5 +1,5 @@
 class PassengerSerializer < BaseSerializer
-  attributes :name,
-             :email,
-             :image
+  attributes :email,
+             :image,
+             :name
 end

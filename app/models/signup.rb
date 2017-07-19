@@ -9,8 +9,6 @@ class Signup < ApplicationRecord
   validates_with CarTripMatchValidator, if: :car_exists?
   validates_with CarSeatsLimitValidator, if: :car_exists?
 
-  private
-
   def car_exists?
     car.class == Car
   end

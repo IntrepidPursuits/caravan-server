@@ -8,10 +8,10 @@ describe "Car Requests" do
       context "for a valid car" do
         it "returns valid JSON for the car and its passengers" do
           car = create(:car, max_seats: 2)
-          owner_identity = create(:google_identity, user: car.owner)
           passenger = create(:user)
-          identity = create(:google_identity, user: passenger)
-          Signup.create(trip: car.trip, car: car, user: car.owner)
+          create(:google_identity, user: car.owner)
+          create(:google_identity, user: passenger)
+          create(:signup, trip: car.trip, car: car, user: car.owner)
           signup = Signup.find_or_create_by(trip: car.trip, car: car, user: passenger)
 
           get(

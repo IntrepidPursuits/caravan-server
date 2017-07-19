@@ -8,12 +8,6 @@ class User < ApplicationRecord
   has_many :cars, through: :signups
   has_many :trips, through: :signups
 
-  def upcoming_trips
-    trips.order(:departing_on).select do |trip|
-      trip.upcoming?
-    end
-  end
-
   def email
     if google_identity_exists?
       google_identity.email
@@ -32,5 +26,11 @@ class User < ApplicationRecord
 
   def google_identity_exists?
     google_identity.present?
+  end
+
+  def upcoming_trips
+    trips.order(:departing_on).select do |trip|
+      trip.upcoming?
+    end
   end
 end
