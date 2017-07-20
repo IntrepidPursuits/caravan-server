@@ -50,25 +50,6 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe "google_identity_exists?" do
-    context "user has no google_identity" do
-      it "returns false" do
-        user = create(:user)
-
-        expect(user.google_identity_exists?).to eq(false)
-      end
-    end
-
-    context "user does have a google_identity" do
-      it "returns true" do
-        google_identity = create(:google_identity)
-        user = google_identity.user
-
-        expect(user.google_identity_exists?).to eq(true)
-      end
-    end
-  end
-
   describe "upcoming_trips" do
     it "returns only the trips in the future, in order of departure date" do
       user = create(:user)

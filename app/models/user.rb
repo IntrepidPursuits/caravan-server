@@ -9,23 +9,11 @@ class User < ApplicationRecord
   has_many :trips, through: :signups
 
   def email
-    if google_identity_exists?
-      google_identity.email
-    else
-      nil
-    end
+    google_identity&.email
   end
 
   def image
-    if google_identity_exists?
-      google_identity.image
-    else
-      nil
-    end
-  end
-
-  def google_identity_exists?
-    google_identity.present?
+    google_identity&.image
   end
 
   def upcoming_trips
