@@ -15,9 +15,9 @@ RSpec.describe User, type: :model do
   describe "upcoming_trips" do
     it "returns only the trips in the future, in order of departure date" do
       user = create(:user)
-      trip_1 = create(:trip, creator: user, departing_on: DateTime.now - 1.day)
-      trip_2 = create(:trip, creator: user, departing_on: DateTime.now + 1.day)
-      trip_3 = create(:trip, creator: user, departing_on: DateTime.now)
+      trip_1 = create(:trip, creator: user, departing_on: Date.today - 1.day)
+      trip_2 = create(:trip, creator: user, departing_on: Date.today + 1.day)
+      trip_3 = create(:trip, creator: user, departing_on: Date.today)
 
       Trip.all.each do |trip|
         create(:signup, user: user, trip: trip)

@@ -89,7 +89,7 @@ describe "Trip Request" do
         end
 
         it "filters out trips with departure dates in the past" do
-          trip_1 = create(:trip, departing_on: DateTime.now - 1.day)
+          trip_1 = create(:trip, departing_on: Date.today - 1.day)
           trip_2 = create(:trip)
 
           Trip.all.each do |trip|
