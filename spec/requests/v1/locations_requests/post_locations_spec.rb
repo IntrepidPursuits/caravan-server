@@ -10,34 +10,98 @@ describe "Location Request" do
         let!(:signup) { create(:signup, car: car, trip: car.trip, user: current_user) }
 
         context "with valid attributes" do
-          it "creates the car returns valid JSON" do
-            unsaved_location = build(:location, car: nil)
-            valid_location_info = { location: unsaved_location }
+          context "more than 0.1 miles from trip's destination, the day of the trip" do
+            it "creates the location returns valid JSON and car's status stays the same" do
+              unsaved_location = build(:location, car: nil)
+              valid_location_info = { location: unsaved_location }
 
-            post(
-              car_locations_url(car),
-              params: valid_location_info.to_json,
-              headers: authorization_headers(current_user)
-            )
+              post(
+                car_locations_url(car),
+                params: valid_location_info.to_json,
+                headers: authorization_headers(current_user)
+              )
 
-            expect(response).to have_http_status :created
-            expect_body_to_include_trip_locations_attributes_at_path("trip_locations")
-            expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/0")
+              car.reload
+              expect(car.status).to eq("in_transit")
 
-            location = Location.find(json_value_at_path("trip_locations/last_locations/0/id"))
-            expect(location).to be
+              expect(response).to have_http_status :created
+              expect_body_to_include_trip_locations_attributes_at_path("trip_locations")
+              expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/0")
 
-            expect(json_value_at_path("trip_locations/trip_id")).to eq(car.trip.id)
-            expect(json_value_at_path("trip_locations/last_locations/0/car_id"))
-            .to eq(car.id)
-            expect(json_value_at_path("trip_locations/last_locations/0/car_name"))
-            .to eq(car.name)
-            expect(json_value_at_path("trip_locations/last_locations/0/direction"))
-            .to eq(attributes_for(:location)[:direction])
-            expect(json_value_at_path("trip_locations/last_locations/0/latitude"))
-            .to eq(attributes_for(:location)[:latitude].to_s)
-            expect(json_value_at_path("trip_locations/last_locations/0/longitude"))
-            .to eq(attributes_for(:location)[:longitude].to_s)
+              location = Location.find(json_value_at_path("trip_locations/last_locations/0/id"))
+              expect(location).to be
+
+              expect(json_value_at_path("trip_locations/trip_id")).to eq(car.trip.id)
+              expect(json_value_at_path("trip_locations/last_locations/0/car_id"))
+                .to eq(car.id)
+              expect(json_value_at_path("trip_locations/last_locations/0/car_name"))
+                .to eq(car.name)
+              expect(json_value_at_path("trip_locations/last_locations/0/direction"))
+                .to eq(attributes_for(:location)[:direction])
+              expect(json_value_at_path("trip_locations/last_locations/0/latitude"))
+                .to eq(attributes_for(:location)[:latitude].to_s)
+              expect(json_value_at_path("trip_locations/last_locations/0/longitude"))
+                .to eq(attributes_for(:location)[:longitude].to_s)
+            end
+          end
+
+          context "within 0.1 miles of the trip's destination, the day of the trip" do
+            it "creates the location and changes the car's status to arrived" do
+              unsaved_location = build(:location, car: nil, latitude: "42.366137", longitude: "-71.0784625")
+              valid_location_info = { location: unsaved_location }
+
+              post(
+                car_locations_url(car),
+                params: valid_location_info.to_json,
+                headers: authorization_headers(current_user)
+              )
+
+              car.reload
+              expect(car.status).to eq("arrived")
+
+              expect(response).to have_http_status :created
+              expect_body_to_include_trip_locations_attributes_at_path("trip_locations")
+              expect_body_to_include_locations_attributes_at_path("trip_locations/last_locations/0")
+
+              location = Location.find(json_value_at_path("trip_locations/last_locations/0/id"))
+              expect(location).to be
+
+              expect(json_value_at_path("trip_locations/trip_id")).to eq(car.trip.id)
+              expect(json_value_at_path("trip_locations/last_locations/0/car_id"))
+                .to eq(car.id)
+              expect(json_value_at_path("trip_locations/last_locations/0/car_name"))
+                .to eq(car.name)
+              expect(json_value_at_path("trip_locations/last_locations/0/direction"))
+                .to eq(attributes_for(:location)[:direction])
+              expect(json_value_at_path("trip_locations/last_locations/0/latitude"))
+                .to eq("42.366137")
+              expect(json_value_at_path("trip_locations/last_locations/0/longitude"))
+                .to eq("-71.0784625")
+            end
+          end
+
+          context "the day after the departure date of the trip" do
+            it "updates the status of the trip to arrived and returns an error" do
+              trip = create(:trip, departing_on: DateTime.now - 1.day)
+              car = create(:car, status: 1, owner: current_user, trip: trip)
+              create(:signup, car: car, trip: trip, user: current_user)
+              unsaved_location = build(:location, car: nil)
+              valid_location_info = { location: unsaved_location }
+              location_count = Location.count
+
+              post(
+                car_locations_url(car),
+                params: valid_location_info.to_json,
+                headers: authorization_headers(current_user)
+              )
+
+              car.reload
+              expect(car.status).to eq("arrived")
+
+              expect(response).to have_http_status :unprocessable_entity
+              expect(errors).to eq("Cannot update car's location unless it has a status of 'In Transit'")
+              expect(Location.count).to eq(location_count)
+            end
           end
         end
 
@@ -220,7 +284,27 @@ describe "Location Request" do
             expect(response).to have_http_status :unprocessable_entity
             expect(body).to have_json_path("errors")
             expect(errors)
-              .to include("Cannot update car's location if it has a status of 'Not Started'")
+              .to include("Cannot update car's location unless it has a status of 'In Transit'")
+          end
+        end
+
+        context "with car that has arrived at its destination" do
+          it "returns JSON with validation errors" do
+            car = create(:car, owner: current_user, status: 2)
+            signup = create(:signup, car: car, trip: car.trip, user: current_user)
+            unsaved_location = build(:location, car: nil)
+            valid_location_info = { location: unsaved_location }
+
+            post(
+              car_locations_url(car),
+              params: valid_location_info.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :unprocessable_entity
+            expect(body).to have_json_path("errors")
+            expect(errors)
+              .to include("Cannot update car's location unless it has a status of 'In Transit'")
           end
         end
 
@@ -267,7 +351,7 @@ describe "Location Request" do
         let!(:signup) { create(:signup, car: car, trip: car.trip, user: current_user) }
 
         context "with valid attributes" do
-          context "no other locations for the car or the trip" do
+          context "no other locations for the car or the trip, the day of the trip" do
             it "doesn't create the location, returns empty list of last locations" do
               unsaved_location = build(:location, car: nil)
               valid_location_info = { location: unsaved_location }
@@ -287,7 +371,7 @@ describe "Location Request" do
             end
           end
 
-          context "other locations for the car or the trip" do
+          context "other locations for the car or the trip, the day of the trip" do
             it "doesn't create the location, returns locations of cars in the trip" do
               location = create(:location, car: car, direction: 1, latitude: 2.0, longitude: 3.0)
               unsaved_location = build(:location, car: nil)
@@ -309,6 +393,30 @@ describe "Location Request" do
               expect(json_value_at_path("trip_locations/last_locations/0/direction")).to eq(1)
               expect(json_value_at_path("trip_locations/last_locations/0/latitude")).to eq("2.0")
               expect(json_value_at_path("trip_locations/last_locations/0/longitude")).to eq("3.0")
+            end
+          end
+
+          context "after the departure date of the trip" do
+            it "updates the status rand returns an error" do
+              trip = create(:trip, departing_on: DateTime.now - 1.day)
+              car = create(:car, status: 1, trip: trip)
+              create(:signup, car: car, trip: trip, user: current_user)
+              unsaved_location = build(:location, car: nil)
+              valid_location_info = { location: unsaved_location }
+              location_count = Location.count
+
+              post(
+                car_locations_url(car),
+                params: valid_location_info.to_json,
+                headers: authorization_headers(current_user)
+              )
+
+              car.reload
+              expect(car.status).to eq("arrived")
+
+              expect(response).to have_http_status :unprocessable_entity
+              expect(errors).to eq("Cannot update car's location unless it has a status of 'In Transit'")
+              expect(Location.count).to eq(location_count)
             end
           end
         end
@@ -427,9 +535,32 @@ describe "Location Request" do
             )
 
             expect(response).to have_http_status :unprocessable_entity
+            expect(Location.count).to eq(location_count)
             expect(body).to have_json_path("errors")
             expect(errors)
-              .to include("Cannot update car's location if it has a status of 'Not Started'")
+              .to include("Cannot update car's location unless it has a status of 'In Transit'")
+          end
+        end
+
+        context "car has already arrived at its destination" do
+          it "returns JSON with validation errors" do
+            location_count = Location.count
+            car = create(:car, status: 2)
+            signup = create(:signup, car: car, trip: car.trip, user: current_user)
+            unsaved_location = build(:location, car: nil)
+            valid_location_info = { location: unsaved_location }
+
+            post(
+              car_locations_url(car),
+              params: valid_location_info.to_json,
+              headers: authorization_headers(current_user)
+            )
+
+            expect(response).to have_http_status :unprocessable_entity
+            expect(Location.count).to eq(location_count)
+            expect(body).to have_json_path("errors")
+            expect(errors)
+              .to include("Cannot update car's location unless it has a status of 'In Transit'")
           end
         end
 

@@ -18,7 +18,7 @@ class Trip < ApplicationRecord
   validates_presence_of :creator, :departing_on, :destination_address, :name
 
   def last_locations
-    cars.map { |car| car.locations.order(:updated_at).last }.compact
+    cars.map { |car| car.last_location }.compact
   end
 
   def upcoming?

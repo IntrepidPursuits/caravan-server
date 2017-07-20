@@ -1,6 +1,6 @@
 UNPROCESSABLE_ENTITY_ERRORS =
   [ActiveRecord::RecordInvalid,
-    CarNotStartedError,
+    CarNotInTransit,
     InvalidCarCreation,
     InvalidCarJoin,
     InvalidInviteCodeError,
