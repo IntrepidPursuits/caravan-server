@@ -26,7 +26,7 @@ RSpec.describe User, type: :model do
       it "returns nil" do
         user = create(:user)
 
-        expect(user.email).to eq(nil)
+        expect(user.email).not_to be
       end
     end
   end
@@ -45,7 +45,7 @@ RSpec.describe User, type: :model do
       it "returns nil" do
         user = create(:user)
 
-        expect(user.image).to eq(nil)
+        expect(user.image).not_to be
       end
     end
   end
