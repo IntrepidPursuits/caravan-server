@@ -5,6 +5,7 @@ RSpec.describe Trip, type: :model do
     it { should belong_to(:creator) }
     it { should belong_to(:invite_code) }
     it { should have_many(:cars) }
+    it { should have_many(:car_owners).through(:cars) }
     it { should have_many(:locations).through(:cars) }
     it { should have_many(:signups) }
     it { should have_many(:users).through(:signups) }
@@ -22,25 +23,6 @@ RSpec.describe Trip, type: :model do
     it { should validate_presence_of(:destination_longitude) }
     it { should validate_presence_of(:invite_code_id) }
     it { should validate_presence_of(:name) }
-  end
-
-  describe "car_owners" do
-    context "there are no cars in the trip" do
-      it "returns an empty array" do
-        trip = create(:trip)
-
-        expect(trip.car_owners).to eq([])
-      end
-    end
-
-    context "there are cars in the trip" do
-      it "returns an array of the owners of the trip's cars" do
-        trip = create(:trip)
-        car1, car2 = create_list(:car, 2, trip: trip)
-
-        expect(trip.car_owners).to eq([car1.owner, car2.owner])
-      end
-    end
   end
 
   describe "last_locations" do
