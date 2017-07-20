@@ -22,6 +22,6 @@ class Trip < ApplicationRecord
   end
 
   def upcoming?
-    departing_on >= DateTime.now.beginning_of_day
+    departing_on.to_date >= Date.today
   end
 end

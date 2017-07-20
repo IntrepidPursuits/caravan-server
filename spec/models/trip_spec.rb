@@ -44,21 +44,24 @@ RSpec.describe Trip, type: :model do
   describe "upcoming?" do
     context "departure date in the future" do
       it "returns true" do
-        trip = create(:trip, departing_on: DateTime.now + 1.day)
+        trip = create(:trip, departing_on: Date.today + 1.day)
+
         expect(trip.upcoming?).to eq(true)
       end
     end
 
     context "departure date is today" do
       it "returns true" do
-        trip = create(:trip, departing_on: DateTime.now)
+        trip = create(:trip, departing_on: Date.today)
+
         expect(trip.upcoming?).to eq(true)
       end
     end
 
     context "departure date in the past" do
       it "returns false" do
-        trip = create(:trip, departing_on: DateTime.now - 1.day)
+        trip = create(:trip, departing_on: Date.today - 1.day)
+
         expect(trip.upcoming?).to eq(false)
       end
     end
