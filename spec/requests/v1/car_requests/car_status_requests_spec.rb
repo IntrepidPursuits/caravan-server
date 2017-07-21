@@ -3,8 +3,8 @@ require "rails_helper"
 describe "Car Status Requests" do
   describe "PATCH /cars/:id/status" do
     context "authenticated user" do
-      let(:current_user) { create(:user) }
-      let!(:current_user_identity) { create(:google_identity, user: current_user) }
+      let!(:current_user_identity) { create(:google_identity) }
+      let(:current_user) { current_user_identity.user }
 
       context "user can update their car's status to reflect starting/ending the trip" do
         context "when status is specified as a valid number" do
@@ -21,9 +21,12 @@ describe "Car Status Requests" do
             car.reload
 
             expect(response).to have_http_status :ok
-            expect_body_to_include_car_attributes(car, car.trip, current_user)
+            expect_body_to_include_car_attributes(car, car.trip)
+            expect_body_to_include_owner_attributes_in_car(car, current_user)
             expect_body_to_include_car_attributes_at_path("car")
-            expect(parsed_body["car"]["status"]).to eq("in_transit")
+            expect(json_value_at_path("car/locations")).to be_a(Array)
+            expect(json_value_at_path("car/locations")).to eq(car.locations)
+            expect(json_value_at_path("car/status")).to eq("in_transit")
 
             patch(
               api_v1_car_status_url(car),
@@ -34,9 +37,12 @@ describe "Car Status Requests" do
             car.reload
 
             expect(response).to have_http_status :ok
-            expect_body_to_include_car_attributes(car, car.trip, current_user)
+            expect_body_to_include_car_attributes(car, car.trip)
+            expect_body_to_include_owner_attributes_in_car(car, current_user)
             expect_body_to_include_car_attributes_at_path("car")
-            expect(parsed_body["car"]["status"]).to eq("arrived")
+            expect(json_value_at_path("car/locations")).to be_a(Array)
+            expect(json_value_at_path("car/locations")).to eq(car.locations)
+            expect(json_value_at_path("car/status")).to eq("arrived")
           end
         end
 
@@ -54,9 +60,12 @@ describe "Car Status Requests" do
             car.reload
 
             expect(response).to have_http_status :ok
-            expect_body_to_include_car_attributes(car, car.trip, current_user)
+            expect_body_to_include_car_attributes(car, car.trip)
+            expect_body_to_include_owner_attributes_in_car(car, current_user)
             expect_body_to_include_car_attributes_at_path("car")
-            expect(parsed_body["car"]["status"]).to eq("in_transit")
+            expect(json_value_at_path("car/locations")).to be_a(Array)
+            expect(json_value_at_path("car/locations")).to eq(car.locations)
+            expect(json_value_at_path("car/status")).to eq("in_transit")
 
             patch(
               api_v1_car_status_url(car),
@@ -67,9 +76,12 @@ describe "Car Status Requests" do
             car.reload
 
             expect(response).to have_http_status :ok
-            expect_body_to_include_car_attributes(car, car.trip, current_user)
+            expect_body_to_include_car_attributes(car, car.trip)
+            expect_body_to_include_owner_attributes_in_car(car, current_user)
             expect_body_to_include_car_attributes_at_path("car")
-            expect(parsed_body["car"]["status"]).to eq("arrived")
+            expect(json_value_at_path("car/locations")).to be_a(Array)
+            expect(json_value_at_path("car/locations")).to eq(car.locations)
+            expect(json_value_at_path("car/status")).to eq("arrived")
           end
         end
 
@@ -115,7 +127,7 @@ describe "Car Status Requests" do
           )
 
           expect(response).to have_http_status :bad_request
-          expect(errors).to eq "'boogityboogityboo' is not a valid status"
+          expect(errors).to eq("'boogityboogityboo' is not a valid status")
 
           patch(
             api_v1_car_status_url(car),
@@ -124,7 +136,7 @@ describe "Car Status Requests" do
           )
 
           expect(response).to have_http_status :bad_request
-          expect(errors).to eq "'42' is not a valid status"
+          expect(errors).to eq("'42' is not a valid status")
         end
       end
     end

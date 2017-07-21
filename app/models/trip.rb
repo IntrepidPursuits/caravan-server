@@ -3,6 +3,7 @@ class Trip < ApplicationRecord
   belongs_to :invite_code
 
   has_many :cars
+  has_many :car_owners, class_name: :User, through: :cars, source: :owner
   has_many :locations, through: :cars
   has_many :signups
   has_many :users, through: :signups

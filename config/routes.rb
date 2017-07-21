@@ -5,7 +5,11 @@ Rails.application.routes.draw do
                    name: "Accept",
                    value: "application/vnd.caravan-server.com; version=1" },
                    defaults: { format: :json }) do
-    resources :auths, only: [:create]
+    resources :auths, only: [:create] do
+      collection do
+        resource :twitter, only: [:create], controller: :twitter_auths
+      end
+    end
 
     constraints AuthenticatedConstraint.new do
       resources :cars, only: [:create, :show] do

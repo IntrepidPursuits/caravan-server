@@ -22,6 +22,7 @@ describe "Auth requests" do
         expect(body).to have_json_path("auth/user")
         expect(body).to have_json_path("auth/user/id")
         expect(body).to have_json_path("auth/user/name")
+        expect(body).to have_json_path("auth/user/twitter_identity")
         expect(body).to have_json_path("auth/user/google_identity")
         expect(body).to have_json_path("auth/user/google_identity/id")
         expect(body).to have_json_path("auth/user/google_identity/email")

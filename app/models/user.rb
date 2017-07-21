@@ -8,6 +8,18 @@ class User < ApplicationRecord
   has_many :cars, through: :signups
   has_many :trips, through: :signups
 
+  def email
+    google_identity&.email
+  end
+
+  def image
+    identity&.image
+  end
+
+  def identity
+    google_identity ? google_identity : twitter_identity
+  end
+
   def upcoming_trips
     trips.order(:departing_on).select do |trip|
       trip.upcoming?

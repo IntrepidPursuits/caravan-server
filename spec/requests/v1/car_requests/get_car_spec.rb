@@ -7,35 +7,38 @@ describe "Car Requests" do
 
       context "for a valid car" do
         it "returns valid JSON for the car and its passengers" do
-          car = create(:car)
-          passenger = create(:user)
-          identity = create(:google_identity, user: passenger)
-          signup = Signup.find_or_create_by(trip: car.trip, car: car, user: passenger)
+          car = create(:car, max_seats: 2)
+          passenger1 = create(:user)
+          passenger2 = create(:user)
+          google_identity = create(:google_identity, user: passenger1, image: "googlepic")
+          twitter_identity = create(:twitter_identity, user: passenger2, image: "twitterpic")
+          _signup1 = Signup.find_or_create_by(trip: car.trip, car: car, user: passenger1)
+          _signup2 = Signup.find_or_create_by(trip: car.trip, car: car, user: passenger2)
 
           get(
             api_v1_car_url(car),
-            headers: authorization_headers(passenger)
+            headers: authorization_headers(passenger1)
           )
 
           expect(response).to have_http_status :ok
           expect(body).to have_json_path("car")
-          expect(body).to have_json_path("car/id")
 
-          expect(json_value_at_path("car/max_seats")).to eq(1)
-          expect(json_value_at_path("car/name")).to include("Car ")
+          expect(json_value_at_path("car/id")).to eq(car.id)
+          expect(json_value_at_path("car/max_seats")).to eq(2)
+          expect(json_value_at_path("car/name")).to eq(car.name)
           expect(json_value_at_path("car/owner_id")).to eq(car.owner_id)
           expect(json_value_at_path("car/seats_remaining")).to eq(0)
           expect(json_value_at_path("car/status")).to eq("not_started")
-
-          expect_body_to_include_car_attributes_at_path("car")
-
           expect(json_value_at_path("car/locations")).to be_a(Array)
           expect(json_value_at_path("car/passengers")).to be_a(Array)
-
-          expect(body).to have_json_path("car/passengers/0/id")
-          expect(body).to have_json_path("car/passengers/0/name")
-          expect(body).to have_json_path("car/passengers/0/email")
-          expect(body).to have_json_path("car/passengers/0/image")
+          expect(json_value_at_path("car/passengers/0/id")).to eq(passenger1.id)
+          expect(json_value_at_path("car/passengers/0/name")).to eq(passenger1.name)
+          expect(json_value_at_path("car/passengers/0/email")).to eq(google_identity.email)
+          expect(json_value_at_path("car/passengers/0/image")).to eq(google_identity.image)
+          expect(json_value_at_path("car/passengers/1/id")).to eq(passenger2.id)
+          expect(json_value_at_path("car/passengers/1/name")).to eq(passenger2.name)
+          expect(json_value_at_path("car/passengers/1/email")).to eq(nil)
+          expect(json_value_at_path("car/passengers/1/image")).to eq(twitter_identity.image)
         end
       end
 

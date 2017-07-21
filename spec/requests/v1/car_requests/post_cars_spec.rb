@@ -24,31 +24,29 @@ describe "Car Requests" do
           end
 
           it "returns valid JSON for the new car" do
-            expect(response).to have_http_status :created
-            expect_body_to_include_car_attributes_at_path("car")
-
             car = Car.find(json_value_at_path("car/id"))
+            trip = @signup.trip
+
+            expect(response).to have_http_status :created
             expect(car).to be
-            expect(car.owner).to eq(current_user)
             expect(json_value_at_path("car/locations")).to eq([])
             expect(json_value_at_path("car/max_seats")).to eq(1)
-            expect(json_value_at_path("car/name")).to include("Car ")
             expect(json_value_at_path("car/seats_remaining")).to eq(0)
             expect(json_value_at_path("car/status")).to eq("not_started")
             expect(json_value_at_path("car/owner_id")).to eq(current_user.id)
-
-            trip = @signup.trip
             expect(json_value_at_path("car/trip/id")).to eq(trip.id)
             expect(json_value_at_path("car/trip/name")).to eq(trip.name)
+            expect_body_to_include_car_attributes_at_path("car")
           end
 
           it "automatically adds the current user to the car" do
             car = Car.find(json_value_at_path("car/id"))
+
             expect(car.owner).to eq(current_user)
             expect(car.users).to include(current_user)
             expect(current_user.owned_cars).to include(car)
-            expect(json_value_at_path("car/passengers").length).to eq 1
-            expect_body_to_include_passenger_attributes
+            expect(json_value_at_path("car/passengers").count).to eq(1)
+            expect_body_to_include_owner_attributes_in_car(car, current_user)
           end
         end
 
@@ -71,7 +69,7 @@ describe "Car Requests" do
             )
 
             expect(response).to have_http_status :unprocessable_entity
-            expect(errors).to eq "Validation failed: Owner User already owns a car for this trip"
+            expect(errors).to include("Owner User already owns a car for this trip")
           end
         end
       end
@@ -164,8 +162,7 @@ describe "Car Requests" do
             )
 
             expect(response).to have_http_status :not_found
-            expect(errors)
-              .to include("Couldn't find Trip with 'id'=not a trip")
+            expect(errors).to eq("Couldn't find Trip with 'id'=not a trip")
           end
         end
       end
@@ -181,8 +178,7 @@ describe "Car Requests" do
           )
 
           expect(response).to have_http_status :bad_request
-          expect(errors)
-            .to eq("param is missing or the value is empty: car")
+          expect(errors).to eq("param is missing or the value is empty: car")
         end
       end
     end
