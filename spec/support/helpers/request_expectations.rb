@@ -129,5 +129,18 @@ module Helpers
       expect(response).to have_http_status :forbidden
       expect(errors).to eq("User is not authorized to perform this action")
     end
+
+    def expect_body_to_include_auth_response
+      expect(body).to have_json_path("auth")
+      expect(body).to have_json_path("auth/access_token")
+      expect(body).to have_json_path("auth/user")
+      expect(body).to have_json_path("auth/user/id")
+      expect(body).to have_json_path("auth/user/name")
+      expect(body).to have_json_path("auth/user/google_identity")
+      expect(body).to have_json_path("auth/user/google_identity/id")
+      expect(body).to have_json_path("auth/user/google_identity/email")
+      expect(body).to have_json_path("auth/user/google_identity/uid")
+      expect(body).to have_json_path("auth/user/google_identity/user_id")
+    end
   end
 end
