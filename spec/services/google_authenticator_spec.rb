@@ -6,7 +6,11 @@ RSpec.describe "GoogleAuthenticator" do
       it "should raise an error" do
         expect_any_instance_of(GoogleAuthenticator).to receive(:token_valid?).and_return(false)
 
-        expect { GoogleAuthenticator.perform("bah") }.to raise_error(UnauthorizedGoogleAccess)
+        expect { GoogleAuthenticator.perform(
+            token: "bah",
+            name: '',
+            image: ''
+          ) }.to raise_error(UnauthorizedGoogleAccess)
       end
     end
 
@@ -22,7 +26,11 @@ RSpec.describe "GoogleAuthenticator" do
           starting_user_count = User.count
           starting_google_id_count = GoogleIdentity.count
 
-          user, google_identity = GoogleAuthenticator.perform(SecureRandom.hex(20))
+          user, google_identity = GoogleAuthenticator.perform(
+            token: SecureRandom.hex(20),
+            name: '',
+            image: '',
+          )
 
           expect(user).to be
           expect(google_identity).to be
@@ -40,7 +48,9 @@ RSpec.describe "GoogleAuthenticator" do
           starting_user_count = User.count
           starting_google_id_count = GoogleIdentity.count
 
-          user, google_identity = GoogleAuthenticator.perform(SecureRandom.hex(20))
+          user, google_identity = GoogleAuthenticator.perform(
+            token: SecureRandom.hex(20)
+          )
 
           expect(user).to be
           expect(google_identity).to be
@@ -66,8 +76,9 @@ RSpec.describe "GoogleAuthenticator" do
             allow_any_instance_of(GoogleAuthenticator)
               .to receive(:token_hash).and_return(user_info_missing_email)
 
-            expect { GoogleAuthenticator.perform(SecureRandom.hex(20)) }
-              .to raise_error(UnauthorizedGoogleAccess)
+            expect { GoogleAuthenticator.perform(
+              token: SecureRandom.hex(20)
+            ) }.to raise_error(UnauthorizedGoogleAccess)
           end
         end
 
@@ -76,8 +87,9 @@ RSpec.describe "GoogleAuthenticator" do
             allow_any_instance_of(GoogleAuthenticator)
               .to receive(:token_hash).and_return(user_info_missing_uid)
 
-            expect { GoogleAuthenticator.perform(SecureRandom.hex(20)) }
-              .to raise_error(UnauthorizedGoogleAccess)
+            expect { GoogleAuthenticator.perform(
+              token: SecureRandom.hex(20)
+            ) }.to raise_error(UnauthorizedGoogleAccess)
           end
         end
       end
@@ -88,8 +100,9 @@ RSpec.describe "GoogleAuthenticator" do
             allow_any_instance_of(GoogleAuthenticator)
               .to receive(:token_hash).and_return(user_info_missing_name)
 
-            expect { GoogleAuthenticator.perform(SecureRandom.hex(20)) }
-              .to raise_error(UnauthorizedGoogleAccess)
+            expect { GoogleAuthenticator.perform(
+              token: SecureRandom.hex(20)
+            ) }.to raise_error(UnauthorizedGoogleAccess)
           end
         end
       end
