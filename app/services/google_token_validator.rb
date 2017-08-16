@@ -1,12 +1,14 @@
 class GoogleTokenValidator
-  attr_reader :token, :response
+  attr_reader :token, :name, :image, :response
 
-  def initialize(token)
+  def initialize(token, name, image)
     @token = token
+    @name = name
+    @image = image
   end
 
-  def self.perform(token)
-    new(token).perform
+  def self.perform(token, name, image)
+    new(token, name, image).perform
   end
 
   def perform
@@ -23,16 +25,26 @@ class GoogleTokenValidator
     VALID_GOOGLE_CLIENT_IDS.include?(client_id)
   end
 
-  def missing_required_info?
-    response["sub"].nil? || response["email"].nil? || response["name"].nil?
-  end
-
   def client_id
     response["aud"]
   end
 
+  def missing_required_info?
+    noName = name.nil? && response["name"].nil?
+    uid.nil? || response["email"].nil? || noName
+  end
+
   def token_hash
-    @token_hash ||= { google_uid: response["sub"], email: response["email"], name: response["name"], image: response["picture"] }
+    @token_hash ||= { google_uid: uid, email: response["email"], name: response["name"], image: response["picture"] }
+    if !name.nil?
+      @token_hash[:name] = name
+      @token_hash[:image] = image
+    end
+    @token_hash
+  end
+
+  def uid
+    response["sub"]
   end
 
   def response
