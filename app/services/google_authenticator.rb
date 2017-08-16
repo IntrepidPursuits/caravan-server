@@ -1,12 +1,14 @@
 class GoogleAuthenticator
-  attr_reader :token, :response, :google_identity
+  attr_reader :token, :name, :image, :response, :google_identity
 
-  def initialize(token)
+  def initialize(token:, name: nil, image: nil)
     @token = token
+    @name = name
+    @image = image
   end
 
-  def self.perform(token)
-    new(token).perform
+  def self.perform(argument)
+    new(argument).perform
   end
 
   def perform
@@ -33,7 +35,7 @@ class GoogleAuthenticator
   end
 
   def token_validator
-    @token_validator ||= GoogleTokenValidator.new(token)
+    @token_validator ||= GoogleTokenValidator.new(token, name, image)
   end
 
   def parsed_token
